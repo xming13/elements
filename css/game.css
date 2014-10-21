@@ -1,0 +1,43 @@
+/* Reset */
+/**,*/
+/**:after,*/
+/**:before {*/
+    /*-webkit-box-sizing: border-box;*/
+    /*-moz-box-sizing: border-box;*/
+    /*box-sizing: border-box;*/
+/*}*/
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+/* Clearfix hack by Nicolas Gallagher: http://nicolasgallagher.com/micro-clearfix-hack/ */
+.clearfix:before,
+.clearfix:after {
+    content: " ";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+#gameboard {
+    width: 800px;
+    height: 600px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 30px;
+    border: 5px solid black;
+    padding: 20px;
+}
+
+.cards ul li {
+    height: 200px;
+    width: 130px;
+    border: 1px solid red;
+    margin: 10px;
+    float: left;
+}
