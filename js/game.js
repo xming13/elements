@@ -27,7 +27,8 @@ XMing.GameManager = new function() {
         TURN: 'turn',
         DRAW: 'draw',
         ACTION: 'action',
-        MESSAGE: 'message'
+        MESSAGE: 'message',
+        REQUEST_DECK: 'request_deck'
     };
 
     _.templateSettings = {
@@ -38,20 +39,19 @@ XMing.GameManager = new function() {
 
     var TEMPLATE = {
         myTurn: _.template('<div><span class="you">You</span> end turn.</div>'),
-        myDraw: _.template('<div><span class="you">You</span> draw <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span>!</div>'),
-        myAction: _.template('<div><span class="you">You</span> play <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span>!</div>'),
+        myDraw: _.template('<div><span class="you">You</span> draw <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span> !</div>'),
+        myAction: _.template('<div><span class="you">You</span> play <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span> !</div>'),
+        myMessage: _.template('<div><span class="you">You :</span> {- message }}</div>'),
         oppTurn: _.template('<div><span class="peer">{{ peer }}</span> ends turn.</div>'),
-        oppDraw: _.template('<div><span class="peer">{{ peer }}</span> draws <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span>!</div>'),
-        oppAction: _.template('<div><span class="peer">{{ peer }}</span> plays <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span>!</div>'),
-        oppMessage: _.template('<div><span class="peer">{{ peer }}</span>:{{ message }}</div>')
+        oppDraw: _.template('<div><span class="peer">{{ peer }}</span> draws <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span> !</div>'),
+        oppAction: _.template('<div><span class="peer">{{ peer }}</span> plays <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span> !</div>'),
+        oppMessage: _.template('<div><span class="peer">{{ peer }} :</span> {- message }}</div>')
     };
 
     this.deck = [];
     this.cardsOnBoard = [];
 
-    this.peer = new Peer({
-        key: 'j4a6ijvcn8z1tt9'
-    });
+    this.peer;
 
     this.connectedPeers = {};
 
@@ -59,33 +59,59 @@ XMing.GameManager = new function() {
         console.log('connect');
 
         if (c.label === 'game') {
-            var chatbox = $('<div></div>').addClass('connection').addClass('active').attr('id', c.peer);
-            var messages = $('<div><em>Peer connected.</em></div>').addClass('messages');
-            chatbox.append(messages);
+            var chatbox = $('<div></div>').addClass('connection')
+                .addClass('active')
+                .attr('id', c.peer);
+
+            var messagesGame = $('<div><em>Peer connected.</em></div>').addClass('messages messages-game');
+            chatbox.append(messagesGame);
+
+            var messagesChat = $('<div></div>').addClass('messages messages-chat');
+            chatbox.append(messagesChat);
+
+            var input = $('<input/>').addClass('messages-input');
+            chatbox.append(input);
+
             $('#connections').append(chatbox);
-            $('.filler').hide();
+
+            $(".messages-input").keydown(function(e) {
+                // enter key
+                if (e.keyCode == 13) {
+                    c.send({ type: DATA.MESSAGE, message: $(this).val() });
+                    messagesChat.append(TEMPLATE.myMessage({ message: $(this).val() }));
+                    $(this).val('').focus();
+                }
+            });
 
             c.on('data', function(data) {
                 console.log(c.peer);
                 console.log(data);
 
-                if (data.type == DATA.DECK) {
+                if (data.type == DATA.REQUEST_DECK) {
+                    console.log('receive data for request_deck');
+
+                    c.send({ type: DATA.DECK, deck: m.deck });
+                }
+                else if (data.type == DATA.DECK) {
+                    console.log('receive data for deck');
+
                     // setting initial deck sent by the host when the game start so that everyone uses the same deck
                     m.deck = data.deck;
 
                     $("#gameboard").show();
+                    $("#menu-container").hide();
 
                     console.log('receive and assign deck');
                 }
                 else if (data.type == DATA.DRAW) {
-                    messages.append(TEMPLATE.oppDraw({ peer: c.peer, cardName: data.cardName }));
+                    messagesGame.append(TEMPLATE.oppDraw({ peer: c.peer, cardName: data.cardName }));
                     console.log('receive data for draw');
                 }
                 else if (data.type == DATA.ACTION) {
-                    messages.append(TEMPLATE.oppAction({ peer: c.peer, cardName: data.cardName, slot: data.slot }));
+                    messagesGame.append(TEMPLATE.oppAction({ peer: c.peer, cardName: data.cardName, slot: data.slot }));
                     console.log('receive data for action');
 
-                    messages.append(TEMPLATE.oppTurn({ peer: c.peer }));
+                    messagesGame.append(TEMPLATE.oppTurn({ peer: c.peer }));
                     m.deck = _.last(m.deck, data.numCardsLeft);
 
                     var card = _.findWhere(CARDS, { name: data.cardName });
@@ -95,13 +121,13 @@ XMing.GameManager = new function() {
                     $("#draw").show();
                 }
                 else if (data.type == DATA.MESSAGE) {
-                    messages.append(TEMPLATE.oppMessage({ peer: c.peer, message: data.message }));
+                    messagesChat.append(TEMPLATE.oppMessage({ peer: c.peer, message: data.message }));
                 }
                 else {
                     console.log('unknown data');
                 }
 
-                messages.animate({scrollTop: messages.prop("scrollHeight")}, 500);
+                m.scrollToBottom();
             });
 
             c.on('close', function() {
@@ -109,9 +135,7 @@ XMing.GameManager = new function() {
                 chatbox.remove();
 
                 m.endGame();
-                if ($('.connection').length === 0) {
-                    $('.filler').show();
-                }
+
                 delete m.connectedPeers[c.peer];
             });
         }
@@ -119,30 +143,29 @@ XMing.GameManager = new function() {
         m.connectedPeers[c.peer] = 1;
     };
 
-    this.peer.on('open', function(id){
-        $('#pid').text(id);
-    });
-
-    this.peer.on('connection', this.connect);
-
-    this.peer.on('error', function(err) {
-        alert(err);
-    });
+    this.scrollToBottom = function() {
+        $(".messages-game").animate({
+            scrollTop: $(".messages-game")[0].scrollHeight
+        }, 500);
+    };
 
     this.drawCard = function() {
         console.log('draw card');
 
+        var self = this;
         var cardDraw = this.deck.shift();
 
         this.eachActiveConnection(function(c, $c) {
             if (c.label === 'game') {
                 c.send({ type: DATA.DRAW, cardName: cardDraw.name });
-                $c.find('.messages').append(TEMPLATE.myDraw({ cardName: cardDraw.name }));
+                $c.find('.messages-game').append(TEMPLATE.myDraw({ cardName: cardDraw.name }));
+                self.scrollToBottom();
             }
         });
+
         this.processCard(cardDraw);
+
         $("#draw").hide();
-        $("#next").show();
     };
 
     // return the available slots that the card can be played on
@@ -155,7 +178,6 @@ XMing.GameManager = new function() {
             }
         });
 
-        console.log("availableSlots.length: " + availableSlots.length);
         return availableSlots;
     };
 
@@ -164,15 +186,10 @@ XMing.GameManager = new function() {
 
         if (card.type == 'element') {
             this.setupSelection(card);
-
         }
         else if (card.type == 'action') {
 
         }
-
-        console.log('before checkgame');
-        console.log(this.cardsOnBoard);
-
     };
 
     this.setupSelection = function(card) {
@@ -280,9 +297,10 @@ XMing.GameManager = new function() {
             if (c.label === 'game') {
                 console.log(card.name);
                 c.send({ type: DATA.ACTION, cardName: card.name, slot: selectedSlot, numCardsLeft: _.size(self.deck) });
-                $c.find('.messages').append(TEMPLATE.myAction({ cardName: card.name, slot: selectedSlot }));
-                $c.find('.messages').append(TEMPLATE.myTurn());
-                $("#next, #draw").hide();
+                $c.find('.messages-game').append(TEMPLATE.myAction({ cardName: card.name, slot: selectedSlot }));
+                $c.find('.messages-game').append(TEMPLATE.myTurn());
+                self.scrollToBottom();
+                $("#draw").hide();
             }
         });
     };
@@ -352,8 +370,6 @@ XMing.GameManager = new function() {
         });
 
         this.deck = _.shuffle(this.deck);
-
-        console.log(this.deck);
     };
 
     this.init = function() {
@@ -361,11 +377,56 @@ XMing.GameManager = new function() {
 
         this.cardsOnBoard = new Array(10);
 
+        // navigate to create connection screen
+        $("#create").click(function() {
+            console.log('create click');
+
+            $("#menu-main").hide();
+            $("#menu-host").show();
+            $("#instruction").hide();
+        })
+
+        // navigate to join connection screen
+        $("#join").click(function() {
+            console.log('join click');
+
+            $("#menu-main").hide();
+            $("#menu-join").show();
+        });
+
+        // create new connection
+        $("#host").click(function() {
+            self.peer =  new Peer({
+                key: 'j4a6ijvcn8z1tt9'
+            });
+
+            self.peer.on('open', function(id){
+                $('#pid').text(id);
+                $("#instruction").show();
+                self.prepareDeck();
+            });
+
+            self.peer.on('connection', function(c) {
+                console.log('on connection');
+                self.connect(c);
+
+                $("#gameboard").show();
+                $("#menu-container").hide();
+            });
+
+            self.peer.on('error', function(err) {
+                alert(err);
+            });
+        });
+
         // Connect to a peer
         $('#connect').click(function() {
             var requestedPeer = $('#rid').val();
             if (!self.connectedPeers[requestedPeer]) {
-                self.prepareDeck();
+
+                self.peer =  new Peer({
+                    key: 'j4a6ijvcn8z1tt9'
+                });
 
                 var c = self.peer.connect(requestedPeer, {
                     label: 'game',
@@ -376,10 +437,7 @@ XMing.GameManager = new function() {
                 c.on('open', function() {
                     console.log('connect open start');
                     self.connect(c);
-
-                    // sending initial deck to everyone so that everyone will be using the same deck
-                    c.send({type: DATA.DECK, deck: self.deck});
-                    $("#gameboard").show();
+                    c.send({ type: DATA.REQUEST_DECK });
 
                     console.log('connect open end');
                 });
@@ -392,44 +450,14 @@ XMing.GameManager = new function() {
             }
         });
 
-        // Close a connection.
+        // Close a connection
         $('#close').click(function() {
             self.eachActiveConnection(function(c) {
                 c.close();
             });
         });
 
-//        // end turn
-//        $('#next').click(function(e) {
-//            e.preventDefault();
-//            var that = $(this);
-//
-//            var msg = 'It is your turn now.';
-//            self.eachActiveConnection(function(c, $c) {
-//                if (c.label === 'game') {
-//                    c.send({ type: DATA.TURN, message: msg, numCardsLeft: _.size(self.deck)});
-//                    $c.find('.messages').append(TEMPLATE.myTurn());
-//                    that.hide();
-//                }
-//            });
-//        });
-
-        // Send a chat message to all active connections.
-        $('#send').submit(function(e) {
-            e.preventDefault();
-            // For each active connection, send the message.
-            var msg = $('#text').val();
-            self.eachActiveConnection(function(c, $c) {
-                if (c.label === 'game') {
-                    c.send({ type: DATA.MESSAGE, message: msg });
-                    $c.find('.messages').append('<div><span class="you">You: </span>' + msg
-                        + '</div>');
-                }
-            });
-            $('#text').val('');
-            $('#text').focus();
-        });
-
+        // Draw a new card
         $('#draw').click(function(e) {
             e.preventDefault();
             m.drawCard();

@@ -7,10 +7,30 @@
     box-sizing: border-box;
 }
 
+html{
+    height: 100%;
+}
+body {
+    min-height: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #eee;
+    color: #444;
+    font-family: Arial;
+    font-size: 15px;
+    line-height: 18px;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+}
+
 ul {
     margin: 0;
     padding: 0;
     list-style-type: none;
+}
+
+a {
+    color: #F2C777;
 }
 
 /* Clearfix hack by Nicolas Gallagher: http://nicolasgallagher.com/micro-clearfix-hack/ */
@@ -24,36 +44,105 @@ ul {
     clear: both;
 }
 
-.connection {
-    width: 285px;
-    overflow: scroll;
-    position: absolute;
-    height: 600px;
-    right: 0;
+#menu-container {
+    height: 100%;
+    text-align: center;
 }
 
-.messages div {
+.important {
+    font-size: 15px;
+    color: #F2C777;
+    margin-bottom: 10px;
+}
+
+.warning {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    padding: 10px;
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 20px;
+    background-color: #333;
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.4);
+}
+
+#pid {
+    display: inline-block;
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #0C6BA1;
+    font-weight: 600;
+}
+
+.connection {
+    position: absolute;
+    right: 0;
+    width: 285px;
+    height: 100%;
+    background: black;
+    color: #ddd;
+}
+
+.messages {
+    border: 1px solid gray;
+    overflow-y: scroll;
+}
+
+.messages div,
+.messages em {
+    padding: 0 10px;
+}
+
+.messages em {
+    color: #fff;
+}
+
+.messages-game {
+    height: 50%;
     line-height: 28px;
     font-family: 'Architects Daughter', cursive;
 }
 
+.messages-chat {
+    height: calc(50% - 30px);
+    letter-spacing: 1px;
+    color: #00ff00;
+    line-height: 20px;
+    font-family: 'Handlee', cursive;
+}
+
+.messages-input {
+    height: 30px;
+    width: 100%;
+    padding: 0 10px;
+    border: none;
+    font: normal 15px/20px 'Handlee', cursive;
+    background: black;
+    color: #00ff00;
+    letter-spacing: 1px;
+}
+
 .peer {
-    color: #ab47bc;
+    color: #ffd54f;
     font-weight: 600;
 }
 
 .you {
-    color: #1a237e;
+    color: #1cffff;
     font-weight: 600;
 }
 
 #gameboard-container {
-   width: 1024px;
+    width: calc(100% - 285px);
 }
 
 #gameboard {
-    width: 800px;
-    height: 600px;
+    width: 100%;
+    height: 100%;
     margin: 0 auto;
     background: white;
     border-radius: 30px;
@@ -84,16 +173,17 @@ ul {
 .cards ul li.selected {
     -webkit-box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,1);
     -moz-box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,1);
-    box-shadow: 0px 0px 55px 10px rgba(0,0,0,1);
+    box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,1);
 }
 
 .card-text {
     margin: 0 5px;
     padding: 1px 8px;
     border-radius: 6px;
+    -webkit-box-shadow: 0px 0px 10px 4px;
+    -moz-box-shadow: 0px 0px 10px 4px;
     box-shadow: 0px 0px 10px 4px;
-    font-family: 'Gloria Hallelujah', cursive;
-    font-weight: bold;
+    font: bold 12px 'Gloria Hallelujah', cursive;
     letter-spacing: 1px;
 }
 
@@ -123,13 +213,13 @@ ul {
 }
 
 .light {
-    color: #ffeb3b;
-    background-color: #fffde7;
+    color: #fdd835;
+    background-color: #ffff8d;
 }
 
 .dark {
-    color: #000000;
-    background-color: #9e9e9e;
+    color: #c8c8c8;
+    background-color: #181818;
 }
 
 

@@ -5,12 +5,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en-us">
 
-    <link href="css/fancy.css" rel="stylesheet" type="text/css">
     <link href="css/game.css" rel="stylesheet" type="text/css">
     <link href='http://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Gloria+Hallelujah' rel='stylesheet' type='text/css'>
-    <!--<link href='http://fonts.googleapis.com/css?family=Coming+Soon' rel='stylesheet' type='text/css'>-->
-    <!--<link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>-->
+    <link href='http://fonts.googleapis.com/css?family=Coming+Soon' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Handlee' rel='stylesheet' type='text/css'>
 
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/underscore-min.js"></script>
@@ -21,6 +21,26 @@
     <script>
         $(document).ready(function() {
             XMing.GameManager.init();
+
+            // http://stackoverflow.com/a/5918791
+            navigator.sayswho = (function(){
+                var ua= navigator.userAgent, tem,
+                        M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+                if(/trident/i.test(M[1])){
+                    tem=  /\brv[ :]+(\d+)/g.exec(ua) || [];
+                    return 'IE '+(tem[1] || '');
+                }
+                if(M[1]=== 'Chrome'){
+                    tem= ua.match(/\bOPR\/(\d+)/)
+                    if(tem!= null) return 'Opera '+tem[1];
+                }
+                M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+                if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
+                return M.join(' ');
+            })();
+
+            // Show browser version
+            $('#browsers').text(navigator.sayswho);
         });
 
         // Make sure things clean up properly.
@@ -31,20 +51,42 @@
 </head>
 
 <body>
-<div id="actions">
-    Your PeerJS ID is <span id="pid"></span><br>
-    Connect to a peer: <input type="text" id="rid" placeholder="Someone else's id"><input class="button" type="button" value="Connect" id="connect"><br><br>
 
-    <form id="send">
-        <input type="text" id="text" placeholder="Enter message"><input class="button" type="submit" value="Send to selected peers">
-    </form>
-    <button id="close">Close selected connections</button>
-    <div id="draw">Draw card</div>
-    <div id="next">Next</div>
+<div id="menu-container">
+    <div id="menu-main" class="menu">
+        <input id="create" class="button" type="button" value="Create Game" />
+        <br>
+        <br>
+        <input id="join" class="button" type="button" value="Join Game" />
+    </div>
+    <div id="menu-host" class="menu" style="display: none;">
+        Username: <input id="username-host" type="text" />
+        <br>
+        <br>
+        <input id="host" class="button" type="button" value="Create" />
+        <br>
+        <br>
+        <span id="instruction" style="display: none;">Give this ID: <span id="pid"></span>
+        to your friend.</span>
+    </div>
+    <div id="menu-join" class="menu" style="display: none;">
+        Username: <input id="username-join" type="text" />
+        <br>
+        <br>
+        Get the ID from your friend: <input type="text" id="rid" />
+        <input id="connect" class="button" type="button" value="Connect" />
+    </div>
+    <div class="warning browser">
+        <div class="important">Your browser version: <span id="browsers"></span><br>
+            Currently <strong>Firefox 22+ and Google Chrome 26.0.1403.0 or above</strong> is required.</strong></div>For more up to date compatibility
+        information see <a href="http://peerjs.com/status">PeerJS WebRTC
+        Status</a><br>Note that this demo may also fail if you are behind
+        stringent firewalls or both you and the remote peer and behind symmetric
+        NATs.
+    </div>
 </div>
 
 <div id="connections">
-    <span class="filler">You have not yet made any connections.</span>
 </div>
 
 <div id="gameboard-container">
@@ -68,19 +110,10 @@
             </ul>
         </div>
     </div>
+    <div id="actions">
+        <div id="draw">Draw card</div>
+    </div>
 </div>
 
-<div id="wrap">
-    <div class="clear"></div>
-</div>
-
-<div class="warning browser">
-    <div class="important">Your browser version: <span id="browsers"></span><br>
-        Currently <strong>Firefox 22+ and Google Chrome 26.0.1403.0 or above</strong> is required.</strong></div>For more up to date compatibility
-    information see <a href="http://peerjs.com/status">PeerJS WebRTC
-    Status</a><br>Note that this demo may also fail if you are behind
-    stringent firewalls or both you and the remote peer and behind symmetric
-    NATs.
-</div>
 </body>
 </html> 
