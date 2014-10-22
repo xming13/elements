@@ -39,39 +39,40 @@
         <input type="text" id="text" placeholder="Enter message"><input class="button" type="submit" value="Send to selected peers">
     </form>
     <button id="close">Close selected connections</button>
+    <div id="draw">Draw card</div>
+    <div id="next">Next</div>
 </div>
 
-<div id="wrap"><div id="connections"><span class="filler">You have not yet
-        made any connections.</span></div>
-    <div class="clear"></div></div>
-
-<div id="draw">Draw card</div>
-<div id="next">Next</div>
-
-<div id="gameboard" style="display: none;" tabindex="0">
-    <div class="opp-cards cards clearfix">
-        <span id="opp-name"></span>
-        <ul>
-            <li>card1</li>
-            <li>card2</li>
-            <li>card3</li>
-            <li>card4</li>
-            <li>card5</li>
-        </ul>
-    </div>
-    <div class="my-cards cards clearfix">
-        <span id="my-name"></span>
-        <ul>
-            <li>card1</li>
-            <li>card2</li>
-            <li>card3</li>
-            <li>card4</li>
-            <li>card5</li>
-        </ul>
-    </div>
-
+<div id="connections">
+    <span class="filler">You have not yet made any connections.</span>
 </div>
 
+<div id="gameboard-container">
+    <div id="gameboard" style="display: none;" tabindex="0">
+        <div class="opp-cards cards clearfix">
+            <ul>
+                <li>card1</li>
+                <li>card2</li>
+                <li>card3</li>
+                <li>card4</li>
+                <li>card5</li>
+            </ul>
+        </div>
+        <div class="my-cards cards clearfix">
+            <ul>
+                <li>card1</li>
+                <li>card2</li>
+                <li>card3</li>
+                <li>card4</li>
+                <li>card5</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="wrap">
+    <div class="clear"></div>
+</div>
 
 <div class="warning browser">
     <div class="important">Your browser version: <span id="browsers"></span><br>

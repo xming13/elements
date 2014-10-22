@@ -24,6 +24,33 @@ ul {
     clear: both;
 }
 
+.connection {
+    width: 285px;
+    overflow: scroll;
+    position: absolute;
+    height: 600px;
+    right: 0;
+}
+
+.messages div {
+    line-height: 28px;
+    font-family: 'Architects Daughter', cursive;
+}
+
+.peer {
+    color: #ab47bc;
+    font-weight: 600;
+}
+
+.you {
+    color: #1a237e;
+    font-weight: 600;
+}
+
+#gameboard-container {
+   width: 1024px;
+}
+
 #gameboard {
     width: 800px;
     height: 600px;
@@ -60,19 +87,9 @@ ul {
     box-shadow: 0px 0px 55px 10px rgba(0,0,0,1);
 }
 
-.connection {
-    width: auto;
-    height: auto;
-    overflow: visible;
-}
-.messages div {
-    line-height: 28px;
-    font-family: 'Architects Daughter', cursive;
-}
-
 .card-text {
     margin: 0 5px;
-    padding: 2px 8px;
+    padding: 1px 8px;
     border-radius: 6px;
     box-shadow: 0px 0px 10px 4px;
     font-family: 'Gloria Hallelujah', cursive;

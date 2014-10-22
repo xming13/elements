@@ -20,6 +20,8 @@ XMing.GameManager = new function() {
 //        SWAP: { type: 'action', name: 'swap', value: 5}
     };
 
+    var CARD_NAMES = _.pluck(CARDS, 'name');
+
     var DATA = {
         DECK: 'deck',
         TURN: 'turn',
@@ -35,9 +37,9 @@ XMing.GameManager = new function() {
     };
 
     var TEMPLATE = {
-        myTurn: _.template('<div><span class="peer">You</span> end turn.</div>'),
-        myDraw: _.template('<div><span class="peer">You</span> draw <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span>!</div>'),
-        myAction: _.template('<div><span class="peer">You</span> play <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span>!</div>'),
+        myTurn: _.template('<div><span class="you">You</span> end turn.</div>'),
+        myDraw: _.template('<div><span class="you">You</span> draw <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span>!</div>'),
+        myAction: _.template('<div><span class="you">You</span> play <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span>!</div>'),
         oppTurn: _.template('<div><span class="peer">{{ peer }}</span> ends turn.</div>'),
         oppDraw: _.template('<div><span class="peer">{{ peer }}</span> draws <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span>!</div>'),
         oppAction: _.template('<div><span class="peer">{{ peer }}</span> plays <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span>!</div>'),
@@ -69,13 +71,14 @@ XMing.GameManager = new function() {
             $('.filler').hide();
 
             c.on('data', function(data) {
-
                 console.log(c.peer);
                 console.log(data);
 
                 if (data.type == DATA.DECK) {
                     // setting initial deck sent by the host when the game start so that everyone uses the same deck
                     m.deck = data.deck;
+
+                    $('.')
                     $("#gameboard").show();
 
                     console.log('receive and assign deck');
@@ -91,6 +94,10 @@ XMing.GameManager = new function() {
                     messages.append(TEMPLATE.oppTurn({ peer: c.peer }));
                     m.deck = _.last(m.deck, data.numCardsLeft);
 
+                    var card = _.findWhere(CARDS, { name: data.cardName });
+                    m.performCardAction(card, data.slot);
+                    m.checkGame();
+
                     $("#draw").show();
                 }
                 else if (data.type == DATA.MESSAGE) {
@@ -99,6 +106,8 @@ XMing.GameManager = new function() {
                 else {
                     console.log('unknown data');
                 }
+
+                messages.animate({scrollTop: messages.prop("scrollHeight")}, 500);
             });
 
             c.on('close', function() {
@@ -167,7 +176,9 @@ XMing.GameManager = new function() {
 
         }
 
-        this.checkGame();
+        console.log('before checkgame');
+        console.log(this.cardsOnBoard);
+
     };
 
     this.setupSelection = function(card) {
@@ -268,9 +279,8 @@ XMing.GameManager = new function() {
     this.processSelectedSlot = function(card, selectedSlot) {
         var self = this;
 
-        this.cardsOnBoard[selectedSlot] = card;
-
-        console.log(this.cardsOnBoard);
+        this.performCardAction(card, selectedSlot);
+        this.checkGame();
 
         this.eachActiveConnection(function(c, $c) {
             if (c.label === 'game') {
@@ -281,6 +291,18 @@ XMing.GameManager = new function() {
                 $("#next, #draw").hide();
             }
         });
+    };
+
+    this.performCardAction = function(card, selectedSlot) {
+        $(".cards ul li").removeClass('available unavailable selected');
+        this.cardsOnBoard[selectedSlot] = card;
+
+        if (selectedSlot < 5) {
+            $($(".opp-cards ul li")[selectedSlot]).removeClass().addClass(card.name);
+        }
+        else {
+            $($(".my-cards ul li")[selectedSlot - 5]).removeClass().addClass(card.name);
+        }
     };
 
     this.assignAvailableCards = function(lis, indexes) {
@@ -307,15 +329,18 @@ XMing.GameManager = new function() {
             return memo + card.value;
         }, 0);
 
+        console.log(sum);
         var score = sum % 10;
 
         while (sum > 0) {
-            sum /= 10;
+            sum = Math.floor(sum / 10);
 
             if (sum % 10 > 0) {
                 score++;
             }
         }
+
+        console.log('final score: ' + score);
 
         return score == 5;
     };
@@ -420,6 +445,7 @@ XMing.GameManager = new function() {
 
     this.endGame = function() {
         console.log("end game");
+        alert('Game over!');
     };
 
     this.destroy = function() {
