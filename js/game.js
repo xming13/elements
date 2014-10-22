@@ -50,12 +50,7 @@ XMing.GameManager = new function() {
     this.cardsOnBoard = [];
 
     this.peer = new Peer({
-        key: 'j4a6ijvcn8z1tt9',
-        debug: 3,
-        logFunction: function() {
-            var copy = Array.prototype.slice.call(arguments).join(' ');
-            $('.log').append(copy + '<br>');
-        }
+        key: 'j4a6ijvcn8z1tt9'
     });
 
     this.connectedPeers = {};
@@ -78,7 +73,6 @@ XMing.GameManager = new function() {
                     // setting initial deck sent by the host when the game start so that everyone uses the same deck
                     m.deck = data.deck;
 
-                    $('.')
                     $("#gameboard").show();
 
                     console.log('receive and assign deck');
