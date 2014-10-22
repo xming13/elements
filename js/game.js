@@ -6,29 +6,46 @@ XMing.GameManager = new function() {
     var maxSize = 5;
 
     var CARDS = {
-        DARKNESS: { type: 'element', name: 'darkness', value: 0},
-        LIGHT: { type: 'element', name: 'light', value: 1},
-        WATER: { type: 'element', name: 'water', value: 10},
-        FIRE: { type: 'element', name: 'fire', value: 100},
-        METAL: { type: 'element', name: 'metal', value: 1000},
-        WOOD: { type: 'element', name: 'wood', value: 10000},
-        EARTH: { type: 'element', name: 'earth', value: 100000},
-        MOVE: { type: 'action', name: 'move', value: 2},
-        DISCARD_1: { type: 'action', name: 'discard 1', value: 3},
-        DISCARD_2: { type: 'action', name: 'discard 2', value: 4},
-        SWAP: { type: 'action', name: 'swap', value: 5}
+        DARK: { type: 'element', name: 'dark', value: 0, enemies: ['water', 'fire', 'metal', 'wood', 'earth']},
+        LIGHT: { type: 'element', name: 'light', value: 1, enemies: ['dark', 'water', 'fire', 'metal', 'wood', 'earth']},
+        WATER: { type: 'element', name: 'water', value: 10, enemies: ['fire', 'earth']},
+        FIRE: { type: 'element', name: 'fire', value: 100, enemies: ['metal', 'water']},
+        METAL: { type: 'element', name: 'metal', value: 1000, enemies: ['wood', 'fire']},
+        WOOD: { type: 'element', name: 'wood', value: 10000, enemies: ['earth', 'wood']},
+        EARTH: { type: 'element', name: 'earth', value: 100000, enemies: ['water', 'wood']}
+//        ,
+//        MOVE: { type: 'action', name: 'move', value: 2},
+//        DISCARD_1: { type: 'action', name: 'discard 1', value: 3},
+//        DISCARD_2: { type: 'action', name: 'discard 2', value: 4},
+//        SWAP: { type: 'action', name: 'swap', value: 5}
+    };
+
+    var DATA = {
+        DECK: 'deck',
+        TURN: 'turn',
+        DRAW: 'draw',
+        ACTION: 'action',
+        MESSAGE: 'message'
+    };
+
+    _.templateSettings = {
+        interpolate: /\{\{(.+?)\}\}/g,
+        escape: /\{\-(.+?)\}\}/g,
+        evaluate: /\{#(.+?)\}\}/g
+    };
+
+    var TEMPLATE = {
+        myTurn: _.template('<div><span class="peer">You</span> end turn.</div>'),
+        myDraw: _.template('<div><span class="peer">You</span> draw <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span>!</div>'),
+        myAction: _.template('<div><span class="peer">You</span> play <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span>!</div>'),
+        oppTurn: _.template('<div><span class="peer">{{ peer }}</span> ends turn.</div>'),
+        oppDraw: _.template('<div><span class="peer">{{ peer }}</span> draws <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span>!</div>'),
+        oppAction: _.template('<div><span class="peer">{{ peer }}</span> plays <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span>!</div>'),
+        oppMessage: _.template('<div><span class="peer">{{ peer }}</span>:{{ message }}</div>')
     };
 
     this.deck = [];
-    this.myCards = [];
-    this.oppCards = [];
-
-    // Card Object
-    var Card = function(type, name, value) {
-        this.type = type;
-        this.name = name;
-        this.value = value;
-    };
+    this.cardsOnBoard = [];
 
     this.peer = new Peer({
         key: 'j4a6ijvcn8z1tt9',
@@ -38,6 +55,7 @@ XMing.GameManager = new function() {
             $('.log').append(copy + '<br>');
         }
     });
+
     this.connectedPeers = {};
 
     this.connect = function(c) {
@@ -52,25 +70,34 @@ XMing.GameManager = new function() {
 
             c.on('data', function(data) {
 
+                console.log(c.peer);
                 console.log(data);
 
-                if (data.deck) {
-                    // setting initial deck when the game start so that everyone uses the same deck
+                if (data.type == DATA.DECK) {
+                    // setting initial deck sent by the host when the game start so that everyone uses the same deck
                     m.deck = data.deck;
                     $("#gameboard").show();
+
+                    console.log('receive and assign deck');
                 }
-                else if (data.turn) {
+                else if (data.type == DATA.DRAW) {
+                    messages.append(TEMPLATE.oppDraw({ peer: c.peer, cardName: data.cardName }));
+                    console.log('receive data for draw');
+                }
+                else if (data.type == DATA.ACTION) {
+                    messages.append(TEMPLATE.oppAction({ peer: c.peer, cardName: data.cardName, slot: data.slot }));
+                    console.log('receive data for action');
+
+                    messages.append(TEMPLATE.oppTurn({ peer: c.peer }));
                     m.deck = _.last(m.deck, data.numCardsLeft);
-                    m.drawCard();
 
-                    $("#next").show();
-                    messages.append('<div><span class="peer">' + c.peer + '</span> msg: ' + data.message +
-                        '</div>');
+                    $("#draw").show();
                 }
-
+                else if (data.type == DATA.MESSAGE) {
+                    messages.append(TEMPLATE.oppMessage({ peer: c.peer, message: data.message }));
+                }
                 else {
-                    messages.append('<div><span class="peer">' + c.peer + '</span>: ' + data +
-                        '</div>');
+                    console.log('unknown data');
                 }
             });
 
@@ -100,44 +127,183 @@ XMing.GameManager = new function() {
     });
 
     this.drawCard = function() {
-        var cardDrawn = this.deck.shift();
-        this.processCard(cardDrawn);
+        console.log('draw card');
+
+        var cardDraw = this.deck.shift();
+
+        this.eachActiveConnection(function(c, $c) {
+            if (c.label === 'game') {
+                c.send({ type: DATA.DRAW, cardName: cardDraw.name });
+                $c.find('.messages').append(TEMPLATE.myDraw({ cardName: cardDraw.name }));
+            }
+        });
+        this.processCard(cardDraw);
+        $("#draw").hide();
+        $("#next").show();
+    };
+
+    // return the available slots that the card can be played on
+    this.getAvailableSlots = function(card) {
+        var availableSlots = [];
+
+        _.each(this.cardsOnBoard, function(cardOnBoard, index) {
+            if (cardOnBoard == null || _.contains(card.enemies, cardOnBoard.name)) {
+                availableSlots.push(index);
+            }
+        });
+
+        console.log("availableSlots.length: " + availableSlots.length);
+        return availableSlots;
     };
 
     this.processCard = function(card) {
-        // process
+        console.log('process card');
 
-        switch (card.name) {
-            case 'darkness':
-                break;
-            case 'light':
-                break;
-            case 'water':
-                break;
-            case 'fire':
-                break;
-            case 'metal':
-                break;
-            case 'wood':
-                break;
-            case 'earth':
-                break;
+        if (card.type == 'element') {
+            this.setupSelection(card);
+
         }
-        //
+        else if (card.type == 'action') {
+
+        }
 
         this.checkGame();
     };
 
+    this.setupSelection = function(card) {
+        console.log('setup selection');
+
+        var self = this;
+
+        var availableSlots = this.getAvailableSlots(card);
+        if (availableSlots.length == 0) {
+            alert('no available move');
+        }
+        else {
+            var parts = _.partition(availableSlots, function(slot) {
+                return slot < 5;
+            });
+
+            parts[1] = _.map(parts[1], function(slot) {
+                return slot - 5;
+            });
+
+            this.assignAvailableCards($(".opp-cards ul li"), parts[0]);
+            this.assignAvailableCards($(".my-cards ul li"), parts[1]);
+
+            // set default selected slot
+            var currentSlot = availableSlots[0];
+            this.setSelectedSlot(currentSlot);
+
+            var hasProcessedSelectedSlot = false;
+
+            $(".cards ul li.available").hover(function() {
+                if (!hasProcessedSelectedSlot) {
+                    currentSlot = $(".cards ul li").index(this);
+                    self.setSelectedSlot(currentSlot);
+                }
+            }).click(function() {
+                if (!hasProcessedSelectedSlot) {
+                    hasProcessedSelectedSlot = true;
+                    currentSlot = $(".cards ul li").index(this);
+                    self.processSelectedSlot(card, currentSlot);
+                }
+            });
+
+            $("#gameboard").focus();
+            $("#gameboard").keydown(function(e) {
+                console.log('key pressed: ' + e.keyCode);
+                console.log('current slot before: ' + currentSlot);
+
+                if (!hasProcessedSelectedSlot) {
+                    switch (e.keyCode) {
+                        case 37: // up arrow
+                            if (currentSlot != 5 && _.contains(availableSlots, currentSlot - 1)) {
+                                currentSlot--;
+                                self.setSelectedSlot(currentSlot);
+                            }
+                            break;
+                        case 38: // left arrow
+                            if (_.contains(availableSlots, currentSlot - 5)) {
+                                currentSlot -= 5;
+                                self.setSelectedSlot(currentSlot);
+                            }
+                            break;
+                        case 39: // right arrow
+                            if (currentSlot != 4 && _.contains(availableSlots, currentSlot + 1)) {
+                                currentSlot++;
+                                self.setSelectedSlot(currentSlot);
+                            }
+                            break;
+                        case 40: // down arrow
+                            if (_.contains(availableSlots, currentSlot + 5)) {
+                                currentSlot += 5;
+                                self.setSelectedSlot(currentSlot);
+                            }
+                            break;
+                        case 13: // enter
+                        case 32: // space
+                            hasProcessedSelectedSlot = true;
+                            self.processSelectedSlot(card, currentSlot);
+                            break;
+                    }
+                }
+
+                console.log('current slot after: ' + currentSlot);
+            });
+        }
+    };
+
+    this.setSelectedSlot = function(slotNumber) {
+        $(".cards ul li").removeClass('selected');
+
+        if (slotNumber < 5) {
+            $($(".opp-cards ul li")[slotNumber]).addClass('selected');
+        }
+        else {
+            $($(".my-cards ul li")[slotNumber - 5]).addClass('selected');
+        }
+    };
+
+    this.processSelectedSlot = function(card, selectedSlot) {
+        var self = this;
+
+        this.cardsOnBoard[selectedSlot] = card;
+
+        console.log(this.cardsOnBoard);
+
+        this.eachActiveConnection(function(c, $c) {
+            if (c.label === 'game') {
+                console.log(card.name);
+                c.send({ type: DATA.ACTION, cardName: card.name, slot: selectedSlot, numCardsLeft: _.size(self.deck) });
+                $c.find('.messages').append(TEMPLATE.myAction({ cardName: card.name, slot: selectedSlot }));
+                $c.find('.messages').append(TEMPLATE.myTurn());
+                $("#next, #draw").hide();
+            }
+        });
+    };
+
+    this.assignAvailableCards = function(lis, indexes) {
+        _.each(lis, function(li, index) {
+            if (_.contains(indexes, index)) {
+                $(li).addClass('available');
+            }
+            else {
+                $(li).addClass('unavailable');
+            }
+        });
+    };
+
     // Check win condition
     this.checkGame = function() {
-        if (this.isWin(this.myCards) || this.isWin(this.oppCards)) {
+        if (this.isWin(_.first(this.cardsOnBoard, 5)) || this.isWin(_.last(this.cardsOnBoard, 5))) {
             this.endGame();
         }
     };
 
     // Return true if all cards are collected
     this.isWin = function(cards) {
-        var sum = _.reduce(cards, function(memo, card) {
+        var sum = _.reduce(_.compact(cards), function(memo, card) {
             return memo + card.value;
         }, 0);
 
@@ -160,9 +326,9 @@ XMing.GameManager = new function() {
         this.deck = [];
 
         _.each(CARDS, function(card) {
-            var numTimes = card.type == 'action' ? 5 : (card.name == 'darkness' ? 6 : 12);
+            var numTimes = card.type == 'action' ? 5 : (card.name == 'dark' ? 6 : 12);
             _.times(numTimes, function() {
-                self.deck.push(new Card(card.type, card.name, card.value));
+                self.deck.push(_.clone(card));
             });
         });
 
@@ -174,14 +340,14 @@ XMing.GameManager = new function() {
     this.init = function() {
         var self = this;
 
-        this.prepareDeck();
-        this.myCards = [];
-        this.oppCards = [];
+        this.cardsOnBoard = new Array(10);
 
         // Connect to a peer
         $('#connect').click(function() {
             var requestedPeer = $('#rid').val();
             if (!self.connectedPeers[requestedPeer]) {
+                self.prepareDeck();
+
                 var c = self.peer.connect(requestedPeer, {
                     label: 'game',
                     serialization: 'json',
@@ -193,7 +359,7 @@ XMing.GameManager = new function() {
                     self.connect(c);
 
                     // sending initial deck to everyone so that everyone will be using the same deck
-                    c.send({deck: self.deck});
+                    c.send({type: DATA.DECK, deck: self.deck});
                     $("#gameboard").show();
 
                     console.log('connect open end');
@@ -214,18 +380,20 @@ XMing.GameManager = new function() {
             });
         });
 
-        // end turn
-        $('#next').click(function(e) {
-            e.preventDefault();
-            var that = $(this);
-
-            var msg = 'It is your turn now.';
-            self.eachActiveConnection(function(c, $c) {
-                c.send({ message: msg, turn: 'next', numCardsLeft: _.size(self.deck)});
-                $c.find('.messages').append('<div>You have ended your turn. It is your opponent\'s turn now</div>');
-                that.hide();
-            });
-        });
+//        // end turn
+//        $('#next').click(function(e) {
+//            e.preventDefault();
+//            var that = $(this);
+//
+//            var msg = 'It is your turn now.';
+//            self.eachActiveConnection(function(c, $c) {
+//                if (c.label === 'game') {
+//                    c.send({ type: DATA.TURN, message: msg, numCardsLeft: _.size(self.deck)});
+//                    $c.find('.messages').append(TEMPLATE.myTurn());
+//                    that.hide();
+//                }
+//            });
+//        });
 
         // Send a chat message to all active connections.
         $('#send').submit(function(e) {
@@ -234,13 +402,18 @@ XMing.GameManager = new function() {
             var msg = $('#text').val();
             self.eachActiveConnection(function(c, $c) {
                 if (c.label === 'game') {
-                    c.send(msg);
+                    c.send({ type: DATA.MESSAGE, message: msg });
                     $c.find('.messages').append('<div><span class="you">You: </span>' + msg
                         + '</div>');
                 }
             });
             $('#text').val('');
             $('#text').focus();
+        });
+
+        $('#draw').click(function(e) {
+            e.preventDefault();
+            m.drawCard();
         });
 
     };

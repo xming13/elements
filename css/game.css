@@ -1,11 +1,11 @@
 /* Reset */
-/**,*/
-/**:after,*/
-/**:before {*/
-    /*-webkit-box-sizing: border-box;*/
-    /*-moz-box-sizing: border-box;*/
-    /*box-sizing: border-box;*/
-/*}*/
+*,
+*:after,
+*:before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
 
 ul {
     margin: 0;
@@ -41,3 +41,79 @@ ul {
     margin: 10px;
     float: left;
 }
+
+.cards ul li.available {
+    -webkit-box-shadow: 0px 0px 55px 10px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0px 0px 55px 10px rgba(0,0,0,0.5);
+    box-shadow: 0px 0px 55px 10px rgba(0,0,0,0.5);
+}
+
+.cards ul li.unavailable {
+    -webkit-box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,0.75);
+    -moz-box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,0.75);
+    box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,0.75)
+}
+
+.cards ul li.selected {
+    -webkit-box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,1);
+    -moz-box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,1);
+    box-shadow: 0px 0px 55px 10px rgba(0,0,0,1);
+}
+
+.connection {
+    width: auto;
+    height: auto;
+    overflow: visible;
+}
+.messages div {
+    line-height: 28px;
+    font-family: 'Architects Daughter', cursive;
+}
+
+.card-text {
+    margin: 0 5px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    box-shadow: 0px 0px 10px 4px;
+    font-family: 'Gloria Hallelujah', cursive;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.fire {
+    color: #e51c23;
+    background-color: #f9bdbb;
+}
+
+.water {
+    color: #03a9f4;
+    background-color: #b3e5fc;
+}
+
+.earth {
+    color: #ff9800;
+    background-color: #ffe0b2;
+}
+
+.wood {
+    color: #259b24;
+    background-color: #a3e9a4;
+}
+
+.metal {
+    color : #cddc39;
+    background-color: #f0f4c3;
+}
+
+.light {
+    color: #ffeb3b;
+    background-color: #fffde7;
+}
+
+.dark {
+    color: #000000;
+    background-color: #9e9e9e;
+}
+
+
+
