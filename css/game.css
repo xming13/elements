@@ -150,30 +150,33 @@ a {
     padding: 20px;
 }
 
+.cards ul {
+    text-align: center;
+}
 .cards ul li {
     height: 200px;
     width: 130px;
     border: 1px solid red;
     margin: 10px;
-    float: left;
+    display: inline-block;
 }
 
 .cards ul li.available {
-    -webkit-box-shadow: 0px 0px 55px 10px rgba(0,0,0,0.5);
-    -moz-box-shadow: 0px 0px 55px 10px rgba(0,0,0,0.5);
-    box-shadow: 0px 0px 55px 10px rgba(0,0,0,0.5);
+    /*-webkit-box-shadow: 0px 0px 55px 10px rgba(0,0,0,0.5);*/
+    /*-moz-box-shadow: 0px 0px 55px 10px rgba(0,0,0,0.5);*/
+    /*box-shadow: 0px 0px 55px 10px rgba(0,0,0,0.5);*/
 }
 
 .cards ul li.unavailable {
-    -webkit-box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,0.75);
-    -moz-box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,0.75);
-    box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,0.75)
+    /*-webkit-box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,0.75);*/
+    /*-moz-box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,0.75);*/
+    /*box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,0.75)*/
 }
 
 .cards ul li.selected {
-    -webkit-box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,1);
-    -moz-box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,1);
-    box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,1);
+    /*-webkit-box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,1);*/
+    /*-moz-box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,1);*/
+    /*box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,1);*/
 }
 
 .card-text {
@@ -190,36 +193,51 @@ a {
 .fire {
     color: #e51c23;
     background-color: #f9bdbb;
+    background-image: url('../images/fire.png');
 }
 
 .water {
     color: #03a9f4;
     background-color: #b3e5fc;
+    background-image: url('../images/water.png');
 }
 
 .earth {
     color: #ff9800;
     background-color: #ffe0b2;
+    background-image: url('../images/earth.png');
 }
 
 .wood {
     color: #259b24;
     background-color: #a3e9a4;
+    background-image: url('../images/wood.png');
 }
 
 .metal {
     color : #cddc39;
     background-color: #f0f4c3;
+    background-image: url('../images/metal.png');
 }
 
 .light {
     color: #fdd835;
     background-color: #ffff8d;
+    background-image: url('../images/light.png');
 }
 
 .dark {
     color: #c8c8c8;
     background-color: #181818;
+    background-image: url('../images/dark.png');
+}
+
+.hover-water {
+    background-image: url('../images/hover-water.png');
+}
+
+.hover-dark {
+    background-image: url('../images/hover-dark.png');
 }
 
 

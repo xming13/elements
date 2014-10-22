@@ -76,10 +76,11 @@ XMing.GameManager = new function() {
 
             $(".messages-input").keydown(function(e) {
                 // enter key
-                if (e.keyCode == 13) {
+                if (e.keyCode == 13 && $(this).val() != '') {
                     c.send({ type: DATA.MESSAGE, message: $(this).val() });
                     messagesChat.append(TEMPLATE.myMessage({ message: $(this).val() }));
                     $(this).val('').focus();
+                    m.scrollChatMessagesToBottom();
                 }
             });
 
@@ -100,18 +101,19 @@ XMing.GameManager = new function() {
 
                     $("#gameboard").show();
                     $("#menu-container").hide();
-
-                    console.log('receive and assign deck');
                 }
                 else if (data.type == DATA.DRAW) {
-                    messagesGame.append(TEMPLATE.oppDraw({ peer: c.peer, cardName: data.cardName }));
                     console.log('receive data for draw');
+
+                    messagesGame.append(TEMPLATE.oppDraw({ peer: c.peer, cardName: data.cardName }));
+                    m.scrollGameMessagesToBottom();
                 }
                 else if (data.type == DATA.ACTION) {
-                    messagesGame.append(TEMPLATE.oppAction({ peer: c.peer, cardName: data.cardName, slot: data.slot }));
                     console.log('receive data for action');
 
+                    messagesGame.append(TEMPLATE.oppAction({ peer: c.peer, cardName: data.cardName, slot: data.slot }));
                     messagesGame.append(TEMPLATE.oppTurn({ peer: c.peer }));
+
                     m.deck = _.last(m.deck, data.numCardsLeft);
 
                     var card = _.findWhere(CARDS, { name: data.cardName });
@@ -119,15 +121,17 @@ XMing.GameManager = new function() {
                     m.checkGame();
 
                     $("#draw").show();
+                    m.scrollGameMessagesToBottom();
                 }
                 else if (data.type == DATA.MESSAGE) {
                     messagesChat.append(TEMPLATE.oppMessage({ peer: c.peer, message: data.message }));
+                    m.scrollChatMessagesToBottom();
                 }
                 else {
                     console.log('unknown data');
                 }
 
-                m.scrollToBottom();
+
             });
 
             c.on('close', function() {
@@ -143,9 +147,14 @@ XMing.GameManager = new function() {
         m.connectedPeers[c.peer] = 1;
     };
 
-    this.scrollToBottom = function() {
+    this.scrollGameMessagesToBottom = function() {
         $(".messages-game").animate({
             scrollTop: $(".messages-game")[0].scrollHeight
+        }, 500);
+    };
+    this.scrollChatMessagesToBottom = function() {
+        $(".messages-chat").animate({
+            scrollTop: $(".messages-chat")[0].scrollHeight
         }, 500);
     };
 
@@ -159,7 +168,7 @@ XMing.GameManager = new function() {
             if (c.label === 'game') {
                 c.send({ type: DATA.DRAW, cardName: cardDraw.name });
                 $c.find('.messages-game').append(TEMPLATE.myDraw({ cardName: cardDraw.name }));
-                self.scrollToBottom();
+                self.scrollGameMessagesToBottom();
             }
         });
 
@@ -215,14 +224,14 @@ XMing.GameManager = new function() {
 
             // set default selected slot
             var currentSlot = availableSlots[0];
-            this.setSelectedSlot(currentSlot);
+            this.setSelectedSlot(card, currentSlot);
 
             var hasProcessedSelectedSlot = false;
 
             $(".cards ul li.available").hover(function() {
                 if (!hasProcessedSelectedSlot) {
                     currentSlot = $(".cards ul li").index(this);
-                    self.setSelectedSlot(currentSlot);
+                    self.setSelectedSlot(card, currentSlot);
                 }
             }).click(function() {
                 if (!hasProcessedSelectedSlot) {
@@ -242,25 +251,25 @@ XMing.GameManager = new function() {
                         case 37: // up arrow
                             if (currentSlot != 5 && _.contains(availableSlots, currentSlot - 1)) {
                                 currentSlot--;
-                                self.setSelectedSlot(currentSlot);
+                                self.setSelectedSlot(card, currentSlot);
                             }
                             break;
                         case 38: // left arrow
                             if (_.contains(availableSlots, currentSlot - 5)) {
                                 currentSlot -= 5;
-                                self.setSelectedSlot(currentSlot);
+                                self.setSelectedSlot(card, currentSlot);
                             }
                             break;
                         case 39: // right arrow
                             if (currentSlot != 4 && _.contains(availableSlots, currentSlot + 1)) {
                                 currentSlot++;
-                                self.setSelectedSlot(currentSlot);
+                                self.setSelectedSlot(card, currentSlot);
                             }
                             break;
                         case 40: // down arrow
                             if (_.contains(availableSlots, currentSlot + 5)) {
                                 currentSlot += 5;
-                                self.setSelectedSlot(currentSlot);
+                                self.setSelectedSlot(card, currentSlot);
                             }
                             break;
                         case 13: // enter
@@ -276,14 +285,14 @@ XMing.GameManager = new function() {
         }
     };
 
-    this.setSelectedSlot = function(slotNumber) {
-        $(".cards ul li").removeClass('selected');
+    this.setSelectedSlot = function(card, slotNumber) {
+        $(".cards ul li").removeClass('selected hover-' + card.name);
 
         if (slotNumber < 5) {
-            $($(".opp-cards ul li")[slotNumber]).addClass('selected');
+            $($(".opp-cards ul li")[slotNumber]).addClass('selected hover-' + card.name);
         }
         else {
-            $($(".my-cards ul li")[slotNumber - 5]).addClass('selected');
+            $($(".my-cards ul li")[slotNumber - 5]).addClass('selected hover-' + card.name);
         }
     };
 
@@ -295,11 +304,10 @@ XMing.GameManager = new function() {
 
         this.eachActiveConnection(function(c, $c) {
             if (c.label === 'game') {
-                console.log(card.name);
                 c.send({ type: DATA.ACTION, cardName: card.name, slot: selectedSlot, numCardsLeft: _.size(self.deck) });
                 $c.find('.messages-game').append(TEMPLATE.myAction({ cardName: card.name, slot: selectedSlot }));
                 $c.find('.messages-game').append(TEMPLATE.myTurn());
-                self.scrollToBottom();
+                self.scrollGameMessagesToBottom();
                 $("#draw").hide();
             }
         });
@@ -396,57 +404,69 @@ XMing.GameManager = new function() {
 
         // create new connection
         $("#host").click(function() {
-            self.peer =  new Peer({
-                key: 'j4a6ijvcn8z1tt9'
-            });
 
-            self.peer.on('open', function(id){
-                $('#pid').text(id);
-                $("#instruction").show();
-                self.prepareDeck();
-            });
+            if ($("#username-host").val() == '') {
+                alert('Please input your username');
+            }
+            else {
+                self.peer =  new Peer($("#username-host").val(), {
+                    key: 'j4a6ijvcn8z1tt9'
+                });
 
-            self.peer.on('connection', function(c) {
-                console.log('on connection');
-                self.connect(c);
+                self.peer.on('open', function(id){
+                    $('#pid').text(id);
+                    $("#instruction").show();
+                    self.prepareDeck();
+                });
 
-                $("#gameboard").show();
-                $("#menu-container").hide();
-            });
+                self.peer.on('connection', function(c) {
+                    console.log('on connection');
+                    self.connect(c);
 
-            self.peer.on('error', function(err) {
-                alert(err);
-            });
+                    $("#gameboard").show();
+                    $("#menu-container").hide();
+                });
+
+                self.peer.on('error', function(err) {
+                    alert(err);
+                });
+            }
         });
 
         // Connect to a peer
         $('#connect').click(function() {
-            var requestedPeer = $('#rid').val();
-            if (!self.connectedPeers[requestedPeer]) {
 
-                self.peer =  new Peer({
-                    key: 'j4a6ijvcn8z1tt9'
-                });
+            if ($("#username-join").val() == '') {
+                alert('Please enter an username');
+            }
+            else {
+                var requestedPeer = $('#rid').val();
+                if (!self.connectedPeers[requestedPeer]) {
 
-                var c = self.peer.connect(requestedPeer, {
-                    label: 'game',
-                    serialization: 'json',
-                    metadata: {message: 'Hi let\'s start a game!'}
-                });
+                    self.peer =  new Peer($("#username-join").val(), {
+                        key: 'j4a6ijvcn8z1tt9'
+                    });
 
-                c.on('open', function() {
-                    console.log('connect open start');
-                    self.connect(c);
-                    c.send({ type: DATA.REQUEST_DECK });
+                    var c = self.peer.connect(requestedPeer, {
+                        label: 'game',
+                        serialization: 'json',
+                        metadata: {message: 'Hi let\'s start a game!'}
+                    });
 
-                    console.log('connect open end');
-                });
+                    c.on('open', function() {
+                        console.log('connect open start');
+                        self.connect(c);
+                        c.send({ type: DATA.REQUEST_DECK });
 
-                c.on('error', function(err) {
-                    alert(err);
-                });
+                        console.log('connect open end');
+                    });
 
-                self.connectedPeers[requestedPeer] = 1;
+                    c.on('error', function(err) {
+                        alert(err);
+                    });
+
+                    self.connectedPeers[requestedPeer] = 1;
+                }
             }
         });
 
