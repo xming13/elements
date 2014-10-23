@@ -24,7 +24,7 @@ XMing.GameManager = new function() {
 
     var DATA = {
         DECK: 'deck',
-        TURN: 'turn',
+        TURN_START: 'turn_start',
         DRAW: 'draw',
         ACTION: 'action',
         MESSAGE: 'message',
@@ -38,11 +38,13 @@ XMing.GameManager = new function() {
     };
 
     var TEMPLATE = {
-        myTurn: _.template('<div><span class="you">You</span> end turn.</div>'),
+        myTurnStart: _.template('<div><span class="you">You</span> start turn.</div>'),
+        myTurnEnd: _.template('<div><span class="you">You</span> end turn.</div>'),
         myDraw: _.template('<div><span class="you">You</span> draw <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span> !</div>'),
         myAction: _.template('<div><span class="you">You</span> play <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span> !</div>'),
         myMessage: _.template('<div><span class="you">You :</span> {- message }}</div>'),
-        oppTurn: _.template('<div><span class="peer">{{ peer }}</span> ends turn.</div>'),
+        oppTurnStart: _.template('<div><span class="peer">{{ peer }}</span> starts turn.</div>'),
+        oppTurnEnd: _.template('<div><span class="peer">{{ peer }}</span> ends turn.</div>'),
         oppDraw: _.template('<div><span class="peer">{{ peer }}</span> draws <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span> !</div>'),
         oppAction: _.template('<div><span class="peer">{{ peer }}</span> plays <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span> !</div>'),
         oppMessage: _.template('<div><span class="peer">{{ peer }} :</span> {- message }}</div>')
@@ -51,7 +53,7 @@ XMing.GameManager = new function() {
     this.deck = [];
     this.cardsOnBoard = [];
 
-    this.peer;
+    this.peer = null;
 
     this.connectedPeers = {};
 
@@ -101,6 +103,20 @@ XMing.GameManager = new function() {
 
                     $("#gameboard").show();
                     $("#menu-container").hide();
+
+                    // Game start!
+                    c.send({ type: DATA.TURN_START });
+
+                    messagesGame.append(TEMPLATE.myTurnStart());
+                    m.scrollGameMessagesToBottom();
+
+                    m.showDrawScreen();
+                }
+                else if (data.type == DATA.TURN_START) {
+                    console.log('retrieve data for turn start');
+
+                    messagesGame.append(TEMPLATE.oppTurnStart({ peer: c.peer }));
+                    m.scrollChatMessagesToBottom();
                 }
                 else if (data.type == DATA.DRAW) {
                     console.log('receive data for draw');
@@ -111,17 +127,24 @@ XMing.GameManager = new function() {
                 else if (data.type == DATA.ACTION) {
                     console.log('receive data for action');
 
-                    messagesGame.append(TEMPLATE.oppAction({ peer: c.peer, cardName: data.cardName, slot: data.slot }));
-                    messagesGame.append(TEMPLATE.oppTurn({ peer: c.peer }));
+                    var mySlot = data.slot < maxSize ? data.slot + maxSize : data.slot - maxSize;
+                    messagesGame.append(TEMPLATE.oppAction({ peer: c.peer, cardName: data.cardName, slot: mySlot }));
+                    messagesGame.append(TEMPLATE.oppTurnEnd({ peer: c.peer }));
 
+                    // Update player's action for the last turn
                     m.deck = _.last(m.deck, data.numCardsLeft);
 
                     var card = _.findWhere(CARDS, { name: data.cardName });
-                    m.performCardAction(card, data.slot);
+                    m.performCardAction(card, mySlot);
                     m.checkGame();
 
-                    $("#draw").show();
+                    // It is your turn now!
+                    c.send({ type: DATA.TURN_START });
+
+                    messagesGame.append(TEMPLATE.myTurnStart());
                     m.scrollGameMessagesToBottom();
+
+                    m.showDrawScreen();
                 }
                 else if (data.type == DATA.MESSAGE) {
                     messagesChat.append(TEMPLATE.oppMessage({ peer: c.peer, message: data.message }));
@@ -130,15 +153,14 @@ XMing.GameManager = new function() {
                 else {
                     console.log('unknown data');
                 }
-
-
             });
 
             c.on('close', function() {
-                alert(c.peer + ' has left the chat.');
-                chatbox.remove();
-
-                m.endGame();
+                swal(
+                    'Oops.. :(',
+                    c.peer + ' has left the game!',
+                    'error'
+                );
 
                 delete m.connectedPeers[c.peer];
             });
@@ -158,6 +180,16 @@ XMing.GameManager = new function() {
         }, 500);
     };
 
+    this.showDrawScreen = function() {
+        $('#actions').fadeIn();
+
+        // Draw a new card
+        $('.draw-cards ul li').click(function () {
+            $('#actions').fadeOut();
+            m.drawCard();
+        });
+    };
+
     this.drawCard = function() {
         console.log('draw card');
 
@@ -173,8 +205,6 @@ XMing.GameManager = new function() {
         });
 
         this.processCard(cardDraw);
-
-        $("#draw").hide();
     };
 
     // return the available slots that the card can be played on
@@ -212,11 +242,11 @@ XMing.GameManager = new function() {
         }
         else {
             var parts = _.partition(availableSlots, function(slot) {
-                return slot < 5;
+                return slot < maxSize;
             });
 
             parts[1] = _.map(parts[1], function(slot) {
-                return slot - 5;
+                return slot - maxSize;
             });
 
             this.assignAvailableCards($(".opp-cards ul li"), parts[0]);
@@ -241,22 +271,22 @@ XMing.GameManager = new function() {
                 }
             });
 
-            $("#gameboard").focus();
-            $("#gameboard").keydown(function(e) {
+            $("#gameboard").focus()
+                .keydown(function(e) {
                 console.log('key pressed: ' + e.keyCode);
                 console.log('current slot before: ' + currentSlot);
 
                 if (!hasProcessedSelectedSlot) {
                     switch (e.keyCode) {
                         case 37: // up arrow
-                            if (currentSlot != 5 && _.contains(availableSlots, currentSlot - 1)) {
+                            if (currentSlot != maxSize && _.contains(availableSlots, currentSlot - 1)) {
                                 currentSlot--;
                                 self.setSelectedSlot(card, currentSlot);
                             }
                             break;
                         case 38: // left arrow
-                            if (_.contains(availableSlots, currentSlot - 5)) {
-                                currentSlot -= 5;
+                            if (_.contains(availableSlots, currentSlot - maxSize)) {
+                                currentSlot -= maxSize;
                                 self.setSelectedSlot(card, currentSlot);
                             }
                             break;
@@ -267,8 +297,8 @@ XMing.GameManager = new function() {
                             }
                             break;
                         case 40: // down arrow
-                            if (_.contains(availableSlots, currentSlot + 5)) {
-                                currentSlot += 5;
+                            if (_.contains(availableSlots, currentSlot + maxSize)) {
+                                currentSlot += maxSize;
                                 self.setSelectedSlot(card, currentSlot);
                             }
                             break;
@@ -288,11 +318,11 @@ XMing.GameManager = new function() {
     this.setSelectedSlot = function(card, slotNumber) {
         $(".cards ul li").removeClass('selected hover-' + card.name);
 
-        if (slotNumber < 5) {
+        if (slotNumber < maxSize) {
             $($(".opp-cards ul li")[slotNumber]).addClass('selected hover-' + card.name);
         }
         else {
-            $($(".my-cards ul li")[slotNumber - 5]).addClass('selected hover-' + card.name);
+            $($(".my-cards ul li")[slotNumber - maxSize]).addClass('selected hover-' + card.name);
         }
     };
 
@@ -306,9 +336,8 @@ XMing.GameManager = new function() {
             if (c.label === 'game') {
                 c.send({ type: DATA.ACTION, cardName: card.name, slot: selectedSlot, numCardsLeft: _.size(self.deck) });
                 $c.find('.messages-game').append(TEMPLATE.myAction({ cardName: card.name, slot: selectedSlot }));
-                $c.find('.messages-game').append(TEMPLATE.myTurn());
+                $c.find('.messages-game').append(TEMPLATE.myTurnEnd());
                 self.scrollGameMessagesToBottom();
-                $("#draw").hide();
             }
         });
     };
@@ -317,11 +346,11 @@ XMing.GameManager = new function() {
         $(".cards ul li").removeClass('available unavailable selected');
         this.cardsOnBoard[selectedSlot] = card;
 
-        if (selectedSlot < 5) {
+        if (selectedSlot < maxSize) {
             $($(".opp-cards ul li")[selectedSlot]).removeClass().addClass(card.name);
         }
         else {
-            $($(".my-cards ul li")[selectedSlot - 5]).removeClass().addClass(card.name);
+            $($(".my-cards ul li")[selectedSlot - maxSize]).removeClass().addClass(card.name);
         }
     };
 
@@ -338,8 +367,11 @@ XMing.GameManager = new function() {
 
     // Check win condition
     this.checkGame = function() {
-        if (this.isWin(_.first(this.cardsOnBoard, 5)) || this.isWin(_.last(this.cardsOnBoard, 5))) {
-            this.endGame();
+        if (this.isWin(_.first(this.cardsOnBoard, maxSize))) {
+            this.endGame(false);
+        }
+        else if (this.isWin(_.last(this.cardsOnBoard, maxSize))) {
+            this.endGame(true);
         }
     };
 
@@ -392,7 +424,7 @@ XMing.GameManager = new function() {
             $("#menu-main").hide();
             $("#menu-host").show();
             $("#instruction").hide();
-        })
+        });
 
         // navigate to join connection screen
         $("#join").click(function() {
@@ -405,11 +437,17 @@ XMing.GameManager = new function() {
         // create new connection
         $("#host").click(function() {
 
-            if ($("#username-host").val() == '') {
-                alert('Please input your username');
+            var usernameHost = $("#username-host").val();
+
+            if (usernameHost === '') {
+                swal(
+                    'Oops..',
+                    'Please enter a username!',
+                    'error'
+                );
             }
             else {
-                self.peer =  new Peer($("#username-host").val(), {
+                self.peer =  new Peer(usernameHost, {
                     key: 'j4a6ijvcn8z1tt9'
                 });
 
@@ -428,7 +466,11 @@ XMing.GameManager = new function() {
                 });
 
                 self.peer.on('error', function(err) {
-                    alert(err);
+                    swal(
+                        'Oops..',
+                         err,
+                        'error'
+                    );
                 });
             }
         });
@@ -437,7 +479,18 @@ XMing.GameManager = new function() {
         $('#connect').click(function() {
 
             if ($("#username-join").val() == '') {
-                alert('Please enter an username');
+                swal(
+                    'Oops..',
+                    'Please enter a username!',
+                    'error'
+                );
+            }
+            else if ($('#rid').val() == '') {
+                swal(
+                    'Oops..',
+                    'Please enter your friend\'s ID!',
+                    'error'
+                );
             }
             else {
                 var requestedPeer = $('#rid').val();
@@ -446,6 +499,8 @@ XMing.GameManager = new function() {
                     self.peer =  new Peer($("#username-join").val(), {
                         key: 'j4a6ijvcn8z1tt9'
                     });
+
+                    //self.peer.listAllPeers();
 
                     var c = self.peer.connect(requestedPeer, {
                         label: 'game',
@@ -462,7 +517,11 @@ XMing.GameManager = new function() {
                     });
 
                     c.on('error', function(err) {
-                        alert(err);
+                        swal(
+                            'Oops..',
+                             err,
+                            'error'
+                        );
                     });
 
                     self.connectedPeers[requestedPeer] = 1;
@@ -476,18 +535,25 @@ XMing.GameManager = new function() {
                 c.close();
             });
         });
-
-        // Draw a new card
-        $('#draw').click(function(e) {
-            e.preventDefault();
-            m.drawCard();
-        });
-
     };
 
-    this.endGame = function() {
+    this.endGame = function(isYouWin) {
         console.log("end game");
-        alert('Game over!');
+
+        if (isYouWin) {
+            swal(
+                'You won!',
+                'Congratulations!',
+                'success'
+            );
+        }
+        else {
+            swal(
+                'You lost!',
+                'Play again!',
+                'error'
+            );
+        }
     };
 
     this.destroy = function() {
