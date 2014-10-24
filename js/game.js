@@ -12,9 +12,9 @@ XMing.GameManager = new function() {
         FIRE: { type: 'element', name: 'fire', value: 100, enemies: ['metal', 'water']},
         METAL: { type: 'element', name: 'metal', value: 1000, enemies: ['wood', 'fire']},
         WOOD: { type: 'element', name: 'wood', value: 10000, enemies: ['earth', 'wood']},
-        EARTH: { type: 'element', name: 'earth', value: 100000, enemies: ['water', 'wood']}
-//        ,
-//        MOVE: { type: 'action', name: 'move', value: 2},
+        EARTH: { type: 'element', name: 'earth', value: 100000, enemies: ['water', 'wood']},
+        MOVE: { type: 'action', name: 'move', value: 2}
+        //,
 //        DISCARD_1: { type: 'action', name: 'discard 1', value: 3},
 //        DISCARD_2: { type: 'action', name: 'discard 2', value: 4},
 //        SWAP: { type: 'action', name: 'swap', value: 5}
@@ -42,15 +42,18 @@ XMing.GameManager = new function() {
         myTurnEnd: _.template('<div><span class="you">You</span> end turn.</div>'),
         myDraw: _.template('<div><span class="you">You</span> draw <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span> !</div>'),
         myAction: _.template('<div><span class="you">You</span> play <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span> !</div>'),
+        myActionFail: _.template('<div><span class="you">You</span> have no available move!</div>'),
         myMessage: _.template('<div><span class="you">You :</span> {- message }}</div>'),
         oppTurnStart: _.template('<div><span class="peer">{{ peer }}</span> starts turn.</div>'),
         oppTurnEnd: _.template('<div><span class="peer">{{ peer }}</span> ends turn.</div>'),
         oppDraw: _.template('<div><span class="peer">{{ peer }}</span> draws <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span> !</div>'),
         oppAction: _.template('<div><span class="peer">{{ peer }}</span> plays <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span> !</div>'),
+        oppActionFail: _.template('<div><span class="peer">{{ peer }}</span> has no available move!</div>'),
         oppMessage: _.template('<div><span class="peer">{{ peer }} :</span> {- message }}</div>')
     };
 
     this.deck = [];
+    this.cardsDiscard = [];
     this.cardsOnBoard = [];
 
     this.peer = null;
@@ -110,7 +113,7 @@ XMing.GameManager = new function() {
                     messagesGame.append(TEMPLATE.myTurnStart());
                     m.scrollGameMessagesToBottom();
 
-                    m.showDrawScreen();
+                    $('#actions').fadeIn();
                 }
                 else if (data.type == DATA.TURN_START) {
                     console.log('retrieve data for turn start');
@@ -127,8 +130,14 @@ XMing.GameManager = new function() {
                 else if (data.type == DATA.ACTION) {
                     console.log('receive data for action');
 
-                    var mySlot = data.slot < maxSize ? data.slot + maxSize : data.slot - maxSize;
-                    messagesGame.append(TEMPLATE.oppAction({ peer: c.peer, cardName: data.cardName, slot: mySlot }));
+                    if (data.slot == -1) {
+                        messagesGame.append(TEMPLATE.oppActionFail({ peer: c.peer }));
+                    }
+                    else {
+                        var mySlot = data.slot < maxSize ? data.slot + maxSize : data.slot - maxSize;
+                        messagesGame.append(TEMPLATE.oppAction({ peer: c.peer, cardName: data.cardName, slot: mySlot }));
+                    }
+
                     messagesGame.append(TEMPLATE.oppTurnEnd({ peer: c.peer }));
 
                     // Update player's action for the last turn
@@ -144,7 +153,7 @@ XMing.GameManager = new function() {
                     messagesGame.append(TEMPLATE.myTurnStart());
                     m.scrollGameMessagesToBottom();
 
-                    m.showDrawScreen();
+                    $('#actions').fadeIn();
                 }
                 else if (data.type == DATA.MESSAGE) {
                     messagesChat.append(TEMPLATE.oppMessage({ peer: c.peer, message: data.message }));
@@ -180,16 +189,6 @@ XMing.GameManager = new function() {
         }, 500);
     };
 
-    this.showDrawScreen = function() {
-        $('#actions').fadeIn();
-
-        // Draw a new card
-        $('.draw-cards ul li').click(function () {
-            $('#actions').fadeOut();
-            m.drawCard();
-        });
-    };
-
     this.drawCard = function() {
         console.log('draw card');
 
@@ -204,58 +203,43 @@ XMing.GameManager = new function() {
             }
         });
 
-        this.processCard(cardDraw);
-    };
-
-    // return the available slots that the card can be played on
-    this.getAvailableSlots = function(card) {
-        var availableSlots = [];
-
-        _.each(this.cardsOnBoard, function(cardOnBoard, index) {
-            if (cardOnBoard == null || _.contains(card.enemies, cardOnBoard.name)) {
-                availableSlots.push(index);
-            }
-        });
-
-        return availableSlots;
-    };
-
-    this.processCard = function(card) {
-        console.log('process card');
-
-        if (card.type == 'element') {
-            this.setupSelection(card);
+        if (cardDraw.type == 'element') {
+            this.setupElementSelection(cardDraw);
         }
-        else if (card.type == 'action') {
-
+        else if (cardDraw.type == 'action') {
+            this.setupActionSelection(cardDraw);
         }
     };
 
-    this.setupSelection = function(card) {
+    this.setupElementSelection = function(card) {
         console.log('setup selection');
 
         var self = this;
 
-        var availableSlots = this.getAvailableSlots(card);
+        var availableSlots = [];
+
+        _.each(this.cardsOnBoard, function(cardOnBoard, index) {
+            if (!cardOnBoard || _.contains(card.enemies, cardOnBoard.name)) {
+                availableSlots.push(index);
+            }
+        });
+
         if (availableSlots.length == 0) {
-            alert('no available move');
+            swal('Too bad!', 'No available move!', 'error');
+
+            this.eachActiveConnection(function(c, $c) {
+                if (c.label === 'game') {
+                    c.send({ type: DATA.ACTION, cardName: card.name, slot: -1, numCardsLeft: _.size(self.deck) });
+                    $c.find('.messages-game').append(TEMPLATE.myActionFail({ cardName: card.name }));
+                    $c.find('.messages-game').append(TEMPLATE.myTurnEnd());
+                    self.scrollGameMessagesToBottom();
+                }
+            });
         }
         else {
-            var parts = _.partition(availableSlots, function(slot) {
-                return slot < maxSize;
-            });
+            this.assignAvailableCards(availableSlots);
 
-            parts[1] = _.map(parts[1], function(slot) {
-                return slot - maxSize;
-            });
-
-            this.assignAvailableCards($(".opp-cards ul li"), parts[0]);
-            this.assignAvailableCards($(".my-cards ul li"), parts[1]);
-
-            // set default selected slot
-            var currentSlot = availableSlots[0];
-            this.setSelectedSlot(card, currentSlot);
-
+            var currentSlot = -1;
             var hasProcessedSelectedSlot = false;
 
             $(".cards ul li.available").hover(function() {
@@ -277,36 +261,64 @@ XMing.GameManager = new function() {
                 console.log('current slot before: ' + currentSlot);
 
                 if (!hasProcessedSelectedSlot) {
-                    switch (e.keyCode) {
-                        case 37: // up arrow
-                            if (currentSlot != maxSize && _.contains(availableSlots, currentSlot - 1)) {
-                                currentSlot--;
-                                self.setSelectedSlot(card, currentSlot);
-                            }
-                            break;
-                        case 38: // left arrow
-                            if (_.contains(availableSlots, currentSlot - maxSize)) {
-                                currentSlot -= maxSize;
-                                self.setSelectedSlot(card, currentSlot);
-                            }
-                            break;
-                        case 39: // right arrow
-                            if (currentSlot != 4 && _.contains(availableSlots, currentSlot + 1)) {
-                                currentSlot++;
-                                self.setSelectedSlot(card, currentSlot);
-                            }
-                            break;
-                        case 40: // down arrow
-                            if (_.contains(availableSlots, currentSlot + maxSize)) {
-                                currentSlot += maxSize;
-                                self.setSelectedSlot(card, currentSlot);
-                            }
-                            break;
-                        case 13: // enter
-                        case 32: // space
-                            hasProcessedSelectedSlot = true;
-                            self.processSelectedSlot(card, currentSlot);
-                            break;
+                    var keyCodes = [13, 32, 37, 38, 39, 40];
+                    if (currentSlot == -1) {
+                        if (_.contains(keyCodes, e.keyCode)) {
+                            currentSlot = availableSlots[0];
+                            this.setSelectedSlot(card, currentSlot);
+                        }
+                    }
+                    else {
+                        switch (e.keyCode) {
+                            case 37: // left arrow
+                                var newSlots = _.filter(availableSlots, function(slot) {
+                                   return slot < currentSlot;
+                                });
+
+                                if (!_.isEmpty(newSlots)) {
+                                    var newSlot = _.max(newSlots);
+
+                                    // different rows
+                                    if (!(newSlot < maxSize && currentSlot >= maxSize)) {
+                                        currentSlot = newSlot;
+                                        self.setSelectedSlot(card, currentSlot);
+                                    }
+                                }
+                                break;
+                            case 38: // up arrow
+                                if (_.contains(availableSlots, currentSlot - maxSize)) {
+                                    currentSlot -= maxSize;
+                                    self.setSelectedSlot(card, currentSlot);
+                                }
+                                break;
+                            case 39: // right arrow
+                                var newSlots = _.filter(availableSlots, function(slot) {
+                                    return slot > currentSlot;
+                                });
+
+                                if (!_.isEmpty(newSlots)) {
+                                    var newSlot = _.min(newSlots);
+
+                                    // different rows
+                                    if (!(newSlot >= maxSize && currentSlot < maxSize)) {
+                                        currentSlot = newSlot;
+                                        self.setSelectedSlot(card, currentSlot);
+                                    }
+                                }
+                                break;
+                                break;
+                            case 40: // down arrow
+                                if (_.contains(availableSlots, currentSlot + maxSize)) {
+                                    currentSlot += maxSize;
+                                    self.setSelectedSlot(card, currentSlot);
+                                }
+                                break;
+                            case 13: // enter
+                            case 32: // space
+                                hasProcessedSelectedSlot = true;
+                                self.processSelectedSlot(card, currentSlot);
+                                break;
+                        }
                     }
                 }
 
@@ -315,15 +327,144 @@ XMing.GameManager = new function() {
         }
     };
 
+    this.handleKeyboardInput = function() {
+
+    };
+
+    this.setupActionSelection = function(card) {
+        console.log('setupActionSelection');
+
+        var cardIndexes = [];
+        var emptyIndexes = [];
+
+        _.each(this.cardsOnBoard, function(cardOnBoard, index) {
+            if (!cardOnBoard) {
+                emptyIndexes.push(index);
+            }
+            else {
+                cardIndexes.push(index);
+            }
+        });
+
+        var isOppCards = function(index) {
+            return index < maxSize
+        };
+        var isMyCards = _.negate(isOppCards);
+        var isActionSuccess = false;
+
+        switch (card.name) {
+            case 'move':
+                if ((_.some(cardIndexes, isOppCards) && _.some(emptyIndexes, isMyCards))
+                    || (_.some(cardIndexes, isMyCards) && _.some(emptyIndexes, isOppCards))) {
+
+                    this.assignAvailableCards(cardIndexes);
+                    var currentSlot = -1;
+                    var hasProcessedSelectedSlot = false;
+
+
+                    // TODO
+//                    $(".cards ul li.available").hover(function() {
+//                        if (!hasProcessedSelectedSlot) {
+//                            currentSlot = $(".cards ul li").index(this);
+//                            self.setSelectedSlot(card, currentSlot);
+//                        }
+//                    }).click(function() {
+//                            if (!hasProcessedSelectedSlot) {
+//                                hasProcessedSelectedSlot = true;
+//                                currentSlot = $(".cards ul li").index(this);
+//                                self.processSelectedSlot(card, currentSlot);
+//                            }
+//                        });
+//
+//                    $("#gameboard").focus()
+//                        .keydown(function(e) {
+//                            console.log('key pressed: ' + e.keyCode);
+//                            console.log('current slot before: ' + currentSlot);
+//
+//                            if (!hasProcessedSelectedSlot) {
+//                                var keyCodes = [13, 32, 37, 38, 39, 40];
+//                                if (currentSlot == -1) {
+//                                    if (_.contains(keyCodes, e.keyCode)) {
+//                                        currentSlot = availableSlots[0];
+//                                        this.setSelectedSlot(card, currentSlot);
+//                                    }
+//                                }
+//                                else {
+//                                    switch (e.keyCode) {
+//                                        case 37: // up arrow
+//                                            if (currentSlot != maxSize && _.contains(availableSlots, currentSlot - 1)) {
+//                                                currentSlot--;
+//                                                self.setSelectedSlot(card, currentSlot);
+//                                            }
+//                                            break;
+//                                        case 38: // left arrow
+//                                            if (_.contains(availableSlots, currentSlot - maxSize)) {
+//                                                currentSlot -= maxSize;
+//                                                self.setSelectedSlot(card, currentSlot);
+//                                            }
+//                                            break;
+//                                        case 39: // right arrow
+//                                            if (currentSlot != 4 && _.contains(availableSlots, currentSlot + 1)) {
+//                                                currentSlot++;
+//                                                self.setSelectedSlot(card, currentSlot);
+//                                            }
+//                                            break;
+//                                        case 40: // down arrow
+//                                            if (_.contains(availableSlots, currentSlot + maxSize)) {
+//                                                currentSlot += maxSize;
+//                                                self.setSelectedSlot(card, currentSlot);
+//                                            }
+//                                            break;
+//                                        case 13: // enter
+//                                        case 32: // space
+//                                            hasProcessedSelectedSlot = true;
+//                                            self.processSelectedSlot(card, currentSlot);
+//                                            break;
+//                                    }
+//                                }
+//                            }
+//                        });
+
+                    isActionSuccess = true;
+                }
+                break;
+            case 'discard 1':
+                if (cardIndexes.length > 0) {
+
+                    isActionSuccess = true;
+                }
+                break;
+            case 'discard 2':
+                if (cardIndexes.length > 0) {
+
+                    isActionSuccess = true;
+                }
+                break;
+            case 'swap':
+                if (_.some(cardIndexes, function(index) { return index < maxSize; })
+                    && _.some(cardIndexes, function(index) { return index >= maxSize; })) {
+
+                    isActionSuccess = true;
+                }
+                break;
+        }
+
+        if (!isActionSuccess) {
+            swal('Too bad!', 'No available move!', 'error');
+
+            this.eachActiveConnection(function(c, $c) {
+                if (c.label === 'game') {
+                    c.send({ type: DATA.ACTION, cardName: card.name, slot: -1, numCardsLeft: _.size(self.deck) });
+                    $c.find('.messages-game').append(TEMPLATE.myActionFail({ cardName: card.name }));
+                    $c.find('.messages-game').append(TEMPLATE.myTurnEnd());
+                    self.scrollGameMessagesToBottom();                }
+            });
+        }
+    };
+
     this.setSelectedSlot = function(card, slotNumber) {
         $(".cards ul li").removeClass('selected hover-' + card.name);
-
-        if (slotNumber < maxSize) {
-            $($(".opp-cards ul li")[slotNumber]).addClass('selected hover-' + card.name);
-        }
-        else {
-            $($(".my-cards ul li")[slotNumber - maxSize]).addClass('selected hover-' + card.name);
-        }
+        $($(".cards ul li")[slotNumber]).addClass('selected hover-' + card.name);
     };
 
     this.processSelectedSlot = function(card, selectedSlot) {
@@ -344,19 +485,16 @@ XMing.GameManager = new function() {
 
     this.performCardAction = function(card, selectedSlot) {
         $(".cards ul li").removeClass('available unavailable selected');
+
         this.cardsOnBoard[selectedSlot] = card;
 
-        if (selectedSlot < maxSize) {
-            $($(".opp-cards ul li")[selectedSlot]).removeClass().addClass(card.name);
-        }
-        else {
-            $($(".my-cards ul li")[selectedSlot - maxSize]).removeClass().addClass(card.name);
-        }
+        $($(".cards ul li")[selectedSlot]).removeClass().addClass(card.name);
     };
 
-    this.assignAvailableCards = function(lis, indexes) {
-        _.each(lis, function(li, index) {
-            if (_.contains(indexes, index)) {
+    this.assignAvailableCards = function(availableIndexes) {
+
+        _.each($('.cards ul li'), function(li, index) {
+            if (_.contains(availableIndexes, index)) {
                 $(li).addClass('available');
             }
             else {
@@ -440,11 +578,7 @@ XMing.GameManager = new function() {
             var usernameHost = $("#username-host").val();
 
             if (usernameHost === '') {
-                swal(
-                    'Oops..',
-                    'Please enter a username!',
-                    'error'
-                );
+                swal('Oops..', 'Please enter a username!', 'error');
             }
             else {
                 self.peer =  new Peer(usernameHost, {
@@ -466,11 +600,7 @@ XMing.GameManager = new function() {
                 });
 
                 self.peer.on('error', function(err) {
-                    swal(
-                        'Oops..',
-                         err,
-                        'error'
-                    );
+                    swal('Oops..', err, 'error');
                 });
             }
         });
@@ -479,18 +609,10 @@ XMing.GameManager = new function() {
         $('#connect').click(function() {
 
             if ($("#username-join").val() == '') {
-                swal(
-                    'Oops..',
-                    'Please enter a username!',
-                    'error'
-                );
+                swal('Oops..', 'Please enter a username!', 'error');
             }
             else if ($('#rid').val() == '') {
-                swal(
-                    'Oops..',
-                    'Please enter your friend\'s ID!',
-                    'error'
-                );
+                swal('Oops..', 'Please enter your friend\'s ID!', 'error');
             }
             else {
                 var requestedPeer = $('#rid').val();
@@ -517,11 +639,7 @@ XMing.GameManager = new function() {
                     });
 
                     c.on('error', function(err) {
-                        swal(
-                            'Oops..',
-                             err,
-                            'error'
-                        );
+                        swal('Oops..', err, 'error');
                     });
 
                     self.connectedPeers[requestedPeer] = 1;
@@ -535,24 +653,21 @@ XMing.GameManager = new function() {
                 c.close();
             });
         });
+
+        $('.draw-cards ul li').click(function () {
+            $('#actions').fadeOut();
+            m.drawCard();
+        });
     };
 
     this.endGame = function(isYouWin) {
         console.log("end game");
 
         if (isYouWin) {
-            swal(
-                'You won!',
-                'Congratulations!',
-                'success'
-            );
+            swal('You won!', 'Congratulations!', 'success');
         }
         else {
-            swal(
-                'You lost!',
-                'Play again!',
-                'error'
-            );
+            swal('You lost!', 'Play again!', 'error');
         }
     };
 
