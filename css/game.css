@@ -81,7 +81,7 @@ a {
 .connection {
     position: absolute;
     right: 0;
-    width: 285px;
+    width: 25%;
     height: 100%;
     background: black;
     color: #ddd;
@@ -137,8 +137,7 @@ a {
 }
 
 #gameboard {
-    width: calc(100% - 285px);
-    min-width: 777px;
+    width: 75%;
     height: 100%;
     margin: 0 auto;
     background: #ffb69b;
@@ -170,7 +169,7 @@ a {
 }
 .cards ul li {
     height: 200px;
-    width: 130px;
+    width: 15%;
     border: 5px solid #cac0c0;
     margin: 10px;
     display: inline-block;
@@ -286,6 +285,28 @@ a {
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
 }
+
+@media only screen
+and (min-device-width: 320px)
+and (max-device-width: 480px) {
+    .messages {
+        font-size: 9px;
+        line-height: 15px;
+    }
+
+    ul.cards-row li {
+        height: auto;
+        margin: 10px 4px;
+    }
+
+    ul.cards-row .card-text {
+        margin: 0;
+        padding: 0 4px;
+        font: bold 10px 'Gloria Hallelujah', cursive;
+        letter-spacing: 0;
+    }
+}
+
 
 
 
