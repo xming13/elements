@@ -90,6 +90,7 @@ a {
 .messages {
     border: 1px solid gray;
     overflow-y: scroll;
+    overflow-wrap: break-word;
 }
 
 .messages div,
@@ -116,14 +117,26 @@ a {
 }
 
 .messages-input {
+    border: 1px solid #fff;
+}
+
+.input-chat {
     height: 30px;
-    width: 100%;
-    padding: 0 10px;
+    width: calc(100% - 30px);
+    padding: 0 5px;
     border: none;
     font: normal 15px/20px 'Handlee', cursive;
-    background: black;
+    background: #000;
     color: #00ff00;
     letter-spacing: 1px;
+}
+
+.icon-chat {
+    height: 28px;
+    width: 28px;
+    padding: 2px;
+    vertical-align: middle;
+    cursor: pointer;
 }
 
 .peer {
@@ -379,8 +392,8 @@ and (max-width: 640px) {
     }
 
     .cards ul li {
-        width: 76px;
-        height: 123px;
+        width: 72px;
+        height: 116px;
         margin: 10px 4px;
     }
 

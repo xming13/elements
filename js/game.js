@@ -133,25 +133,37 @@ XMing.GameManager = new function() {
             var messagesChat = $('<div></div>').addClass('messages messages-chat');
             chatbox.append(messagesChat);
 
-            var input = $('<input/>').addClass('messages-input');
-            chatbox.append(input);
+            var messagesInput = $('<div></div>').addClass('messages-input');
+
+            var input = $('<input/>').addClass('input-chat');
+            messagesInput.append(input);
+
+            var imgChat = $('<img/>', { src: '../images/icon-chat.png'} ).addClass('icon-chat');
+            messagesInput.append(imgChat);
+
+            chatbox.append(messagesInput);
 
             $('#connections').append(chatbox);
 
-            $(".messages-input").keydown(function(e) {
+            var sendMessage = function() {
+                c.send({
+                    type: DATA.MESSAGE,
+                    message: $(".input-chat").val()
+                });
+                messagesChat.append(TEMPLATE.myMessage({
+                    message: $(".input-chat").val()
+                }));
+                $(".input-chat").val('').focus();
+                m.scrollChatMessagesToBottom();
+            };
+
+            $(".input-chat").keydown(function(e) {
                 // enter key
                 if (e.keyCode == 13 && $(this).val() != '') {
-                    c.send({
-                        type: DATA.MESSAGE,
-                        message: $(this).val()
-                    });
-                    messagesChat.append(TEMPLATE.myMessage({
-                        message: $(this).val()
-                    }));
-                    $(this).val('').focus();
-                    m.scrollChatMessagesToBottom();
+                    sendMessage();
                 }
             });
+            $('.icon-chat').click(sendMessage);
 
             c.on('data', function(data) {
                 console.log(c.peer);
