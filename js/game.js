@@ -138,7 +138,7 @@ XMing.GameManager = new function() {
             var input = $('<input/>').addClass('input-chat');
             messagesInput.append(input);
 
-            var imgChat = $('<img/>', { src: '../images/icon-chat.png'} ).addClass('icon-chat');
+            var imgChat = $('<img/>', { src: 'images/icon-chat.png'} ).addClass('icon-chat');
             messagesInput.append(imgChat);
 
             chatbox.append(messagesInput);
