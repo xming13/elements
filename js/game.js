@@ -433,7 +433,7 @@ XMing.GameManager = new function() {
                     console.log('current slot after: ' + currentSlot);
                 });
 
-            var processElementSelected = function(card, selectedSlot) {
+            function processElementSelected(card, selectedSlot) {
                 self.performCardAction(card, [selectedSlot]);
                 self.cleanUp();
                 self.eachActiveConnection(function(c, $c) {
