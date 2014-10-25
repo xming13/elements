@@ -141,7 +141,7 @@ a {
     min-width: 777px;
     height: 100%;
     margin: 0 auto;
-    background: white;
+    background: #ffb69b;
     border: 5px solid black;
     padding: 20px;
     position: absolute;
@@ -188,6 +188,7 @@ a {
     /*box-shadow: inset 0px 0px 70px 10px rgba(0,0,0,0.75)*/
 }
 
+.cards ul li.hovered,
 .cards ul li.selected {
     -webkit-box-shadow: 0px 0px 70px 20px rgba(0,0,0,1);
     -moz-box-shadow: 0px 0px 70px 20px rgba(0,0,0,1);
@@ -206,44 +207,44 @@ a {
 }
 
 .fire {
-    color: #e51c23;
-    background-color: #f9bdbb;
+    background-color: #e51c23;
+    color: #f9bdbb;
     background-image: url('../images/fire.png');
 }
 
 .water {
-    color: #03a9f4;
-    background-color: #b3e5fc;
+    background-color: #03a9f4;
+    color: #b3e5fc;
     background-image: url('../images/water.png');
 }
 
 .earth {
-    color: #ff9800;
-    background-color: #ffe0b2;
+    background-color: #a36100;
+    color: #ffe0b2;
     background-image: url('../images/earth.png');
 }
 
 .wood {
-    color: #259b24;
-    background-color: #a3e9a4;
+    background-color: #259b24;
+    color: #a3e9a4;
     background-image: url('../images/wood.png');
 }
 
 .metal {
-    color : #cddc39;
-    background-color: #f0f4c3;
+    background-color : #cddc39;
+    color: #f0f4c3;
     background-image: url('../images/metal.png');
 }
 
 .light {
-    color: #fdd835;
-    background-color: #ffff8d;
+    background-color: #fffbea;
+    color: #eaea12;
     background-image: url('../images/light.png');
 }
 
 .dark {
-    color: #c8c8c8;
     background-color: #181818;
+    color: #c8c8c8;
     background-image: url('../images/dark.png');
 }
 

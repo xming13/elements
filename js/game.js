@@ -4,20 +4,74 @@ XMing.GameManager = new function() {
 
     var m = this;
     var maxSize = 5;
+    var isOppCards = function(index) {
+        return index < maxSize
+    };
+    var isMyCards = _.negate(isOppCards);
 
     var CARDS = {
-        DARK: { type: 'element', name: 'dark', value: 0, enemies: ['water', 'fire', 'metal', 'wood', 'earth']},
-        LIGHT: { type: 'element', name: 'light', value: 1, enemies: ['dark', 'water', 'fire', 'metal', 'wood', 'earth']},
-        WATER: { type: 'element', name: 'water', value: 10, enemies: ['fire', 'earth']},
-        FIRE: { type: 'element', name: 'fire', value: 100, enemies: ['metal', 'water']},
-        METAL: { type: 'element', name: 'metal', value: 1000, enemies: ['wood', 'fire']},
-        WOOD: { type: 'element', name: 'wood', value: 10000, enemies: ['earth', 'wood']},
-        EARTH: { type: 'element', name: 'earth', value: 100000, enemies: ['water', 'wood']},
-        MOVE: { type: 'action', name: 'move', value: 2}
-        //,
-//        DISCARD_1: { type: 'action', name: 'discard 1', value: 3},
-//        DISCARD_2: { type: 'action', name: 'discard 2', value: 4},
-//        SWAP: { type: 'action', name: 'swap', value: 5}
+        DARK: {
+            type: 'element',
+            name: 'dark',
+            value: 0,
+            enemies: ['water', 'fire', 'metal', 'wood', 'earth']
+        },
+        LIGHT: {
+            type: 'element',
+            name: 'light',
+            value: 1,
+            enemies: ['dark', 'water', 'fire', 'metal', 'wood', 'earth']
+        },
+        WATER: {
+            type: 'element',
+            name: 'water',
+            value: 10,
+            enemies: ['fire', 'earth']
+        },
+        FIRE: {
+            type: 'element',
+            name: 'fire',
+            value: 100,
+            enemies: ['metal', 'water']
+        },
+        METAL: {
+            type: 'element',
+            name: 'metal',
+            value: 1000,
+            enemies: ['wood', 'fire']
+        },
+        WOOD: {
+            type: 'element',
+            name: 'wood',
+            value: 10000,
+            enemies: ['earth', 'metal']
+        },
+        EARTH: {
+            type: 'element',
+            name: 'earth',
+            value: 100000,
+            enemies: ['water', 'wood']
+        },
+        MOVE: {
+            type: 'action',
+            name: 'move',
+            value: 2
+        },
+        DISCARD_1: {
+            type: 'action',
+            name: 'discard 1',
+            value: 3
+        },
+        DISCARD_2: {
+            type: 'action',
+            name: 'discard 2',
+            value: 4
+        },
+        SWAP: {
+            type: 'action',
+            name: 'swap',
+            value: 5
+        }
     };
 
     var CARD_NAMES = _.pluck(CARDS, 'name');
@@ -44,6 +98,9 @@ XMing.GameManager = new function() {
         myAction: _.template('<div><span class="you">You</span> play <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span> !</div>'),
         myActionFail: _.template('<div><span class="you">You</span> have no available move!</div>'),
         myMessage: _.template('<div><span class="you">You :</span> {- message }}</div>'),
+        myWin: _.template('<div><span class="you">You</span> WON!!! Congratulations!</div>'),
+        myLose: _.template('<div><span class="you">You</span> lost! Play again!</div>'),
+
         oppTurnStart: _.template('<div><span class="peer">{{ peer }}</span> starts turn.</div>'),
         oppTurnEnd: _.template('<div><span class="peer">{{ peer }}</span> ends turn.</div>'),
         oppDraw: _.template('<div><span class="peer">{{ peer }}</span> draws <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span> !</div>'),
@@ -56,8 +113,10 @@ XMing.GameManager = new function() {
     this.cardsDiscard = [];
     this.cardsOnBoard = [];
 
-    this.peer = null;
+    this.isDrawPhase = false;
+    this.isGameEnd = false;
 
+    this.peer = null;
     this.connectedPeers = {};
 
     this.connect = function(c) {
@@ -82,8 +141,13 @@ XMing.GameManager = new function() {
             $(".messages-input").keydown(function(e) {
                 // enter key
                 if (e.keyCode == 13 && $(this).val() != '') {
-                    c.send({ type: DATA.MESSAGE, message: $(this).val() });
-                    messagesChat.append(TEMPLATE.myMessage({ message: $(this).val() }));
+                    c.send({
+                        type: DATA.MESSAGE,
+                        message: $(this).val()
+                    });
+                    messagesChat.append(TEMPLATE.myMessage({
+                        message: $(this).val()
+                    }));
                     $(this).val('').focus();
                     m.scrollChatMessagesToBottom();
                 }
@@ -96,9 +160,11 @@ XMing.GameManager = new function() {
                 if (data.type == DATA.REQUEST_DECK) {
                     console.log('receive data for request_deck');
 
-                    c.send({ type: DATA.DECK, deck: m.deck });
-                }
-                else if (data.type == DATA.DECK) {
+                    c.send({
+                        type: DATA.DECK,
+                        deck: m.deck
+                    });
+                } else if (data.type == DATA.DECK) {
                     console.log('receive data for deck');
 
                     // setting initial deck sent by the host when the game start so that everyone uses the same deck
@@ -108,58 +174,84 @@ XMing.GameManager = new function() {
                     $("#menu-container").hide();
 
                     // Game start!
-                    c.send({ type: DATA.TURN_START });
+                    c.send({
+                        type: DATA.TURN_START
+                    });
 
                     messagesGame.append(TEMPLATE.myTurnStart());
                     m.scrollGameMessagesToBottom();
 
+                    m.isDrawPhase = true;
                     $('#actions').fadeIn();
-                }
-                else if (data.type == DATA.TURN_START) {
+                } else if (data.type == DATA.TURN_START) {
                     console.log('retrieve data for turn start');
 
-                    messagesGame.append(TEMPLATE.oppTurnStart({ peer: c.peer }));
+                    messagesGame.append(TEMPLATE.oppTurnStart({
+                        peer: c.peer
+                    }));
                     m.scrollChatMessagesToBottom();
-                }
-                else if (data.type == DATA.DRAW) {
+                } else if (data.type == DATA.DRAW) {
                     console.log('receive data for draw');
 
-                    messagesGame.append(TEMPLATE.oppDraw({ peer: c.peer, cardName: data.cardName }));
+                    messagesGame.append(TEMPLATE.oppDraw({
+                        peer: c.peer,
+                        cardName: data.cardName
+                    }));
                     m.scrollGameMessagesToBottom();
-                }
-                else if (data.type == DATA.ACTION) {
+                } else if (data.type == DATA.ACTION) {
                     console.log('receive data for action');
-
-                    if (data.slot == -1) {
-                        messagesGame.append(TEMPLATE.oppActionFail({ peer: c.peer }));
-                    }
-                    else {
-                        var mySlot = data.slot < maxSize ? data.slot + maxSize : data.slot - maxSize;
-                        messagesGame.append(TEMPLATE.oppAction({ peer: c.peer, cardName: data.cardName, slot: mySlot }));
-                    }
-
-                    messagesGame.append(TEMPLATE.oppTurnEnd({ peer: c.peer }));
-
-                    // Update player's action for the last turn
                     m.deck = _.last(m.deck, data.numCardsLeft);
 
-                    var card = _.findWhere(CARDS, { name: data.cardName });
-                    m.performCardAction(card, mySlot);
-                    m.checkGame();
+                    if (data.slots.length == 0) {
+                        messagesGame
+                            .append(TEMPLATE.oppActionFail({
+                                peer: c.peer
+                            }))
+                            .append(TEMPLATE.oppTurnEnd({
+                                peer: c.peer
+                            }));
+                    } else {
+                        var slots = _.map(data.slots, function(slot) {
+                            return isOppCards(slot) ? slot + maxSize : slot - maxSize;
+                        })
+                        messagesGame
+                            .append(TEMPLATE.oppAction({
+                                peer: c.peer,
+                                cardName: data.cardName,
+                                slots: slots[0]
+                            }))
+                            .append(TEMPLATE.oppTurnEnd({
+                                peer: c.peer
+                            }));
 
-                    // It is your turn now!
-                    c.send({ type: DATA.TURN_START });
+                        // Update player's action for the last turn
+                        var card = _.findWhere(CARDS, {
+                            name: data.cardName
+                        });
+                        m.performCardAction(card, slots);
+                        m.cleanUp();
+                        m.checkGameStatus();
+                    }
 
-                    messagesGame.append(TEMPLATE.myTurnStart());
-                    m.scrollGameMessagesToBottom();
+                    if (!m.isGameEnd) {
+                        // It is your turn now!
+                        c.send({
+                            type: DATA.TURN_START
+                        });
 
-                    $('#actions').fadeIn();
-                }
-                else if (data.type == DATA.MESSAGE) {
-                    messagesChat.append(TEMPLATE.oppMessage({ peer: c.peer, message: data.message }));
+                        messagesGame.append(TEMPLATE.myTurnStart());
+                        m.scrollGameMessagesToBottom();
+
+                        m.isDrawPhase = true;
+                        $('#actions').fadeIn();
+                    }
+                } else if (data.type == DATA.MESSAGE) {
+                    messagesChat.append(TEMPLATE.oppMessage({
+                        peer: c.peer,
+                        message: data.message
+                    }));
                     m.scrollChatMessagesToBottom();
-                }
-                else {
+                } else {
                     console.log('unknown data');
                 }
             });
@@ -197,16 +289,20 @@ XMing.GameManager = new function() {
 
         this.eachActiveConnection(function(c, $c) {
             if (c.label === 'game') {
-                c.send({ type: DATA.DRAW, cardName: cardDraw.name });
-                $c.find('.messages-game').append(TEMPLATE.myDraw({ cardName: cardDraw.name }));
+                c.send({
+                    type: DATA.DRAW,
+                    cardName: cardDraw.name
+                });
+                $c.find('.messages-game').append(TEMPLATE.myDraw({
+                    cardName: cardDraw.name
+                }));
                 self.scrollGameMessagesToBottom();
             }
         });
 
         if (cardDraw.type == 'element') {
             this.setupElementSelection(cardDraw);
-        }
-        else if (cardDraw.type == 'action') {
+        } else if (cardDraw.type == 'action') {
             this.setupActionSelection(cardDraw);
         }
     };
@@ -229,66 +325,69 @@ XMing.GameManager = new function() {
 
             this.eachActiveConnection(function(c, $c) {
                 if (c.label === 'game') {
-                    c.send({ type: DATA.ACTION, cardName: card.name, slot: -1, numCardsLeft: _.size(self.deck) });
-                    $c.find('.messages-game').append(TEMPLATE.myActionFail({ cardName: card.name }));
-                    $c.find('.messages-game').append(TEMPLATE.myTurnEnd());
+                    c.send({
+                        type: DATA.ACTION,
+                        cardName: card.name,
+                        slots: [],
+                        numCardsLeft: _.size(self.deck)
+                    });
+                    $c.find('.messages-game')
+                        .append(TEMPLATE.myActionFail({
+                            cardName: card.name
+                        }))
+                        .append(TEMPLATE.myTurnEnd());
                     self.scrollGameMessagesToBottom();
                 }
             });
-        }
-        else {
+        } else {
             this.assignAvailableCards(availableSlots);
 
             var currentSlot = -1;
-            var hasProcessedSelectedSlot = false;
 
-            $(".cards ul li.available").hover(function() {
-                if (!hasProcessedSelectedSlot) {
-                    currentSlot = $(".cards ul li").index(this);
-                    self.setSelectedSlot(card, currentSlot);
-                }
-            }).click(function() {
-                if (!hasProcessedSelectedSlot) {
-                    hasProcessedSelectedSlot = true;
-                    currentSlot = $(".cards ul li").index(this);
-                    self.processSelectedSlot(card, currentSlot);
+            $(".cards-row li.available").on({
+                'mouseenter': function() {
+                    currentSlot = $(".cards-row li").index(this);
+                    self.setHoveredStyle(card, currentSlot);
+                },
+                'mouseleave': function() {
+                    self.removeHoveredStyle(card, currentSlot);
+                },
+                'click': function() {
+                    processElementSelected(card, currentSlot);
                 }
             });
 
             $("#gameboard").focus()
-                .keydown(function(e) {
-                console.log('key pressed: ' + e.keyCode);
-                console.log('current slot before: ' + currentSlot);
+                .on('keydown', function(e) {
+                    console.log('key pressed: ' + e.keyCode);
+                    console.log('current slot before: ' + currentSlot);
 
-                if (!hasProcessedSelectedSlot) {
                     var keyCodes = [13, 32, 37, 38, 39, 40];
                     if (currentSlot == -1) {
                         if (_.contains(keyCodes, e.keyCode)) {
                             currentSlot = availableSlots[0];
-                            this.setSelectedSlot(card, currentSlot);
+                            this.setHoveredStyle(card, currentSlot);
                         }
-                    }
-                    else {
+                    } else {
                         switch (e.keyCode) {
                             case 37: // left arrow
                                 var newSlots = _.filter(availableSlots, function(slot) {
-                                   return slot < currentSlot;
+                                    return slot < currentSlot;
                                 });
 
                                 if (!_.isEmpty(newSlots)) {
                                     var newSlot = _.max(newSlots);
 
-                                    // different rows
-                                    if (!(newSlot < maxSize && currentSlot >= maxSize)) {
-                                        currentSlot = newSlot;
-                                        self.setSelectedSlot(card, currentSlot);
-                                    }
+                                    self.removeHoveredStyle(card, currentSlot);
+                                    currentSlot = newSlot;
+                                    self.setHoveredStyle(card, currentSlot);
                                 }
                                 break;
                             case 38: // up arrow
                                 if (_.contains(availableSlots, currentSlot - maxSize)) {
+                                    self.removeHoveredStyle(card, currentSlot);
                                     currentSlot -= maxSize;
-                                    self.setSelectedSlot(card, currentSlot);
+                                    self.setHoveredStyle(card, currentSlot);
                                 }
                                 break;
                             case 39: // right arrow
@@ -299,31 +398,51 @@ XMing.GameManager = new function() {
                                 if (!_.isEmpty(newSlots)) {
                                     var newSlot = _.min(newSlots);
 
-                                    // different rows
-                                    if (!(newSlot >= maxSize && currentSlot < maxSize)) {
-                                        currentSlot = newSlot;
-                                        self.setSelectedSlot(card, currentSlot);
-                                    }
+                                    self.removeHoveredStyle(card, currentSlot);
+                                    currentSlot = newSlot;
+                                    self.setHoveredStyle(card, currentSlot);
                                 }
                                 break;
                                 break;
                             case 40: // down arrow
                                 if (_.contains(availableSlots, currentSlot + maxSize)) {
+                                    self.removeHoveredStyle(card, currentSlot);
                                     currentSlot += maxSize;
-                                    self.setSelectedSlot(card, currentSlot);
+                                    self.setHoveredStyle(card, currentSlot);
                                 }
                                 break;
                             case 13: // enter
                             case 32: // space
-                                hasProcessedSelectedSlot = true;
-                                self.processSelectedSlot(card, currentSlot);
+                                processElementSelected(card, currentSlot);
                                 break;
                         }
                     }
-                }
 
-                console.log('current slot after: ' + currentSlot);
-            });
+                    console.log('current slot after: ' + currentSlot);
+                });
+
+            var processElementSelected = function(card, selectedSlot) {
+                self.performCardAction(card, [selectedSlot]);
+                self.cleanUp();
+                self.eachActiveConnection(function(c, $c) {
+                    if (c.label === 'game') {
+                        c.send({
+                            type: DATA.ACTION,
+                            cardName: card.name,
+                            slots: [selectedSlot],
+                            numCardsLeft: _.size(self.deck)
+                        });
+                        $c.find('.messages-game')
+                            .append(TEMPLATE.myAction({
+                                cardName: card.name,
+                                slot: selectedSlot
+                            }))
+                            .append(TEMPLATE.myTurnEnd());
+                        self.scrollGameMessagesToBottom();
+                    }
+                });
+                self.checkGameStatus();
+            };
         }
     };
 
@@ -334,24 +453,44 @@ XMing.GameManager = new function() {
     this.setupActionSelection = function(card) {
         console.log('setupActionSelection');
 
+        var self = this;
         var cardIndexes = [];
         var emptyIndexes = [];
 
         _.each(this.cardsOnBoard, function(cardOnBoard, index) {
-            if (!cardOnBoard) {
+            if (_.isUndefined(cardOnBoard)) {
                 emptyIndexes.push(index);
-            }
-            else {
+            } else {
                 cardIndexes.push(index);
             }
         });
 
-        var isOppCards = function(index) {
-            return index < maxSize
-        };
-        var isMyCards = _.negate(isOppCards);
         var isActionSuccess = false;
 
+        var selectedSlots = [];
+
+        var doAction = function(card, selectedSlots) {
+            self.performCardAction(card, selectedSlots);
+            self.cleanUp();
+            self.eachActiveConnection(function(c, $c) {
+                if (c.label === 'game') {
+                    c.send({
+                        type: DATA.ACTION,
+                        cardName: card.name,
+                        slots: selectedSlots,
+                        numCardsLeft: _.size(self.deck)
+                    });
+                    $c.find('.messages-game')
+                        .append(TEMPLATE.myAction({
+                            cardName: card.name,
+                            slots: selectedSlots
+                        }))
+                        .append(TEMPLATE.myTurnEnd());
+                    self.scrollGameMessagesToBottom();
+                }
+            });
+            self.checkGameStatus();
+        }
         switch (card.name) {
             case 'move':
                 if ((_.some(cardIndexes, isOppCards) && _.some(emptyIndexes, isMyCards))
@@ -359,77 +498,105 @@ XMing.GameManager = new function() {
 
                     this.assignAvailableCards(cardIndexes);
                     var currentSlot = -1;
-                    var hasProcessedSelectedSlot = false;
 
+                    (function bindEvent() {
+                        $(".cards-row li.available").on({
+                            'mouseenter': function() {
+                                currentSlot = $(".cards-row li").index(this);
+                                self.setHoveredStyle(card, currentSlot);
+                            },
+                            'mouseleave': function() {
+                                self.removeHoveredStyle(card, currentSlot);
+                            },
+                            'click': function() {
+                                selectedSlots.push(currentSlot);
+                                self.setSelectedStyle(currentSlot);
 
-                    // TODO
-//                    $(".cards ul li.available").hover(function() {
-//                        if (!hasProcessedSelectedSlot) {
-//                            currentSlot = $(".cards ul li").index(this);
-//                            self.setSelectedSlot(card, currentSlot);
-//                        }
-//                    }).click(function() {
-//                            if (!hasProcessedSelectedSlot) {
-//                                hasProcessedSelectedSlot = true;
-//                                currentSlot = $(".cards ul li").index(this);
-//                                self.processSelectedSlot(card, currentSlot);
-//                            }
-//                        });
-//
-//                    $("#gameboard").focus()
-//                        .keydown(function(e) {
-//                            console.log('key pressed: ' + e.keyCode);
-//                            console.log('current slot before: ' + currentSlot);
-//
-//                            if (!hasProcessedSelectedSlot) {
-//                                var keyCodes = [13, 32, 37, 38, 39, 40];
-//                                if (currentSlot == -1) {
-//                                    if (_.contains(keyCodes, e.keyCode)) {
-//                                        currentSlot = availableSlots[0];
-//                                        this.setSelectedSlot(card, currentSlot);
-//                                    }
-//                                }
-//                                else {
-//                                    switch (e.keyCode) {
-//                                        case 37: // up arrow
-//                                            if (currentSlot != maxSize && _.contains(availableSlots, currentSlot - 1)) {
-//                                                currentSlot--;
-//                                                self.setSelectedSlot(card, currentSlot);
-//                                            }
-//                                            break;
-//                                        case 38: // left arrow
-//                                            if (_.contains(availableSlots, currentSlot - maxSize)) {
-//                                                currentSlot -= maxSize;
-//                                                self.setSelectedSlot(card, currentSlot);
-//                                            }
-//                                            break;
-//                                        case 39: // right arrow
-//                                            if (currentSlot != 4 && _.contains(availableSlots, currentSlot + 1)) {
-//                                                currentSlot++;
-//                                                self.setSelectedSlot(card, currentSlot);
-//                                            }
-//                                            break;
-//                                        case 40: // down arrow
-//                                            if (_.contains(availableSlots, currentSlot + maxSize)) {
-//                                                currentSlot += maxSize;
-//                                                self.setSelectedSlot(card, currentSlot);
-//                                            }
-//                                            break;
-//                                        case 13: // enter
-//                                        case 32: // space
-//                                            hasProcessedSelectedSlot = true;
-//                                            self.processSelectedSlot(card, currentSlot);
-//                                            break;
-//                                    }
-//                                }
-//                            }
-//                        });
+                                if (selectedSlots.length == 1) {
+                                    if (isMyCards(currentSlot)) {
+                                        self.assignAvailableCards(_.filter(emptyIndexes, isOppCards));
+                                    } else {
+                                        self.assignAvailableCards(_.filter(emptyIndexes, isMyCards));
+                                    }
+
+                                    $(".cards-row li").off('mouseenter mouseleave click');
+                                    bindEvent();
+                                } else if (selectedSlots.length == 2) {
+                                    doAction(card, selectedSlots);
+                                }
+                            }
+                        });
+                    })();
+
+                    //                    $("#gameboard").focus()
+                    //                        .keydown(function(e) {
+                    //                            console.log('key pressed: ' + e.keyCode);
+                    //                            console.log('current slot before: ' + currentSlot);
+                    //
+                    //                            if (!hasProcessedSelectedSlot) {
+                    //                                var keyCodes = [13, 32, 37, 38, 39, 40];
+                    //                                if (currentSlot == -1) {
+                    //                                    if (_.contains(keyCodes, e.keyCode)) {
+                    //                                        currentSlot = availableSlots[0];
+                    //                                        this.setHoveredStyle(card, currentSlot);
+                    //                                    }
+                    //                                }
+                    //                                else {
+                    //                                    switch (e.keyCode) {
+                    //                                        case 37: // up arrow
+                    //                                            if (currentSlot != maxSize && _.contains(availableSlots, currentSlot - 1)) {
+                    //                                                currentSlot--;
+                    //                                                self.setHoveredStyle(card, currentSlot);
+                    //                                            }
+                    //                                            break;
+                    //                                        case 38: // left arrow
+                    //                                            if (_.contains(availableSlots, currentSlot - maxSize)) {
+                    //                                                currentSlot -= maxSize;
+                    //                                                self.setHoveredStyle(card, currentSlot);
+                    //                                            }
+                    //                                            break;
+                    //                                        case 39: // right arrow
+                    //                                            if (currentSlot != 4 && _.contains(availableSlots, currentSlot + 1)) {
+                    //                                                currentSlot++;
+                    //                                                self.setHoveredStyle(card, currentSlot);
+                    //                                            }
+                    //                                            break;
+                    //                                        case 40: // down arrow
+                    //                                            if (_.contains(availableSlots, currentSlot + maxSize)) {
+                    //                                                currentSlot += maxSize;
+                    //                                                self.setHoveredStyle(card, currentSlot);
+                    //                                            }
+                    //                                            break;
+                    //                                        case 13: // enter
+                    //                                        case 32: // space
+                    //                                            hasProcessedSelectedSlot = true;
+                    //                                            self.processSelectedSlot(card, currentSlot);
+                    //                                            break;
+                    //                                    }
+                    //                                }
+                    //                            }
+                    //                        });
 
                     isActionSuccess = true;
                 }
                 break;
             case 'discard 1':
                 if (cardIndexes.length > 0) {
+                    this.assignAvailableCards(cardIndexes);
+                    var currentSlot = -1;
+
+                    $(".cards-row li.available").on({
+                        'mouseenter': function() {
+                            currentSlot = $(".cards-row li").index(this);
+                            self.setHoveredStyle(card, currentSlot);
+                        },
+                        'mouseleave': function() {
+                            self.removeHoveredStyle(card, currentSlot);
+                        },
+                        'click': function() {
+                            doAction(card, [currentSlot]);
+                        }
+                    });
 
                     isActionSuccess = true;
                 }
@@ -437,12 +604,87 @@ XMing.GameManager = new function() {
             case 'discard 2':
                 if (cardIndexes.length > 0) {
 
+                    this.assignAvailableCards(cardIndexes);
+                    var currentSlot = -1;
+
+                    (function bindEvent() {
+                        $('.cards-row li.available').on({
+                            'mouseenter': function() {
+                                currentSlot = $('.cards-row li').index(this);
+                                self.setHoveredStyle(card, currentSlot);
+                            },
+                            'mouseleave': function() {
+                                self.removeHoveredStyle(card, currentSlot);
+                            },
+                            'click': function() {
+                                selectedSlots.push(currentSlot);
+                                self.setSelectedStyle(currentSlot);
+
+                                if (selectedSlots.length == 1) {
+                                    if (_.without(cardIndexes, currentSlot).length > 0) {
+                                        self.assignAvailableCards(_.without(cardIndexes, currentSlot));
+                                        $('.cards-row li').off('mouseenter mouseleave click');
+                                        bindEvent();
+                                    } else {
+                                        doAction(card, selectedSlots);
+                                    }
+                                } else if (selectedSlots.length == 2) {
+                                    doAction(card, selectedSlots);
+                                }
+                            }
+                        });
+                    })()
+
                     isActionSuccess = true;
                 }
                 break;
             case 'swap':
-                if (_.some(cardIndexes, function(index) { return index < maxSize; })
-                    && _.some(cardIndexes, function(index) { return index >= maxSize; })) {
+                var myUniqueCardNames = _.unique(_.map(_.filter(cardIndexes, isMyCards), function(cardIndex){
+                    return self.cardsOnBoard[cardIndex].name;
+                }));
+                var oppUniqueCardNames = _.unique(_.map(_.filter(cardIndexes, isOppCards), function(cardIndex){
+                    return self.cardsOnBoard[cardIndex].name;
+                }));
+
+                if (myUniqueCardNames.length > 0 && oppUniqueCardNames.length > 0 &&
+                    (_.difference(myUniqueCardNames, oppUniqueCardNames).length > 0
+                    || _.difference(oppUniqueCardNames, myUniqueCardNames).length > 0)) {
+                    this.assignAvailableCards(cardIndexes);
+                    var currentSlot = -1;
+
+                    (function bindEvent() {
+                        $(".cards-row li.available").on({
+                            'mouseenter': function() {
+                                currentSlot = $(".cards-row li").index(this);
+                                self.setHoveredStyle(card, currentSlot);
+                            },
+                            'mouseleave': function() {
+                                self.removeHoveredStyle(card, currentSlot);
+                            },
+                            'click': function() {
+                                selectedSlots.push(currentSlot);
+                                self.setSelectedStyle(currentSlot);
+
+                                if (selectedSlots.length == 1) {
+                                    var currentCardName = self.cardsOnBoard[currentSlot].name;
+                                    if (isMyCards(currentSlot)) {
+                                        self.assignAvailableCards(_.filter(cardIndexes, function(cardIndex) {
+                                            return cardIndex < maxSize && self.cardsOnBoard[cardIndex] != currentCardName;
+                                        }));
+                                    } else {
+                                        self.assignAvailableCards(_.filter(cardIndexes, function(cardIndex) {
+                                            return cardIndex >= maxSize && self.cardsOnBoard[cardIndex] != currentCardName;
+                                        }));
+                                    }
+
+                                    $(".cards-row li").off('mouseenter mouseleave click');
+                                    bindEvent();
+                                } else if (selectedSlots.length == 2) {
+                                    doAction(card, selectedSlots);
+                                }
+                            }
+                        });
+                    })();
 
                     isActionSuccess = true;
                 }
@@ -454,63 +696,113 @@ XMing.GameManager = new function() {
 
             this.eachActiveConnection(function(c, $c) {
                 if (c.label === 'game') {
-                    c.send({ type: DATA.ACTION, cardName: card.name, slot: -1, numCardsLeft: _.size(self.deck) });
-                    $c.find('.messages-game').append(TEMPLATE.myActionFail({ cardName: card.name }));
-                    $c.find('.messages-game').append(TEMPLATE.myTurnEnd());
-                    self.scrollGameMessagesToBottom();                }
+                    c.send({
+                        type: DATA.ACTION,
+                        cardName: card.name,
+                        slots: [],
+                        numCardsLeft: _.size(self.deck)
+                    });
+                    $c.find('.messages-game')
+                        .append(TEMPLATE.myActionFail({
+                            cardName: card.name
+                        }))
+                        .append(TEMPLATE.myTurnEnd());
+                    self.scrollGameMessagesToBottom();
+                }
             });
         }
     };
 
-    this.setSelectedSlot = function(card, slotNumber) {
-        $(".cards ul li").removeClass('selected hover-' + card.name);
-        $($(".cards ul li")[slotNumber]).addClass('selected hover-' + card.name);
+    this.setHoveredStyle = function(card, slotNumber) {
+        $($(".cards-row li")[slotNumber]).addClass('hovered hover-' + card.name);
+    };
+    this.removeHoveredStyle = function(card, slotNumber) {
+        $($(".cards-row li")[slotNumber]).removeClass('hovered hover-' + card.name);
+    }
+    this.setSelectedStyle = function(slotNumber) {
+        $($(".cards-row li")[slotNumber]).addClass('selected');
+    };
+    this.removeSelectedStyle = function(slotNumber) {
+        $($(".cards-row li")[slotNumber]).removeClass('selected');
+    }
+
+    this.performCardAction = function(card, selectedSlots) {
+        if (card.type == 'element') {
+            this.cardsOnBoard[selectedSlots[0]] = card;
+        } else {
+            switch (card.name) {
+                case 'move':
+                    var fromIndex = selectedSlots[0];
+                    var toIndex = selectedSlots[1];
+
+                    this.cardsOnBoard[toIndex] = this.cardsOnBoard[fromIndex];
+                    delete this.cardsOnBoard[fromIndex];
+                    break;
+                case 'discard 1':
+                    delete this.cardsOnBoard[selectedSlots[0]];
+                    break;
+                case 'discard 2':
+                    delete this.cardsOnBoard[selectedSlots[0]];
+
+                    if (!_.isUndefined(selectedSlots[1])) {
+                        delete this.cardsOnBoard[selectedSlots[1]];
+                    }
+                    break;
+                case 'swap':
+                    var fromIndex = selectedSlots[0];
+                    var toIndex = selectedSlots[1];
+
+                    var tempCards = this.cardsOnBoard[toIndex];
+                    this.cardsOnBoard[toIndex] = this.cardsOnBoard[fromIndex];
+                    this.cardsOnBoard[fromIndex] = tempCards;
+
+                    break;
+            }
+        }
     };
 
-    this.processSelectedSlot = function(card, selectedSlot) {
+    this.cleanUp = function() {
         var self = this;
 
-        this.performCardAction(card, selectedSlot);
-        this.checkGame();
+        $('.cards-row li')
+            .off('mouseenter mouseleave click')
+            .removeClass('available unavailable selected');
+        $('#gameboard').off('keydown');
 
-        this.eachActiveConnection(function(c, $c) {
-            if (c.label === 'game') {
-                c.send({ type: DATA.ACTION, cardName: card.name, slot: selectedSlot, numCardsLeft: _.size(self.deck) });
-                $c.find('.messages-game').append(TEMPLATE.myAction({ cardName: card.name, slot: selectedSlot }));
-                $c.find('.messages-game').append(TEMPLATE.myTurnEnd());
-                self.scrollGameMessagesToBottom();
+        _.each($('.cards-row li'), function(li, index) {
+            $(li).removeClass();
+
+            if (!_.isUndefined(self.cardsOnBoard[index])) {
+                $(li).addClass(self.cardsOnBoard[index].name);
             }
         });
     };
 
-    this.performCardAction = function(card, selectedSlot) {
-        $(".cards ul li").removeClass('available unavailable selected');
-
-        this.cardsOnBoard[selectedSlot] = card;
-
-        $($(".cards ul li")[selectedSlot]).removeClass().addClass(card.name);
-    };
-
     this.assignAvailableCards = function(availableIndexes) {
 
-        _.each($('.cards ul li'), function(li, index) {
+        _.each($('.cards-row li'), function(li, index) {
+            $(li).removeClass('available unavailable');
+
             if (_.contains(availableIndexes, index)) {
                 $(li).addClass('available');
-            }
-            else {
+            } else {
                 $(li).addClass('unavailable');
             }
         });
     };
 
     // Check win condition
-    this.checkGame = function() {
+    // Return true if game ends
+    this.checkGameStatus = function() {
         if (this.isWin(_.first(this.cardsOnBoard, maxSize))) {
             this.endGame(false);
-        }
-        else if (this.isWin(_.last(this.cardsOnBoard, maxSize))) {
+            return true;
+        } else if (this.isWin(_.last(this.cardsOnBoard, maxSize))) {
             this.endGame(true);
+            return true;
         }
+
+        return false;
     };
 
     // Return true if all cards are collected
@@ -519,7 +811,6 @@ XMing.GameManager = new function() {
             return memo + card.value;
         }, 0);
 
-        console.log(sum);
         var score = sum % 10;
 
         while (sum > 0) {
@@ -530,9 +821,7 @@ XMing.GameManager = new function() {
             }
         }
 
-        console.log('final score: ' + score);
-
-        return score == 5;
+        return score == maxSize;
     };
 
     this.prepareDeck = function() {
@@ -579,13 +868,12 @@ XMing.GameManager = new function() {
 
             if (usernameHost === '') {
                 swal('Oops..', 'Please enter a username!', 'error');
-            }
-            else {
-                self.peer =  new Peer(usernameHost, {
+            } else {
+                self.peer = new Peer(usernameHost, {
                     key: 'j4a6ijvcn8z1tt9'
                 });
 
-                self.peer.on('open', function(id){
+                self.peer.on('open', function(id) {
                     $('#pid').text(id);
                     $("#instruction").show();
                     self.prepareDeck();
@@ -610,30 +898,32 @@ XMing.GameManager = new function() {
 
             if ($("#username-join").val() == '') {
                 swal('Oops..', 'Please enter a username!', 'error');
-            }
-            else if ($('#rid').val() == '') {
+            } else if ($('#rid').val() == '') {
                 swal('Oops..', 'Please enter your friend\'s ID!', 'error');
-            }
-            else {
+            } else {
                 var requestedPeer = $('#rid').val();
                 if (!self.connectedPeers[requestedPeer]) {
 
-                    self.peer =  new Peer($("#username-join").val(), {
+                    self.peer = new Peer($("#username-join").val(), {
                         key: 'j4a6ijvcn8z1tt9'
                     });
 
-                    //self.peer.listAllPeers();
+                    // console.log(self.peer.listAllPeers());
 
                     var c = self.peer.connect(requestedPeer, {
                         label: 'game',
                         serialization: 'json',
-                        metadata: {message: 'Hi let\'s start a game!'}
+                        metadata: {
+                            message: 'Hi let\'s start a game!'
+                        }
                     });
 
                     c.on('open', function() {
                         console.log('connect open start');
                         self.connect(c);
-                        c.send({ type: DATA.REQUEST_DECK });
+                        c.send({
+                            type: DATA.REQUEST_DECK
+                        });
 
                         console.log('connect open end');
                     });
@@ -654,9 +944,12 @@ XMing.GameManager = new function() {
             });
         });
 
-        $('.draw-cards ul li').click(function () {
-            $('#actions').fadeOut();
-            m.drawCard();
+        $('.draw-cards ul li').click(function() {
+            if (self.isDrawPhase) {
+                self.isDrawPhase = false;
+                $('#actions').fadeOut();
+                m.drawCard();
+            }
         });
     };
 
@@ -665,10 +958,15 @@ XMing.GameManager = new function() {
 
         if (isYouWin) {
             swal('You won!', 'Congratulations!', 'success');
-        }
-        else {
+            $('.messages-game').append(TEMPLATE.myWin());
+            this.scrollChatMessagesToBottom();
+        } else {
             swal('You lost!', 'Play again!', 'error');
+            $('.messages-game').append(TEMPLATE.myLose());
+            this.scrollChatMessagesToBottom();
         }
+
+        this.isGameEnd = true;
     };
 
     this.destroy = function() {
@@ -698,4 +996,3 @@ XMing.GameManager = new function() {
         });
     };
 };
-
