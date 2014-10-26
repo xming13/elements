@@ -312,11 +312,7 @@ XMing.GameManager = new function() {
             }
         });
 
-        if (cardDraw.type == 'element') {
-            this.setupElementSelection(cardDraw);
-        } else if (cardDraw.type == 'action') {
-            this.setupActionSelection(cardDraw);
-        }
+        return cardDraw;
     };
 
     this.setupElementSelection = function(card) {
@@ -491,7 +487,18 @@ XMing.GameManager = new function() {
                 if ((_.some(cardIndexes, isOppCards) && _.some(emptyIndexes, isMyCards))
                     || (_.some(cardIndexes, isMyCards) && _.some(emptyIndexes, isOppCards))) {
 
-                    this.assignAvailableCards(cardIndexes);
+                    if ((_.some(cardIndexes, isOppCards) && _.some(emptyIndexes, isMyCards))
+                        && (_.some(cardIndexes, isMyCards) && _.some(emptyIndexes, isOppCards))) {
+                        this.assignAvailableCards(cardIndexes);
+                    }
+                    else if ((_.some(cardIndexes, isOppCards) && _.some(emptyIndexes, isMyCards))
+                        && !(_.some(cardIndexes, isMyCards) && _.some(emptyIndexes, isOppCards))) {
+                        this.assignAvailableCards(_.filter(cardIndexes, isOppCards));
+                    }
+                    else {
+                        this.assignAvailableCards(_.filter(cardIndexes, isMyCards));
+                    }
+
                     var currentSlot = -1;
 
                     (function bindEvent() {
@@ -831,8 +838,6 @@ XMing.GameManager = new function() {
 
         // navigate to create connection screen
         $("#create").click(function() {
-            console.log('create click');
-
             $("#menu-main").hide();
             $("#menu-host").show();
             $("#instruction").hide();
@@ -840,10 +845,16 @@ XMing.GameManager = new function() {
 
         // navigate to join connection screen
         $("#join").click(function() {
-            console.log('join click');
-
             $("#menu-main").hide();
             $("#menu-join").show();
+        });
+
+        // navigate back to main menu screen
+        $(".back").click(function() {
+            $("#menu-host").hide();
+            $("#menu-join").hide();
+            $("#menu-main").show();
+            self.destroy();
         });
 
         // create new connection
@@ -879,7 +890,6 @@ XMing.GameManager = new function() {
 
         // Connect to a peer
         $('#connect').click(function() {
-
             if ($("#username-join").val() == '') {
                 swal('Oops..', 'Please enter a username!', 'error');
             } else if ($('#rid').val() == '') {
@@ -887,9 +897,13 @@ XMing.GameManager = new function() {
             } else {
                 var requestedPeer = $('#rid').val();
                 if (!self.connectedPeers[requestedPeer]) {
-
                     self.peer = new Peer($("#username-join").val(), {
-                        key: 'j4a6ijvcn8z1tt9'
+                        key: 'j4a6ijvcn8z1tt9',
+                        debug: 3,
+                        logFunction: function() {
+                            var copy = Array.prototype.slice.call(arguments).join(' ');
+                            console.log(copy);
+                        }
                     });
 
                     // pending peerjs team to enable this feature for me!
@@ -914,10 +928,14 @@ XMing.GameManager = new function() {
                     });
 
                     c.on('error', function(err) {
+                        console.log('onError: ' + err);
                         swal('Oops..', err, 'error');
                     });
 
                     self.connectedPeers[requestedPeer] = 1;
+                }
+                else {
+                    console.log('self.connectedPeers[requestedPeer] exists!');
                 }
             }
         });
@@ -932,8 +950,20 @@ XMing.GameManager = new function() {
         $('.draw-cards ul li').click(function() {
             if (self.isDrawPhase) {
                 self.isDrawPhase = false;
-                $('#actions').fadeOut();
-                m.drawCard();
+                var cardDraw = m.drawCard();
+                $(this).addClass('animated flip ' + cardDraw.name);
+                $(this).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+                    var that = this;
+                    $('#actions').fadeOut(500, function() {
+                        $(that).removeClass('animated flip ' + cardDraw.name);
+
+                        if (cardDraw.type == 'element') {
+                            self.setupElementSelection(cardDraw);
+                        } else if (cardDraw.type == 'action') {
+                            self.setupActionSelection(cardDraw);
+                        }
+                    });
+                });
             }
         });
     };

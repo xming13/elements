@@ -17,31 +17,62 @@
 
 <body>
 
+<div id="rotate">
+    <div class="box">
+        Please rotate your device
+        <br>
+        for a better experience.
+        <br>
+        <br>
+        <img src="images/icon-horizontal.jpg" alt="rotate" />
+    </div>
+</div>
 <div id="menu-container">
+    <div class="jumbotron"></div>
     <div id="menu-main" class="menu">
-        <input id="create" class="button" type="button" value="Create Game"/>
-        <br>
-        <br>
-        <input id="join" class="button" type="button" value="Join Game"/>
+        <ul>
+            <li>
+                <a id="create">Create Game</a>
+            </li>
+            <li>
+                <a id="join">Join Game</a>
+            </li>
+            <li class="disable">
+                <a id="how-to-play">How To Play</a>
+            </li>
+            <li class="disable">
+                <a id="options">Options</a>
+            </li>
+            <li class="disable">
+                <a id="achievement">Achievement</a>
+            </li>
+            <li class="disable">
+                <a id="about">About</a>
+            </li>
+        </ul>
     </div>
     <div id="menu-host" class="menu" style="display: none;">
         Username: <input id="username-host" type="text"/>
         <br>
         <br>
-        <input id="host" class="button" type="button" value="Create"/>
-        <br>
-        <br>
         <span id="instruction" style="display: none;">Give this ID: <span id="pid"></span>
-        to your friend.</span>
+        to your friend!</span>
+        <br>
+        <br>
+        <a id="host" class="button-action">Create</a>
+        <a class="button-action back">Back</a>
     </div>
     <div id="menu-join" class="menu" style="display: none;">
         Username: <input id="username-join" type="text"/>
         <br>
         <br>
         Get the ID from your friend: <input type="text" id="rid"/>
-        <input id="connect" class="button" type="button" value="Connect"/>
+        <br>
+        <br>
+        <a id="connect" class="button-action">Connect</a>
+        <a class="button-action back">Back</a>
     </div>
-    <div class="warning browser">
+    <div class="warning browser" style="display: none;">
         <div class="important">Your browser version: <span id="browsers"></span><br>
             Currently <strong>Firefox 22+ and Google Chrome 26.0.1403.0 or above</strong> is required.
         </div>

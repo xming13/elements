@@ -15,9 +15,9 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
-    background-color: #eee;
+    background-color: #f6d2ff;
     color: #444;
-    font-family: Arial;
+    font-family: Handlee;
     font-size: 15px;
     line-height: 18px;
     text-shadow: 0 1px 0 rgba(255,255,255,0.4);
@@ -27,10 +27,6 @@ ul {
     margin: 0;
     padding: 0;
     list-style-type: none;
-}
-
-a {
-    color: #F2C777;
 }
 
 /* Clearfix hack by Nicolas Gallagher: http://nicolasgallagher.com/micro-clearfix-hack/ */
@@ -44,9 +40,73 @@ a {
     clear: both;
 }
 
+#rotate {
+    display: none;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    font: 20px Handlee, cursive;
+    background-color: rgba(20,20,255,0.75);
+    color: #fff;
+}
+
+.box {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+
 #menu-container {
     height: 100%;
+}
+
+.jumbotron {
+    min-height: 250px;
+    background: white;
+    width: 100%;
+}
+
+.menu {
     text-align: center;
+    margin: 0 auto;
+    padding: 20px;
+    font-size: 20px;
+}
+
+#menu-main {
+    width: 200px;
+}
+
+#menu-main ul li {
+    margin: 0 0 5px;
+    padding: 8px;
+    background: #b7009d;
+}
+
+#menu-main ul li a {
+    font: 20px Handlee, cursive;
+    color: #fff;
+    cursor: pointer;
+}
+
+#menu-main ul li.disable {
+    background: #999999;
+}
+
+#menu-main ul li.disable a {
+     cursor: auto;
+}
+
+.button-action {
+    display: inline-block;
+    padding: 5px;
+    border: 5px solid rgb(72, 0, 97);
+    border-radius: 10px;
+    background: rgb(161, 0, 255);
+    font: 20px Handlee, cursive;
+    color: #fff;
+    cursor: pointer;
 }
 
 .important {
@@ -153,7 +213,7 @@ a {
     width: 75%;
     height: 100%;
     margin: 0 auto;
-    background: #ffb69b;
+    background: #ba8cbd;
     border: 5px solid black;
     padding: 20px;
     position: absolute;
@@ -196,6 +256,13 @@ a {
     background-size: contain;
 }
 
+.draw-cards ul li.light.animated.flip {
+    -webkit-animation: flip 1s; /* Chrome, Safari, Opera */
+    -webkit-animation-iteration-count: 1;
+    animation: flip 1s;
+    animation-iteration-count: 1;
+}
+
 .my-cards ul li,
 .opp-cards ul li {
     background-image: url('../images/empty.png');
@@ -228,7 +295,7 @@ a {
     cursor: pointer;
 }
 
-ul.cards-row li.water {
+.cards ul li.water {
     background-image: url('../images/water.png');
     border: 2px solid #1010ff;
 }
@@ -244,7 +311,7 @@ ul.cards-row li.water.selected {
     box-shadow: 0px 0px 30px 25px rgba(16,16,255,0.8);
 }
 
-ul.cards-row li.fire {
+.cards ul li.fire {
     background-image: url('../images/fire.png');
     border: 2px solid #ff1010;
 }
@@ -260,7 +327,7 @@ ul.cards-row li.fire.selected {
     box-shadow: 0px 0px 30px 25px rgba(255,16,16,0.8);
 }
 
-ul.cards-row li.metal {
+.cards ul li.metal {
     background-image: url('../images/metal.png');
     border: 2px solid #ffd700;
 }
@@ -276,7 +343,7 @@ ul.cards-row li.metal.selected {
     box-shadow: 0px 0px 30px 25px rgba(255,215,0,0.8);
 }
 
-ul.cards-row li.wood {
+.cards ul li.wood {
     background-image: url('../images/wood.png');
     border: 2px solid #13e213;
 }
@@ -292,7 +359,7 @@ ul.cards-row li.wood.selected {
     box-shadow: 0px 0px 30px 25px rgba(19,226,19,0.8);
 }
 
-ul.cards-row li.earth {
+.cards ul li.earth {
     background-image: url('../images/earth.png');
     border: 2px solid #a36100;
 }
@@ -308,7 +375,7 @@ ul.cards-row li.earth.selected {
     box-shadow: 0px 0px 30px 25px rgba(163,97,0,0.8);
 }
 
-ul.cards-row li.light {
+.cards ul li.light {
     background-image: url('../images/light.png');
     border: 2px solid #fff;
 }
@@ -324,7 +391,7 @@ ul.cards-row li.light.selected {
     box-shadow: 0px 0px 30px 25px rgba(255,255,255,0.8);
 }
 
-ul.cards-row li.dark {
+.cards ul li.dark {
     background-image: url('../images/dark.png');
     border: 2px solid #181818;
 }
@@ -383,7 +450,6 @@ ul.cards-row li.dark.selected {
     -webkit-animation-iteration-count: infinite;
     animation: light 8s;
     animation-iteration-count: infinite;
-    /*background-image: url('../images/light.png');*/
 }
 
 .dark {
@@ -473,6 +539,96 @@ ul.cards-row li.dark.selected {
     }
 }
 
+/* Chrome, Safari, Opera */
+@-webkit-keyframes flip {
+    0% {
+        -webkit-transform: perspective(400px) rotate3d(0, 1, 0, -360deg);
+        transform: perspective(400px) rotate3d(0, 1, 0, -360deg);
+        -webkit-animation-timing-function: ease-out;
+        animation-timing-function: ease-out;
+    }
+
+    40% {
+        -webkit-transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -190deg);
+        transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -190deg);
+        -webkit-animation-timing-function: ease-out;
+        animation-timing-function: ease-out;
+    }
+
+    50% {
+        -webkit-transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -170deg);
+        transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -170deg);
+        -webkit-animation-timing-function: ease-in;
+        animation-timing-function: ease-in;
+    }
+
+    80% {
+        -webkit-transform: perspective(400px) scale3d(.95, .95, .95);
+        transform: perspective(400px) scale3d(.95, .95, .95);
+        -webkit-animation-timing-function: ease-in;
+        animation-timing-function: ease-in;
+    }
+
+    100% {
+        -webkit-transform: perspective(400px);
+        transform: perspective(400px);
+        -webkit-animation-timing-function: ease-in;
+        animation-timing-function: ease-in;
+    }
+}
+
+/* Standard syntax */
+@keyframes flip {
+    0% {
+        -webkit-transform: perspective(400px) rotate3d(0, 1, 0, -360deg);
+        transform: perspective(400px) rotate3d(0, 1, 0, -360deg);
+        -webkit-animation-timing-function: ease-out;
+        animation-timing-function: ease-out;
+    }
+
+    40% {
+        -webkit-transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -190deg);
+        transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -190deg);
+        -webkit-animation-timing-function: ease-out;
+        animation-timing-function: ease-out;
+    }
+
+    50% {
+        -webkit-transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -170deg);
+        transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -170deg);
+        -webkit-animation-timing-function: ease-in;
+        animation-timing-function: ease-in;
+    }
+
+    80% {
+        -webkit-transform: perspective(400px) scale3d(.95, .95, .95);
+        transform: perspective(400px) scale3d(.95, .95, .95);
+        -webkit-animation-timing-function: ease-in;
+        animation-timing-function: ease-in;
+    }
+
+    100% {
+        -webkit-transform: perspective(400px);
+        transform: perspective(400px);
+        -webkit-animation-timing-function: ease-in;
+        animation-timing-function: ease-in;
+    }
+}
+
+.animated {
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+.animated.flip {
+    -webkit-backface-visibility: visible;
+    backface-visibility: visible;
+    -webkit-animation-name: flip;
+    animation-name: flip;
+}
+
 #actions {
     position: absolute;
     top: 0;
@@ -517,6 +673,15 @@ and (max-width: 640px) {
         margin: 0 2px;
         padding: 0 5px;
         font: bold 8px 'Gloria Hallelujah', cursive;
+    }
+}
+
+/* only when orientation is in portrait mode */
+@media all
+and (max-width: 640px)
+and (orientation:portrait) {
+    #rotate {
+        display: table;
     }
 }
 
