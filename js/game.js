@@ -138,7 +138,9 @@ XMing.GameManager = new function() {
             var input = $('<input/>').addClass('input-chat');
             messagesInput.append(input);
 
-            var imgChat = $('<img/>', { src: 'images/icon-chat.png'} ).addClass('icon-chat');
+            var imgChat = $('<img/>', {
+                src: 'images/icon-chat.png'
+            }).addClass('icon-chat');
             messagesInput.append(imgChat);
 
             chatbox.append(messagesInput);
@@ -485,18 +487,13 @@ XMing.GameManager = new function() {
         }
         switch (card.name) {
             case 'move':
-                if ((_.some(cardIndexes, isOppCards) && _.some(emptyIndexes, isMyCards))
-                    || (_.some(cardIndexes, isMyCards) && _.some(emptyIndexes, isOppCards))) {
+                if ((_.some(cardIndexes, isOppCards) && _.some(emptyIndexes, isMyCards)) || (_.some(cardIndexes, isMyCards) && _.some(emptyIndexes, isOppCards))) {
 
-                    if ((_.some(cardIndexes, isOppCards) && _.some(emptyIndexes, isMyCards))
-                        && (_.some(cardIndexes, isMyCards) && _.some(emptyIndexes, isOppCards))) {
+                    if ((_.some(cardIndexes, isOppCards) && _.some(emptyIndexes, isMyCards)) && (_.some(cardIndexes, isMyCards) && _.some(emptyIndexes, isOppCards))) {
                         this.assignAvailableCards(cardIndexes);
-                    }
-                    else if ((_.some(cardIndexes, isOppCards) && _.some(emptyIndexes, isMyCards))
-                        && !(_.some(cardIndexes, isMyCards) && _.some(emptyIndexes, isOppCards))) {
+                    } else if ((_.some(cardIndexes, isOppCards) && _.some(emptyIndexes, isMyCards)) && !(_.some(cardIndexes, isMyCards) && _.some(emptyIndexes, isOppCards))) {
                         this.assignAvailableCards(_.filter(cardIndexes, isOppCards));
-                    }
-                    else {
+                    } else {
                         this.assignAvailableCards(_.filter(cardIndexes, isMyCards));
                     }
 
@@ -630,16 +627,15 @@ XMing.GameManager = new function() {
                 }
                 break;
             case 'swap':
-                var myUniqueCardNames = _.unique(_.map(_.filter(cardIndexes, isMyCards), function(cardIndex){
+                var myUniqueCardNames = _.unique(_.map(_.filter(cardIndexes, isMyCards), function(cardIndex) {
                     return self.cardsOnBoard[cardIndex].name;
                 }));
-                var oppUniqueCardNames = _.unique(_.map(_.filter(cardIndexes, isOppCards), function(cardIndex){
+                var oppUniqueCardNames = _.unique(_.map(_.filter(cardIndexes, isOppCards), function(cardIndex) {
                     return self.cardsOnBoard[cardIndex].name;
                 }));
 
                 if (myUniqueCardNames.length > 0 && oppUniqueCardNames.length > 0 &&
-                    (_.difference(myUniqueCardNames, oppUniqueCardNames).length > 0
-                    || _.difference(oppUniqueCardNames, myUniqueCardNames).length > 0)) {
+                    (_.difference(myUniqueCardNames, oppUniqueCardNames).length > 0 || _.difference(oppUniqueCardNames, myUniqueCardNames).length > 0)) {
                     this.assignAvailableCards(cardIndexes);
                     var currentSlot = -1;
 
@@ -753,19 +749,16 @@ XMing.GameManager = new function() {
                     $(li).removeClass().fadeOut(0, function() {
                         $(li).addClass(self.cardsOnBoard[index].name).fadeIn(500);
                     });
-                }
-                else {
+                } else {
                     $(li).removeClass().addClass(self.cardsOnBoard[index].name);
                 }
-            }
-            else {
+            } else {
                 var classList = $(li).attr('class') ? $(li).attr('class').split(/\s+/) : [];
                 if (_.intersection(CARD_NAMES, classList).length > 0) {
                     $(li).fadeOut(500, function() {
                         $(li).removeClass().fadeIn(0);
                     })
-                }
-                else {
+                } else {
                     $(li).removeClass();
                 }
             }
@@ -934,8 +927,7 @@ XMing.GameManager = new function() {
                     });
 
                     self.connectedPeers[requestedPeer] = 1;
-                }
-                else {
+                } else {
                     console.log('self.connectedPeers[requestedPeer] exists!');
                 }
             }
@@ -954,17 +946,17 @@ XMing.GameManager = new function() {
                 var cardDraw = m.drawCard();
                 $(this).addClass('animated flip ' + cardDraw.name)
                     .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
-                    var that = this;
-                    $('#actions').fadeOut(500, function() {
-                        $(that).removeClass('animated flip ' + cardDraw.name);
+                        var that = this;
+                        $('#actions').fadeOut(500, function() {
+                            $(that).removeClass('animated flip ' + cardDraw.name);
 
-                        if (cardDraw.type == 'element') {
-                            self.setupElementSelection(cardDraw);
-                        } else if (cardDraw.type == 'action') {
-                            self.setupActionSelection(cardDraw);
-                        }
+                            if (cardDraw.type == 'element') {
+                                self.setupElementSelection(cardDraw);
+                            } else if (cardDraw.type == 'action') {
+                                self.setupActionSelection(cardDraw);
+                            }
+                        });
                     });
-                });
             }
         });
     };
