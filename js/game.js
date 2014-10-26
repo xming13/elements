@@ -206,6 +206,7 @@ XMing.GameManager = new function() {
                     m.scrollChatMessagesToBottom();
                 } else if (data.type == DATA.DRAW) {
                     console.log('receive data for draw');
+                    m.deck.splice(data.indexDraw, 1);
 
                     messagesGame.append(TEMPLATE.oppDraw({
                         peer: c.peer,
@@ -214,7 +215,6 @@ XMing.GameManager = new function() {
                     m.scrollGameMessagesToBottom();
                 } else if (data.type == DATA.ACTION) {
                     console.log('receive data for action');
-                    m.deck = _.last(m.deck, data.numCardsLeft);
 
                     if (data.slots.length == 0) {
                         messagesGame
@@ -296,17 +296,19 @@ XMing.GameManager = new function() {
         }, 500);
     };
 
-    this.drawCard = function() {
+    this.drawCard = function(index) {
         console.log('draw card');
 
         var self = this;
-        var cardDraw = this.deck.shift();
+        var cardDraw = this.deck[index];
+        this.deck.splice(index, 1);
 
         this.eachActiveConnection(function(c, $c) {
             if (c.label === 'game') {
                 c.send({
                     type: DATA.DRAW,
-                    cardName: cardDraw.name
+                    cardName: cardDraw.name,
+                    indexDraw: index
                 });
                 $c.find('.messages-game').append(TEMPLATE.myDraw({
                     cardName: cardDraw.name
@@ -339,8 +341,7 @@ XMing.GameManager = new function() {
                     c.send({
                         type: DATA.ACTION,
                         cardName: card.name,
-                        slots: [],
-                        numCardsLeft: _.size(self.deck)
+                        slots: []
                     });
                     $c.find('.messages-game')
                         .append(TEMPLATE.myActionFail({
@@ -423,8 +424,7 @@ XMing.GameManager = new function() {
                         c.send({
                             type: DATA.ACTION,
                             cardName: card.name,
-                            slots: [selectedSlot],
-                            numCardsLeft: _.size(self.deck)
+                            slots: [selectedSlot]
                         });
                         $c.find('.messages-game')
                             .append(TEMPLATE.myAction({
@@ -471,8 +471,7 @@ XMing.GameManager = new function() {
                     c.send({
                         type: DATA.ACTION,
                         cardName: card.name,
-                        slots: selectedSlots,
-                        numCardsLeft: _.size(self.deck)
+                        slots: selectedSlots
                     });
                     $c.find('.messages-game')
                         .append(TEMPLATE.myAction({
@@ -635,7 +634,7 @@ XMing.GameManager = new function() {
                 }));
 
                 if (myUniqueCardNames.length > 0 && oppUniqueCardNames.length > 0 &&
-                    (_.difference(myUniqueCardNames, oppUniqueCardNames).length > 0 || _.difference(oppUniqueCardNames, myUniqueCardNames).length > 0)) {
+                    (myUniqueCardNames.length != 1 || oppUniqueCardNames.length != 1 || myUniqueCardNames[0] != oppUniqueCardNames[0])) {
                     this.assignAvailableCards(cardIndexes);
                     var currentSlot = -1;
 
@@ -682,8 +681,7 @@ XMing.GameManager = new function() {
                     c.send({
                         type: DATA.ACTION,
                         cardName: card.name,
-                        slots: [],
-                        numCardsLeft: _.size(self.deck)
+                        slots: []
                     });
                     $c.find('.messages-game')
                         .append(TEMPLATE.myActionFail({
@@ -943,7 +941,7 @@ XMing.GameManager = new function() {
         $('.draw-cards ul li').click(function() {
             if (self.isDrawPhase) {
                 self.isDrawPhase = false;
-                var cardDraw = m.drawCard();
+                var cardDraw = m.drawCard($('.draw-cards ul li').index(this));
                 $(this).addClass('animated flip ' + cardDraw.name)
                     .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
                         var that = this;
