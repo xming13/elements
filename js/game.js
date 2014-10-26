@@ -241,7 +241,7 @@ XMing.GameManager = new function() {
                             name: data.cardName
                         });
                         m.performCardAction(card, slots);
-                        m.cleanUp();
+                        m.updateUI();
                         m.checkGameStatus();
                     }
 
@@ -418,7 +418,7 @@ XMing.GameManager = new function() {
 
             function processElementSelected(card, selectedSlot) {
                 self.performCardAction(card, [selectedSlot]);
-                self.cleanUp();
+                self.updateUI();
                 self.eachActiveConnection(function(c, $c) {
                     if (c.label === 'game') {
                         c.send({
@@ -466,7 +466,7 @@ XMing.GameManager = new function() {
 
         var doAction = function(card, selectedSlots) {
             self.performCardAction(card, selectedSlots);
-            self.cleanUp();
+            self.updateUI();
             self.eachActiveConnection(function(c, $c) {
                 if (c.label === 'game') {
                     c.send({
@@ -648,11 +648,11 @@ XMing.GameManager = new function() {
                                     var currentCardName = self.cardsOnBoard[currentSlot].name;
                                     if (isMyCards(currentSlot)) {
                                         self.assignAvailableCards(_.filter(cardIndexes, function(cardIndex) {
-                                            return cardIndex < maxSize && self.cardsOnBoard[cardIndex] != currentCardName;
+                                            return cardIndex < maxSize && self.cardsOnBoard[cardIndex].name != currentCardName;
                                         }));
                                     } else {
                                         self.assignAvailableCards(_.filter(cardIndexes, function(cardIndex) {
-                                            return cardIndex >= maxSize && self.cardsOnBoard[cardIndex] != currentCardName;
+                                            return cardIndex >= maxSize && self.cardsOnBoard[cardIndex].name != currentCardName;
                                         }));
                                     }
 
@@ -731,7 +731,7 @@ XMing.GameManager = new function() {
         }
     };
 
-    this.cleanUp = function() {
+    this.updateUI = function() {
         var self = this;
 
         $('.cards-row li')
@@ -740,16 +740,31 @@ XMing.GameManager = new function() {
         $('#gameboard').off('keydown');
 
         _.each($('.cards-row li'), function(li, index) {
-            $(li).removeClass();
-
             if (!_.isUndefined(self.cardsOnBoard[index])) {
-                $(li).addClass(self.cardsOnBoard[index].name);
+                if (!$(li).hasClass(self.cardsOnBoard[index].name)) {
+                    $(li).removeClass().fadeOut(0, function() {
+                        $(li).addClass(self.cardsOnBoard[index].name).fadeIn(500);
+                    });
+                }
+                else {
+                    $(li).removeClass().addClass(self.cardsOnBoard[index].name);
+                }
+            }
+            else {
+                var classList = $(li).attr('class') ? $(li).attr('class').split(/\s+/) : [];
+                if (_.intersection(CARD_NAMES, classList).length > 0) {
+                    $(li).fadeOut(500, function() {
+                        $(li).removeClass().fadeIn(0);
+                    })
+                }
+                else {
+                    $(li).removeClass();
+                }
             }
         });
     };
 
     this.assignAvailableCards = function(availableIndexes) {
-
         _.each($('.cards-row li'), function(li, index) {
             $(li).removeClass('available unavailable');
 
@@ -833,7 +848,6 @@ XMing.GameManager = new function() {
 
         // create new connection
         $("#host").click(function() {
-
             var usernameHost = $("#username-host").val();
 
             if (usernameHost === '') {
