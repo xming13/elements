@@ -103,13 +103,13 @@ a {
 }
 
 .messages-game {
-    height: 50%;
+    height: calc(50% - 16px);
     line-height: 28px;
     font-family: 'Architects Daughter', cursive;
 }
 
 .messages-chat {
-    height: calc(50% - 30px);
+    height: calc(50% - 16px);
     letter-spacing: 1px;
     color: #00ff00;
     line-height: 20px;
