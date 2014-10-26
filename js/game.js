@@ -153,7 +153,7 @@ XMing.GameManager = new function() {
                 messagesChat.append(TEMPLATE.myMessage({
                     message: $(".input-chat").val()
                 }));
-                $(".input-chat").val('').focus();
+                $(".input-chat").val('');
                 m.scrollChatMessagesToBottom();
             };
 
