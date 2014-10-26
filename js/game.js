@@ -359,10 +359,6 @@ XMing.GameManager = new function() {
             $(".cards-row li.available").on({
                 'mouseenter': function() {
                     currentSlot = $(".cards-row li").index(this);
-                    self.setHoveredStyle(card, currentSlot);
-                },
-                'mouseleave': function() {
-                    self.removeHoveredStyle(card, currentSlot);
                 },
                 'click': function() {
                     processElementSelected(card, currentSlot);
@@ -378,7 +374,6 @@ XMing.GameManager = new function() {
                     if (currentSlot == -1) {
                         if (_.contains(keyCodes, e.keyCode)) {
                             currentSlot = availableSlots[0];
-                            this.setHoveredStyle(card, currentSlot);
                         }
                     } else {
                         switch (e.keyCode) {
@@ -388,18 +383,12 @@ XMing.GameManager = new function() {
                                 });
 
                                 if (!_.isEmpty(newSlots)) {
-                                    var newSlot = _.max(newSlots);
-
-                                    self.removeHoveredStyle(card, currentSlot);
-                                    currentSlot = newSlot;
-                                    self.setHoveredStyle(card, currentSlot);
+                                    currentSlot = _.max(newSlots);
                                 }
                                 break;
                             case 38: // up arrow
                                 if (_.contains(availableSlots, currentSlot - maxSize)) {
-                                    self.removeHoveredStyle(card, currentSlot);
                                     currentSlot -= maxSize;
-                                    self.setHoveredStyle(card, currentSlot);
                                 }
                                 break;
                             case 39: // right arrow
@@ -408,19 +397,13 @@ XMing.GameManager = new function() {
                                 });
 
                                 if (!_.isEmpty(newSlots)) {
-                                    var newSlot = _.min(newSlots);
-
-                                    self.removeHoveredStyle(card, currentSlot);
-                                    currentSlot = newSlot;
-                                    self.setHoveredStyle(card, currentSlot);
+                                    currentSlot = _.min(newSlots);
                                 }
                                 break;
                                 break;
                             case 40: // down arrow
                                 if (_.contains(availableSlots, currentSlot + maxSize)) {
-                                    self.removeHoveredStyle(card, currentSlot);
                                     currentSlot += maxSize;
-                                    self.setHoveredStyle(card, currentSlot);
                                 }
                                 break;
                             case 13: // enter
@@ -515,10 +498,6 @@ XMing.GameManager = new function() {
                         $(".cards-row li.available").on({
                             'mouseenter': function() {
                                 currentSlot = $(".cards-row li").index(this);
-                                self.setHoveredStyle(card, currentSlot);
-                            },
-                            'mouseleave': function() {
-                                self.removeHoveredStyle(card, currentSlot);
                             },
                             'click': function() {
                                 selectedSlots.push(currentSlot);
@@ -531,7 +510,7 @@ XMing.GameManager = new function() {
                                         self.assignAvailableCards(_.filter(emptyIndexes, isMyCards));
                                     }
 
-                                    $(".cards-row li").off('mouseenter mouseleave click');
+                                    $(".cards-row li").off('mouseenter click');
                                     bindEvent();
                                 } else if (selectedSlots.length == 2) {
                                     doAction(card, selectedSlots);
@@ -600,10 +579,6 @@ XMing.GameManager = new function() {
                     $(".cards-row li.available").on({
                         'mouseenter': function() {
                             currentSlot = $(".cards-row li").index(this);
-                            self.setHoveredStyle(card, currentSlot);
-                        },
-                        'mouseleave': function() {
-                            self.removeHoveredStyle(card, currentSlot);
                         },
                         'click': function() {
                             doAction(card, [currentSlot]);
@@ -623,10 +598,6 @@ XMing.GameManager = new function() {
                         $('.cards-row li.available').on({
                             'mouseenter': function() {
                                 currentSlot = $('.cards-row li').index(this);
-                                self.setHoveredStyle(card, currentSlot);
-                            },
-                            'mouseleave': function() {
-                                self.removeHoveredStyle(card, currentSlot);
                             },
                             'click': function() {
                                 selectedSlots.push(currentSlot);
@@ -635,7 +606,7 @@ XMing.GameManager = new function() {
                                 if (selectedSlots.length == 1) {
                                     if (_.without(cardIndexes, currentSlot).length > 0) {
                                         self.assignAvailableCards(_.without(cardIndexes, currentSlot));
-                                        $('.cards-row li').off('mouseenter mouseleave click');
+                                        $('.cards-row li').off('mouseenter click');
                                         bindEvent();
                                     } else {
                                         doAction(card, selectedSlots);
@@ -668,10 +639,6 @@ XMing.GameManager = new function() {
                         $(".cards-row li.available").on({
                             'mouseenter': function() {
                                 currentSlot = $(".cards-row li").index(this);
-                                self.setHoveredStyle(card, currentSlot);
-                            },
-                            'mouseleave': function() {
-                                self.removeHoveredStyle(card, currentSlot);
                             },
                             'click': function() {
                                 selectedSlots.push(currentSlot);
@@ -689,7 +656,7 @@ XMing.GameManager = new function() {
                                         }));
                                     }
 
-                                    $(".cards-row li").off('mouseenter mouseleave click');
+                                    $(".cards-row li").off('mouseenter click');
                                     bindEvent();
                                 } else if (selectedSlots.length == 2) {
                                     doAction(card, selectedSlots);
@@ -725,18 +692,9 @@ XMing.GameManager = new function() {
         }
     };
 
-    this.setHoveredStyle = function(card, slotNumber) {
-        $($(".cards-row li")[slotNumber]).addClass('hovered hover-' + card.name);
-    };
-    this.removeHoveredStyle = function(card, slotNumber) {
-        $($(".cards-row li")[slotNumber]).removeClass('hovered hover-' + card.name);
-    }
     this.setSelectedStyle = function(slotNumber) {
         $($(".cards-row li")[slotNumber]).addClass('selected');
     };
-    this.removeSelectedStyle = function(slotNumber) {
-        $($(".cards-row li")[slotNumber]).removeClass('selected');
-    }
 
     this.performCardAction = function(card, selectedSlots) {
         if (card.type == 'element') {
@@ -777,7 +735,7 @@ XMing.GameManager = new function() {
         var self = this;
 
         $('.cards-row li')
-            .off('mouseenter mouseleave click')
+            .off('mouseenter click')
             .removeClass('available unavailable selected');
         $('#gameboard').off('keydown');
 

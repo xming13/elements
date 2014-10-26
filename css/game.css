@@ -171,8 +171,8 @@ a {
 .my-cards {
     width: 100%;
     position: absolute;
-    left: 50%;
     bottom: 0;
+    left: 50%;
     -webkit-transform: translateX(-50%);
     transform: translateX(-50%);
 }
@@ -180,12 +180,15 @@ a {
 .cards ul {
     text-align: center;
 }
+
 .cards ul li {
     width: 150px;
     height: 243px;
     margin: 10px;
     display: inline-block;
-    position: relative;;
+    position: relative;
+    border-radius: 10px;
+    border: 2px solid #800080;
 }
 
 .draw-cards ul li {
@@ -193,18 +196,20 @@ a {
     background-size: contain;
 }
 
-ul.cards-row li {
+.my-cards ul li,
+.opp-cards ul li {
     background-image: url('../images/empty.png');
     background-size: contain;
 }
+
 .cards ul li.available {
-    -webkit-box-shadow: 0px 0px 55px 20px rgba(255,255,255,0.6);
-    -moz-box-shadow: 0px 0px 55px 20px rgba(255,255,255,0.6);
-    box-shadow: 0px 0px 55px 20px rgba(255,255,255,0.6);
+    -webkit-box-shadow: 0px 0px 30px 20px rgba(255,255,255,0.4);
+    -moz-box-shadow: 0px 0px 30px 20px rgba(255,255,255,0.4);
+    box-shadow: 0px 0px 30px 20px rgba(255,255,255,0.4);
     cursor: pointer;
 }
 
-ul.cards-row  li.unavailable:after {
+.cards ul li.unavailable:after {
     content: "";
     display: inline-block;
     height: 100%;
@@ -212,117 +217,127 @@ ul.cards-row  li.unavailable:after {
     position: absolute;
     left: 0;
     background-color: rgba(0,0,0,0.7);
+    border-radius: 8px;
 }
 
-.cards ul li.available:hover {
-    -webkit-box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
-    -moz-box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
-    box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
-    cursor: pointer;
-}
-
+.cards ul li.available:hover,
 .cards ul li.selected {
-    -webkit-box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
-    -moz-box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
-    box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
+    -webkit-box-shadow: 0px 0px 30px 25px rgba(255,255,255,0.8);
+    -moz-box-shadow: 0px 0px 30px 25px rgba(255,255,255,0.8);
+    box-shadow: 0px 0px 30px 25px rgba(255,255,255,0.8);
+    cursor: pointer;
 }
 
 ul.cards-row li.water {
     background-image: url('../images/water.png');
+    border: 2px solid #1010ff;
 }
 ul.cards-row li.water.available {
-    -webkit-box-shadow: 0px 0px 70px 30px rgba(16,16,255,0.6);
-    -moz-box-shadow: 0px 0px 70px 30px rgba(16,16,255,0.6);
-    box-shadow: 0px 0px 70px 30px rgba(16,16,255,0.6);
+    -webkit-box-shadow: 0px 0px 30px 20px rgba(16,16,255,0.4);
+    -moz-box-shadow: 0px 0px 30px 20px rgba(16,16,255,0.4);
+    box-shadow: 0px 0px 30px 20px rgba(16,16,255,0.4);
 }
-ul.cards-row li.water.hovered {
-    -webkit-box-shadow: 0px 0px 70px 30px rgba(16,16,255,1);
-    -moz-box-shadow: 0px 0px 70px 30px rgba(16,16,255,1);
-    box-shadow: 0px 0px 70px 30px rgba(16,16,255,1);
+ul.cards-row li.water.available:hover,
+ul.cards-row li.water.selected {
+    -webkit-box-shadow: 0px 0px 30px 25px rgba(16,16,255,0.8);
+    -moz-box-shadow: 0px 0px 30px 25px rgba(16,16,255,0.8);
+    box-shadow: 0px 0px 30px 25px rgba(16,16,255,0.8);
 }
 
 ul.cards-row li.fire {
     background-image: url('../images/fire.png');
+    border: 2px solid #ff1010;
 }
 ul.cards-row li.fire.available {
-    -webkit-box-shadow: 0px 0px 70px 30px rgba(255,16,16,0.6);
-    -moz-box-shadow: 0px 0px 70px 30px rgba(255,16,16,0.6);
-    box-shadow: 0px 0px 70px 30px rgba(255,16,16,0.6);
+    -webkit-box-shadow: 0px 0px 30px 20px rgba(255,16,16,0.4);
+    -moz-box-shadow: 0px 0px 30px 20px rgba(255,16,16,0.4);
+    box-shadow: 0px 0px 30px 20px rgba(255,16,16,0.4);
 }
-ul.cards-row li.fire.hovered {
-    -webkit-box-shadow: 0px 0px 70px 30px rgba(255,16,16,1);
-    -moz-box-shadow: 0px 0px 70px 30px rgba(255,16,16,1);
-    box-shadow: 0px 0px 70px 30px rgba(255,16,16,1);
+ul.cards-row li.fire.available:hover,
+ul.cards-row li.fire.selected {
+    -webkit-box-shadow: 0px 0px 30px 25px rgba(255,16,16,0.8);
+    -moz-box-shadow: 0px 0px 30px 25px rgba(255,16,16,0.8);
+    box-shadow: 0px 0px 30px 25px rgba(255,16,16,0.8);
 }
 
 ul.cards-row li.metal {
     background-image: url('../images/metal.png');
+    border: 2px solid #ffd700;
 }
 ul.cards-row li.metal.available {
-    -webkit-box-shadow: 0px 0px 70px 30px rgba(255,215,0,0.6);
-    -moz-box-shadow: 0px 0px 70px 30px rgba(255,215,0,0.6);
-    box-shadow: 0px 0px 70px 30px rgba(255,215,0,0.6);
+    -webkit-box-shadow: 0px 0px 30px 20px rgba(255,215,0,0.4);
+    -moz-box-shadow: 0px 0px 30px 20px rgba(255,215,0,0.4);
+    box-shadow: 0px 0px 30px 20px rgba(255,215,0,0.4);
 }
-ul.cards-row li.metal.hovered {
-    -webkit-box-shadow: 0px 0px 70px 30px rgba(255,215,0,1);
-    -moz-box-shadow: 0px 0px 70px 30px rgba(255,215,0,1);
-    box-shadow: 0px 0px 70px 30px rgba(255,215,0,1);
-}
-
-ul.cards-row li.earth {
-    background-image: url('../images/earth.png');
-}
-ul.cards-row li.earth.available {
-    -webkit-box-shadow: 0px 0px 70px 30px rgba(163,97,0,0.6);
-    -moz-box-shadow: 0px 0px 70px 30px rgba(163,97,0,0.6);
-    box-shadow: 0px 0px 70px 30px rgba(163,97,0,0.6);
-}
-ul.cards-row li.earth.hovered {
-    -webkit-box-shadow: 0px 0px 70px 30px rgba(163,97,0,1);
-    -moz-box-shadow: 0px 0px 70px 30px rgba(163,97,0,1);
-    box-shadow: 0px 0px 70px 30px rgba(163,97,0,1);
+ul.cards-row li.metal.available:hover,
+ul.cards-row li.metal.selected {
+    -webkit-box-shadow: 0px 0px 30px 25px rgba(255,215,0,0.8);
+    -moz-box-shadow: 0px 0px 30px 25px rgba(255,215,0,0.8);
+    box-shadow: 0px 0px 30px 25px rgba(255,215,0,0.8);
 }
 
 ul.cards-row li.wood {
     background-image: url('../images/wood.png');
+    border: 2px solid #13e213;
 }
 ul.cards-row li.wood.available {
-    -webkit-box-shadow: 0px 0px 70px 30px rgba(19,226,19,0.6);
-    -moz-box-shadow: 0px 0px 70px 30px rgba(19,226,19,0.6);
-    box-shadow: 0px 0px 70px 30px rgba(19,226,19,0.6);
+    -webkit-box-shadow: 0px 0px 30px 20px rgba(19,226,19,0.4);
+    -moz-box-shadow: 0px 0px 30px 20px rgba(19,226,19,0.4);
+    box-shadow: 0px 0px 30px 20px rgba(19,226,19,0.4);
 }
-ul.cards-row li.wood.hovered {
-    -webkit-box-shadow: 0px 0px 70px 30px rgba(19,226,19,1);
-    -moz-box-shadow: 0px 0px 70px 30px rgba(19,226,19,1);
-    box-shadow: 0px 0px 70px 30px rgba(19,226,19,1);
+ul.cards-row li.wood.available:hover,
+ul.cards-row li.wood.selected {
+    -webkit-box-shadow: 0px 0px 30px 25px rgba(19,226,19,0.8);
+    -moz-box-shadow: 0px 0px 30px 25px rgba(19,226,19,0.8);
+    box-shadow: 0px 0px 30px 25px rgba(19,226,19,0.8);
+}
+
+ul.cards-row li.earth {
+    background-image: url('../images/earth.png');
+    border: 2px solid #a36100;
+}
+ul.cards-row li.earth.available {
+    -webkit-box-shadow: 0px 0px 30px 20px rgba(163,97,0,0.4);
+    -moz-box-shadow: 0px 0px 30px 20px rgba(163,97,0,0.4);
+    box-shadow: 0px 0px 30px 20px rgba(163,97,0,0.4);
+}
+ul.cards-row li.earth.available:hover,
+ul.cards-row li.earth.selected {
+    -webkit-box-shadow: 0px 0px 30px 25px rgba(163,97,0,0.8);
+    -moz-box-shadow: 0px 0px 30px 25px rgba(163,97,0,0.8);
+    box-shadow: 0px 0px 30px 25px rgba(163,97,0,0.8);
 }
 
 ul.cards-row li.light {
     background-image: url('../images/light.png');
+    border: 2px solid #fff;
 }
 ul.cards-row li.light.available {
-    -webkit-box-shadow: 0px 0px 70px 30px rgba(255,255,255,0.6);
-    -moz-box-shadow: 0px 0px 70px 30px rgba(255,255,255,0.6);
-    box-shadow: 0px 0px 70px 30px rgba(255,255,255,0.6);
+    -webkit-box-shadow: 0px 0px 30px 20px rgba(255,255,255,0.4);
+    -moz-box-shadow: 0px 0px 30px 20px rgba(255,255,255,0.4);
+    box-shadow: 0px 0px 30px 20px rgba(255,255,255,0.4);
 }
-ul.cards-row li.light.hovered {
-    -webkit-box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
-    -moz-box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
-    box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
+ul.cards-row li.light.available:hover,
+ul.cards-row li.light.selected {
+    -webkit-box-shadow: 0px 0px 30px 25px rgba(255,255,255,0.8);
+    -moz-box-shadow: 0px 0px 30px 25px rgba(255,255,255,0.8);
+    box-shadow: 0px 0px 30px 25px rgba(255,255,255,0.8);
 }
 
 ul.cards-row li.dark {
     background-image: url('../images/dark.png');
+    border: 2px solid #181818;
 }
 ul.cards-row li.dark.available {
-    -webkit-box-shadow: 0px 0px 70px 30px rgba(24,24,24,0.6);
-    -moz-box-shadow: 0px 0px 70px 30px rgba(24,24,24,0.6);
-    box-shadow: 0px 0px 70px 30px rgba(24,24,24,0.6);
+    -webkit-box-shadow: 0px 0px 30px 20px rgba(24,24,24,0.4);
+    -moz-box-shadow: 0px 0px 30px 20px rgba(24,24,24,0.4);
+    box-shadow: 0px 0px 30px 20px rgba(24,24,24,0.4);
 }
-ul.cards-row li.dark.hovered {
-    -webkit-box-shadow: 0px 0px 70px 30px rgba(24,24,24,1);
-    -moz-box-shadow: 0px 0px 70px 30px rgba(24,24,24,1);
-    box-shadow: 0px 0px 70px 30px rgba(24,24,24,1);
+ul.cards-row li.dark.available:hover,
+ul.cards-row li.dark.selected {
+    -webkit-box-shadow: 0px 0px 30px 25px rgba(24,24,24,0.8);
+    -moz-box-shadow: 0px 0px 30px 25px rgba(24,24,24,0.8);
+    box-shadow: 0px 0px 30px 25px rgba(24,24,24,0.8);
 }
 
 .card-text {
@@ -344,7 +359,7 @@ ul.cards-row li.dark.hovered {
 
 .fire {
     background-color: #ff1010;
-    color: #FFCACA;
+    color: #ffcaca;
 }
 
 .metal {
