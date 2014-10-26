@@ -243,6 +243,7 @@ XMing.GameManager = new function() {
                         m.performCardAction(card, slots);
                         m.updateUI();
                         m.checkGameStatus();
+                        m.scrollGameMessagesToBottom();
                     }
 
                     if (!m.isGameEnd) {
@@ -951,8 +952,8 @@ XMing.GameManager = new function() {
             if (self.isDrawPhase) {
                 self.isDrawPhase = false;
                 var cardDraw = m.drawCard();
-                $(this).addClass('animated flip ' + cardDraw.name);
-                $(this).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+                $(this).addClass('animated flip ' + cardDraw.name)
+                    .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
                     var that = this;
                     $('#actions').fadeOut(500, function() {
                         $(that).removeClass('animated flip ' + cardDraw.name);
