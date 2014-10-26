@@ -920,6 +920,7 @@ XMing.GameManager = new function() {
                         key: 'j4a6ijvcn8z1tt9'
                     });
 
+                    // pending peerjs team to enable this feature for me!
                     // console.log(self.peer.listAllPeers());
 
                     var c = self.peer.connect(requestedPeer, {

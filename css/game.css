@@ -197,10 +197,11 @@ ul.cards-row li {
     background-image: url('../images/empty.png');
     background-size: contain;
 }
-ul.cards-row  li.available {
-    -webkit-box-shadow: 0px 0px 55px 20px rgba(0,0,0,0.5);
-    -moz-box-shadow: 0px 0px 55px 20px rgba(0,0,0,0.5);
-    box-shadow: 0px 0px 55px 20px rgba(0,0,0,0.5);
+.cards ul li.available {
+    -webkit-box-shadow: 0px 0px 55px 20px rgba(255,255,255,0.6);
+    -moz-box-shadow: 0px 0px 55px 20px rgba(255,255,255,0.6);
+    box-shadow: 0px 0px 55px 20px rgba(255,255,255,0.6);
+    cursor: pointer;
 }
 
 ul.cards-row  li.unavailable:after {
@@ -210,117 +211,118 @@ ul.cards-row  li.unavailable:after {
     width: 100%;
     position: absolute;
     left: 0;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0,0,0,0.7);
 }
 
-ul.cards-row li.hovered {
-    -webkit-box-shadow: 0px 0px 70px 20px rgba(0,0,0,1);
-    -moz-box-shadow: 0px 0px 70px 20px rgba(0,0,0,1);
-    box-shadow: 0px 0px 70px 20px rgba(0,0,0,1);
+.cards ul li.available:hover {
+    -webkit-box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
+    -moz-box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
+    box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
+    cursor: pointer;
 }
 
-ul.cards-row li.selected {
-    -webkit-box-shadow: 0px 0px 70px 20px rgba(255,255,255,1);
-    -moz-box-shadow: 0px 0px 70px 20px rgba(255,255,255,1);
-    box-shadow: 0px 0px 70px 20px rgba(255,255,255,1);
-}
-
-ul.cards-row li.fire {
-    background-image: url('../images/fire.png');
-}
-ul.cards-row li.fire.available {
-    -webkit-box-shadow: 0px 0px 70px 20px rgba(255,0,0,0.75);
-    -moz-box-shadow: 0px 0px 70px 20px rgba(255,0,0,0.75);
-    box-shadow: 0px 0px 70px 20px rgba(255,0,0,0.75);
-}
-ul.cards-row li.fire.hovered {
-    -webkit-box-shadow: 0px 0px 70px 20px rgba(255,0,0,1);
-    -moz-box-shadow: 0px 0px 70px 20px rgba(255,0,0,1);
-    box-shadow: 0px 0px 70px 20px rgba(255,0,0,1);
+.cards ul li.selected {
+    -webkit-box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
+    -moz-box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
+    box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
 }
 
 ul.cards-row li.water {
     background-image: url('../images/water.png');
 }
 ul.cards-row li.water.available {
-    -webkit-box-shadow: 0px 0px 70px 20px rgba(0,0,255,0.75);
-    -moz-box-shadow: 0px 0px 70px 20px rgba(0,0,255,0.75);
-    box-shadow: 0px 0px 70px 20px rgba(0,0,255,0.75);
+    -webkit-box-shadow: 0px 0px 70px 30px rgba(16,16,255,0.6);
+    -moz-box-shadow: 0px 0px 70px 30px rgba(16,16,255,0.6);
+    box-shadow: 0px 0px 70px 30px rgba(16,16,255,0.6);
 }
 ul.cards-row li.water.hovered {
-    -webkit-box-shadow: 0px 0px 70px 20px rgba(0,0,255,1);
-    -moz-box-shadow: 0px 0px 70px 20px rgba(0,0,255,1);
-    box-shadow: 0px 0px 70px 20px rgba(0,0,255,1);
+    -webkit-box-shadow: 0px 0px 70px 30px rgba(16,16,255,1);
+    -moz-box-shadow: 0px 0px 70px 30px rgba(16,16,255,1);
+    box-shadow: 0px 0px 70px 30px rgba(16,16,255,1);
 }
 
-ul.cards-row li.earth {
-    background-image: url('../images/earth.png');
+ul.cards-row li.fire {
+    background-image: url('../images/fire.png');
 }
-ul.cards-row li.earth.available {
-    -webkit-box-shadow: 0px 0px 70px 20px rgba(163,97,0,0.75);
-    -moz-box-shadow: 0px 0px 70px 20px rgba(163,97,0,0.75);
-    box-shadow: 0px 0px 70px 20px rgba(163,97,0,0.75);
+ul.cards-row li.fire.available {
+    -webkit-box-shadow: 0px 0px 70px 30px rgba(255,16,16,0.6);
+    -moz-box-shadow: 0px 0px 70px 30px rgba(255,16,16,0.6);
+    box-shadow: 0px 0px 70px 30px rgba(255,16,16,0.6);
 }
-ul.cards-row li.earth.hovered {
-    -webkit-box-shadow: 0px 0px 70px 20px rgba(163,97,0,1);
-    -moz-box-shadow: 0px 0px 70px 20px rgba(163,97,0,1);
-    box-shadow: 0px 0px 70px 20px rgba(163,97,0,1);
-}
-
-ul.cards-row li.wood {
-    background-image: url('../images/wood.png');
-}
-ul.cards-row li.wood.available {
-    -webkit-box-shadow: 0px 0px 70px 20px rgba(37,155,36,0.75);
-    -moz-box-shadow: 0px 0px 70px 20px rgba(37,155,36,0.75);
-    box-shadow: 0px 0px 70px 20px rgba(37,155,36,0.75);
-}
-ul.cards-row li.wood.hovered {
-    -webkit-box-shadow: 0px 0px 70px 20px rgba(37,155,36,1);
-    -moz-box-shadow: 0px 0px 70px 20px rgba(37,155,36,1);
-    box-shadow: 0px 0px 70px 20px rgba(37,155,36,1);
+ul.cards-row li.fire.hovered {
+    -webkit-box-shadow: 0px 0px 70px 30px rgba(255,16,16,1);
+    -moz-box-shadow: 0px 0px 70px 30px rgba(255,16,16,1);
+    box-shadow: 0px 0px 70px 30px rgba(255,16,16,1);
 }
 
 ul.cards-row li.metal {
     background-image: url('../images/metal.png');
 }
 ul.cards-row li.metal.available {
-    -webkit-box-shadow: 0px 0px 70px 20px rgba(255,215,0,0.75);
-    -moz-box-shadow: 0px 0px 70px 20px rgba(255,215,0,0.75);
-    box-shadow: 0px 0px 70px 20px rgba(255,215,0,0.75);
+    -webkit-box-shadow: 0px 0px 70px 30px rgba(255,215,0,0.6);
+    -moz-box-shadow: 0px 0px 70px 30px rgba(255,215,0,0.6);
+    box-shadow: 0px 0px 70px 30px rgba(255,215,0,0.6);
 }
 ul.cards-row li.metal.hovered {
-    -webkit-box-shadow: 0px 0px 70px 20px rgba(255,215,0,1);
-    -moz-box-shadow: 0px 0px 70px 20px rgba(255,215,0,1);
-    box-shadow: 0px 0px 70px 20px rgba(255,215,0,1);
+    -webkit-box-shadow: 0px 0px 70px 30px rgba(255,215,0,1);
+    -moz-box-shadow: 0px 0px 70px 30px rgba(255,215,0,1);
+    box-shadow: 0px 0px 70px 30px rgba(255,215,0,1);
+}
+
+ul.cards-row li.earth {
+    background-image: url('../images/earth.png');
+}
+ul.cards-row li.earth.available {
+    -webkit-box-shadow: 0px 0px 70px 30px rgba(163,97,0,0.6);
+    -moz-box-shadow: 0px 0px 70px 30px rgba(163,97,0,0.6);
+    box-shadow: 0px 0px 70px 30px rgba(163,97,0,0.6);
+}
+ul.cards-row li.earth.hovered {
+    -webkit-box-shadow: 0px 0px 70px 30px rgba(163,97,0,1);
+    -moz-box-shadow: 0px 0px 70px 30px rgba(163,97,0,1);
+    box-shadow: 0px 0px 70px 30px rgba(163,97,0,1);
+}
+
+ul.cards-row li.wood {
+    background-image: url('../images/wood.png');
+}
+ul.cards-row li.wood.available {
+    -webkit-box-shadow: 0px 0px 70px 30px rgba(19,226,19,0.6);
+    -moz-box-shadow: 0px 0px 70px 30px rgba(19,226,19,0.6);
+    box-shadow: 0px 0px 70px 30px rgba(19,226,19,0.6);
+}
+ul.cards-row li.wood.hovered {
+    -webkit-box-shadow: 0px 0px 70px 30px rgba(19,226,19,1);
+    -moz-box-shadow: 0px 0px 70px 30px rgba(19,226,19,1);
+    box-shadow: 0px 0px 70px 30px rgba(19,226,19,1);
 }
 
 ul.cards-row li.light {
     background-image: url('../images/light.png');
 }
 ul.cards-row li.light.available {
-    -webkit-box-shadow: 0px 0px 70px 20px rgba(255,255,255,0.75);
-    -moz-box-shadow: 0px 0px 70px 20px rgba(255,255,255,0.75);
-    box-shadow: 0px 0px 70px 20px rgba(255,255,255,0.75);
+    -webkit-box-shadow: 0px 0px 70px 30px rgba(255,255,255,0.6);
+    -moz-box-shadow: 0px 0px 70px 30px rgba(255,255,255,0.6);
+    box-shadow: 0px 0px 70px 30px rgba(255,255,255,0.6);
 }
 ul.cards-row li.light.hovered {
-    -webkit-box-shadow: 0px 0px 70px 20px rgba(255,255,255,1);
-    -moz-box-shadow: 0px 0px 70px 20px rgba(255,255,255,1);
-    box-shadow: 0px 0px 70px 20px rgba(255,255,255,1);
+    -webkit-box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
+    -moz-box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
+    box-shadow: 0px 0px 70px 30px rgba(255,255,255,1);
 }
 
 ul.cards-row li.dark {
     background-image: url('../images/dark.png');
 }
 ul.cards-row li.dark.available {
-    -webkit-box-shadow: 0px 0px 70px 20px rgba(24,24,24,0.75);
-    -moz-box-shadow: 0px 0px 70px 20px rgba(24,24,24,0.75);
-    box-shadow: 0px 0px 70px 20px rgba(24,24,24,0.75);
+    -webkit-box-shadow: 0px 0px 70px 30px rgba(24,24,24,0.6);
+    -moz-box-shadow: 0px 0px 70px 30px rgba(24,24,24,0.6);
+    box-shadow: 0px 0px 70px 30px rgba(24,24,24,0.6);
 }
 ul.cards-row li.dark.hovered {
-    -webkit-box-shadow: 0px 0px 70px 20px rgba(24,24,24,1);
-    -moz-box-shadow: 0px 0px 70px 20px rgba(24,24,24,1);
-    box-shadow: 0px 0px 70px 20px rgba(24,24,24,1);
+    -webkit-box-shadow: 0px 0px 70px 30px rgba(24,24,24,1);
+    -moz-box-shadow: 0px 0px 70px 30px rgba(24,24,24,1);
+    box-shadow: 0px 0px 70px 30px rgba(24,24,24,1);
 }
 
 .card-text {
@@ -335,24 +337,29 @@ ul.cards-row li.dark.hovered {
     letter-spacing: 1px;
 }
 
-.fire {
-    background-color: #e51c23;
-}
-
 .water {
-    background-color: #03a9f4;
+    background-color: #1010ff;
+    color: #ccccff;
 }
 
-.earth {
-    background-color: #a36100;
-}
-
-.wood {
-    background-color: #259b24;
+.fire {
+    background-color: #ff1010;
+    color: #FFCACA;
 }
 
 .metal {
     background-color : #ffd700; /* gold color */
+    color: #fffbcc;
+}
+
+.wood {
+    background-color: #13e213;
+    color: #ccffcc;
+}
+
+.earth {
+    background-color: #a36100;
+    color: #f4dece;
 }
 
 .light {
@@ -366,14 +373,7 @@ ul.cards-row li.dark.hovered {
 
 .dark {
     background-color: #181818;
-}
-
-.hover-water {
-    background-image: url('../images/hover-water.png');
-}
-
-.hover-dark {
-    background-image: url('../images/hover-dark.png');
+    color: #999999;
 }
 
 /* Chrome, Safari, Opera */
@@ -464,16 +464,7 @@ ul.cards-row li.dark.hovered {
     left: 0;
     height: 100%;
     width: 100%;
-    background: rgba(0,0,0,0.5);
     text-align: center;
-    -webkit-transition:background 1s;
-    -moz-transition:background 1s;
-    -o-transition:background 1s;
-    transition:background 1s;
-}
-
-#actions.fadeOut {
-    background: transparent;
 }
 
 #draw {
@@ -483,7 +474,7 @@ ul.cards-row li.dark.hovered {
     left: 50%;
     padding: 30px;
     background: #b5ffff;
-    border: 5px solid #ff0000;
+    border: 5px solid #e412ff;
     border-radius: 25px;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
