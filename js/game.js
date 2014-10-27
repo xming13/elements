@@ -185,7 +185,7 @@ XMing.GameManager = new function() {
                     m.deck = data.deck;
 
                     $("#gameboard").show();
-                    $("#menu-container").hide();
+                    $("#panel-container").hide();
 
                     // Game start!
                     c.send({
@@ -830,24 +830,30 @@ XMing.GameManager = new function() {
 
         // navigate to create connection screen
         $("#create").click(function() {
-            $("#menu-main").hide();
-            $("#menu-host").show();
+            $("#panel-main").hide();
+            $("#panel-host").show();
             $("#instruction").hide();
         });
 
         // navigate to join connection screen
         $("#join").click(function() {
-            $("#menu-main").hide();
-            $("#menu-join").show();
+            $("#panel-main").hide();
+            $("#panel-join").show();
         });
 
         // navigate back to main menu screen
         $(".back").click(function() {
-            $("#menu-host").hide();
-            $("#menu-join").hide();
-            $("#menu-main").show();
+            $("#panel-host").hide();
+            $("#panel-join").hide();
+            $("#panel-how-to-play").hide();
+            $("#panel-main").show();
             self.destroy();
         });
+
+        $("#how-to-play").click(function() {
+            $("#panel-main").hide();
+            $("#panel-how-to-play").show();
+        })
 
         // create new connection
         $("#host").click(function() {
@@ -871,7 +877,7 @@ XMing.GameManager = new function() {
                     self.connect(c);
 
                     $("#gameboard").show();
-                    $("#menu-container").hide();
+                    $("#panel-container").hide();
                 });
 
                 self.peer.on('error', function(err) {

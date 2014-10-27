@@ -18,7 +18,7 @@ body {
     padding: 0;
     background-color: #f6d2ff;
     color: #444;
-    font-family: Handlee;
+    font-family: "Architects Daughter";
     font-size: 15px;
     line-height: 18px;
     text-shadow: 0 1px 0 rgba(255,255,255,0.4);
@@ -58,7 +58,7 @@ ul {
     vertical-align: middle;
 }
 
-#menu-container {
+#panel-container {
     height: 100%;
 }
 
@@ -68,23 +68,23 @@ ul {
     width: 100%;
 }
 
-.menu {
+.panel {
     text-align: center;
     margin: 0 auto;
     padding: 20px;
     font-size: 20px;
 }
 
-#menu-main {
+#panel-main {
     width: 200px;
 }
 
-#menu-main ul li {
+#panel-main ul li {
     margin: 0 0 5px;
     background: #b7009d;
 }
 
-#menu-main ul li a {
+#panel-main ul li a {
     display: block;
     padding: 8px;
     font: 20px Handlee, cursive;
@@ -92,11 +92,11 @@ ul {
     cursor: pointer;
 }
 
-#menu-main ul li.disable {
+#panel-main ul li.disable {
     background: #999999;
 }
 
-#menu-main ul li.disable a {
+#panel-main ul li.disable a {
     cursor: auto;
 }
 
@@ -109,6 +109,20 @@ ul {
     font: 20px Handlee, cursive;
     color: #fff;
     cursor: pointer;
+}
+
+#panel-how-to-play .card {
+    margin-bottom: 38px;
+}
+
+#panel-how-to-play .card:after {
+    content: attr(data-content);
+    position: absolute;
+    bottom: -33px;
+    left: 50%;
+    font-size: 30px;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
 }
 
 .important {
@@ -136,7 +150,7 @@ ul {
     margin: 5px;
     border: 1px solid #ccc;
     background-color: #fff;
-    color: #0C6BA1;
+    color: #0c6ba1;
     font-weight: 600;
 }
 
@@ -251,11 +265,11 @@ ul {
     position: relative;
     border-radius: 10px;
     border: 2px solid #800080;
+    background-size: contain;
 }
 
 .draw-cards ul li {
     background-image: url('../images/draw.png');
-    background-size: contain;
 }
 
 .draw-cards ul li.light.flipcard {
@@ -272,7 +286,6 @@ ul {
 .my-cards ul li,
 .opp-cards ul li {
     background-image: url('../images/empty.png');
-    background-size: contain;
 }
 
 .cards ul li.available {
@@ -480,6 +493,30 @@ ul {
 .dark {
     background-color: #181818;
     color: #999999;
+}
+
+.water.dim {
+    color: #1010ff;
+}
+
+.fire.dim {
+    color: #ff1010;
+}
+
+.metal.dim {
+    color: #ffd700;
+}
+
+.wood.dim {
+    color: #13e213;
+}
+
+.earth.dim {
+    color: #a36100;
+}
+
+.dark.dim {
+    color: #181818;
 }
 
 /* Chrome, Safari, Opera */
@@ -695,6 +732,15 @@ ul {
 @media only screen
 and (min-width: 320px)
 and (max-width: 640px) {
+    #panel-how-to-play .card {
+        margin-bottom: 33px;
+    }
+
+    #panel-how-to-play .card:after {
+        bottom: -28px;
+        font-size: 20px;
+    }
+
     .messages {
         font-size: 10px;
         line-height: 18px;
@@ -710,7 +756,7 @@ and (max-width: 640px) {
         margin: 10px 4px;
     }
 
-    .card-text {
+    .messages-chat .card-text {
         margin: 0 2px;
         padding: 0 5px;
         font: bold 8px 'Gloria Hallelujah', cursive;

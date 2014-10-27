@@ -8,11 +8,11 @@
 
     <link href="css/sweet-alert.min.css" rel="stylesheet" type="text/css">
     <link href="css/game.css" rel="stylesheet" type="text/css">
-    <!--<link href='http://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>-->
-    <link href='http://fonts.googleapis.com/css?family=Gloria+Hallelujah' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Architects+Daughter|Gloria+Hallelujah|Handlee' rel='stylesheet' type='text/css'>
+    <!--<link href='http://fonts.googleapis.com/css?family=Gloria+Hallelujah' rel='stylesheet' type='text/css'>-->
     <!--<link href='http://fonts.googleapis.com/css?family=Coming+Soon' rel='stylesheet' type='text/css'>-->
     <!--<link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>-->
-    <link href='http://fonts.googleapis.com/css?family=Handlee' rel='stylesheet' type='text/css'>
+    <!--<link href='http://fonts.googleapis.com/css?family=Handlee' rel='stylesheet' type='text/css'>-->
 </head>
 
 <body>
@@ -27,9 +27,9 @@
         <img src="images/icon-horizontal.jpg" alt="rotate" />
     </div>
 </div>
-<div id="menu-container">
+<div id="panel-container">
     <div class="jumbotron"></div>
-    <div id="menu-main" class="menu">
+    <div id="panel-main" class="panel">
         <ul>
             <li>
                 <a id="create">Create Game</a>
@@ -37,7 +37,7 @@
             <li>
                 <a id="join">Join Game</a>
             </li>
-            <li class="disable">
+            <li>
                 <a id="how-to-play">How To Play</a>
             </li>
             <li class="disable">
@@ -51,7 +51,7 @@
             </li>
         </ul>
     </div>
-    <div id="menu-host" class="menu" style="display: none;">
+    <div id="panel-host" class="panel" style="display: none;">
         Username: <input id="username-host" type="text"/>
         <br>
         <br>
@@ -62,7 +62,7 @@
         <a id="host" class="button-action">Create</a>
         <a class="button-action back">Back</a>
     </div>
-    <div id="menu-join" class="menu" style="display: none;">
+    <div id="panel-join" class="panel" style="display: none;">
         Username: <input id="username-join" type="text"/>
         <br>
         <br>
@@ -71,6 +71,50 @@
         <br>
         <a id="connect" class="button-action">Connect</a>
         <a class="button-action back">Back</a>
+    </div>
+    <div id="panel-how-to-play" class="panel" style="display:none;">
+        <h1>Collect all five Elements to win!</h1>
+        <p>
+            <span class="card-text water">Water</span><span class="card-text fire">Fire</span>
+            <span class="card-text metal">Metal</span><span class="card-text wood">Wood</span>
+            <span class="card-text earth">Earth</span>
+        </p>
+        <p>
+            The order of the cards is not important.
+        </p>
+        <p>
+            <span class="card-text light">Light</span> is wild and can represent any element you need to win
+        </p>
+        <p>
+            <span class="card-text dark">Dark</span> does not contribute to winning and is often used to block your opponent's slot.
+        </p>
+        <p>
+            You <b>must</b> always play your card even if you don't like the result.
+        </p>
+
+        <h2>Element Card</h2>
+        <p>
+            An element card can be played into any empty slot or replace any element it can defeat.
+        </p>
+        <p>
+            You can see the colors of the replaceable elements at the top left corner of each card.
+        </p>
+        <p>
+            <div class="cards">
+                <ul class="cards-row">
+                    <li class="card dim water" data-content="Water"></li>
+                    <li class="card dim fire" data-content="Fire"></li>
+                    <li class="card dim metal" data-content="Metal"></li>
+                    <li class="card dim wood" data-content="Wood"></li>
+                    <li class="card dim earth" data-content="Earth"></li>
+                </ul>
+                <ul class="cards-row">
+                    <li class="card dim light" data-content="Light"></li>
+                    <li class="card dim dark" data-content="Dark"></li>
+                </ul>
+            </div>
+        </p>
+        <h2>Action Card</h2>
     </div>
     <div class="warning browser" style="display: none;">
         <div class="important">Your browser version: <span id="browsers"></span><br>
