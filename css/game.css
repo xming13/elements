@@ -81,11 +81,12 @@ ul {
 
 #menu-main ul li {
     margin: 0 0 5px;
-    padding: 8px;
     background: #b7009d;
 }
 
 #menu-main ul li a {
+    display: block;
+    padding: 8px;
     font: 20px Handlee, cursive;
     color: #fff;
     cursor: pointer;
@@ -257,12 +258,15 @@ ul {
     background-size: contain;
 }
 
-.draw-cards ul li.light.animated.flip {
-    -webkit-animation: flip 1s;
-    /* Chrome, Safari, Opera */
+.draw-cards ul li.light.flipcard {
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
     -webkit-animation-iteration-count: 1;
-    animation: flip 1s;
     animation-iteration-count: 1;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    -webkit-animation-name: flipcard;
+    animation-name: flipcard;
 }
 
 .my-cards ul li,
@@ -302,14 +306,14 @@ ul {
     border: 2px solid #1010ff;
 }
 
-ul.cards-row li.water.available {
+.cards ul li.water.available {
     -webkit-box-shadow: 0px 0px 30px 20px rgba(16,16,255,0.4);
     -moz-box-shadow: 0px 0px 30px 20px rgba(16,16,255,0.4);
     box-shadow: 0px 0px 30px 20px rgba(16,16,255,0.4);
 }
 
-ul.cards-row li.water.available:hover,
-ul.cards-row li.water.selected {
+.cards ul li.water.available:hover,
+.cards ul li.water.selected {
     -webkit-box-shadow: 0px 0px 30px 25px rgba(16,16,255,0.8);
     -moz-box-shadow: 0px 0px 30px 25px rgba(16,16,255,0.8);
     box-shadow: 0px 0px 30px 25px rgba(16,16,255,0.8);
@@ -320,14 +324,14 @@ ul.cards-row li.water.selected {
     border: 2px solid #ff1010;
 }
 
-ul.cards-row li.fire.available {
+.cards ul li.fire.available {
     -webkit-box-shadow: 0px 0px 30px 20px rgba(255,16,16,0.4);
     -moz-box-shadow: 0px 0px 30px 20px rgba(255,16,16,0.4);
     box-shadow: 0px 0px 30px 20px rgba(255,16,16,0.4);
 }
 
-ul.cards-row li.fire.available:hover,
-ul.cards-row li.fire.selected {
+.cards ul li.fire.available:hover,
+.cards ul li.fire.selected {
     -webkit-box-shadow: 0px 0px 30px 25px rgba(255,16,16,0.8);
     -moz-box-shadow: 0px 0px 30px 25px rgba(255,16,16,0.8);
     box-shadow: 0px 0px 30px 25px rgba(255,16,16,0.8);
@@ -338,14 +342,14 @@ ul.cards-row li.fire.selected {
     border: 2px solid #ffd700;
 }
 
-ul.cards-row li.metal.available {
+.cards ul li.metal.available {
     -webkit-box-shadow: 0px 0px 30px 20px rgba(255,215,0,0.4);
     -moz-box-shadow: 0px 0px 30px 20px rgba(255,215,0,0.4);
     box-shadow: 0px 0px 30px 20px rgba(255,215,0,0.4);
 }
 
-ul.cards-row li.metal.available:hover,
-ul.cards-row li.metal.selected {
+.cards ul li.metal.available:hover,
+.cards ul li.metal.selected {
     -webkit-box-shadow: 0px 0px 30px 25px rgba(255,215,0,0.8);
     -moz-box-shadow: 0px 0px 30px 25px rgba(255,215,0,0.8);
     box-shadow: 0px 0px 30px 25px rgba(255,215,0,0.8);
@@ -356,14 +360,14 @@ ul.cards-row li.metal.selected {
     border: 2px solid #13e213;
 }
 
-ul.cards-row li.wood.available {
+.cards ul li.wood.available {
     -webkit-box-shadow: 0px 0px 30px 20px rgba(19,226,19,0.4);
     -moz-box-shadow: 0px 0px 30px 20px rgba(19,226,19,0.4);
     box-shadow: 0px 0px 30px 20px rgba(19,226,19,0.4);
 }
 
-ul.cards-row li.wood.available:hover,
-ul.cards-row li.wood.selected {
+.cards ul li.wood.available:hover,
+.cards ul li.wood.selected {
     -webkit-box-shadow: 0px 0px 30px 25px rgba(19,226,19,0.8);
     -moz-box-shadow: 0px 0px 30px 25px rgba(19,226,19,0.8);
     box-shadow: 0px 0px 30px 25px rgba(19,226,19,0.8);
@@ -374,14 +378,14 @@ ul.cards-row li.wood.selected {
     border: 2px solid #a36100;
 }
 
-ul.cards-row li.earth.available {
+.cards ul li.earth.available {
     -webkit-box-shadow: 0px 0px 30px 20px rgba(163,97,0,0.4);
     -moz-box-shadow: 0px 0px 30px 20px rgba(163,97,0,0.4);
     box-shadow: 0px 0px 30px 20px rgba(163,97,0,0.4);
 }
 
-ul.cards-row li.earth.available:hover,
-ul.cards-row li.earth.selected {
+.cards ul li.earth.available:hover,
+.cards ul li.earth.selected {
     -webkit-box-shadow: 0px 0px 30px 25px rgba(163,97,0,0.8);
     -moz-box-shadow: 0px 0px 30px 25px rgba(163,97,0,0.8);
     box-shadow: 0px 0px 30px 25px rgba(163,97,0,0.8);
@@ -392,14 +396,14 @@ ul.cards-row li.earth.selected {
     border: 2px solid #fff;
 }
 
-ul.cards-row li.light.available {
+.cards ul li.light.available {
     -webkit-box-shadow: 0px 0px 30px 20px rgba(255,255,255,0.4);
     -moz-box-shadow: 0px 0px 30px 20px rgba(255,255,255,0.4);
     box-shadow: 0px 0px 30px 20px rgba(255,255,255,0.4);
 }
 
-ul.cards-row li.light.available:hover,
-ul.cards-row li.light.selected {
+.cards ul li.light.available:hover,
+.cards ul li.light.selected {
     -webkit-box-shadow: 0px 0px 30px 25px rgba(255,255,255,0.8);
     -moz-box-shadow: 0px 0px 30px 25px rgba(255,255,255,0.8);
     box-shadow: 0px 0px 30px 25px rgba(255,255,255,0.8);
@@ -410,14 +414,14 @@ ul.cards-row li.light.selected {
     border: 2px solid #181818;
 }
 
-ul.cards-row li.dark.available {
+.cards ul li.dark.available {
     -webkit-box-shadow: 0px 0px 30px 20px rgba(24,24,24,0.4);
     -moz-box-shadow: 0px 0px 30px 20px rgba(24,24,24,0.4);
     box-shadow: 0px 0px 30px 20px rgba(24,24,24,0.4);
 }
 
-ul.cards-row li.dark.available:hover,
-ul.cards-row li.dark.selected {
+.cards ul li.dark.available:hover,
+.cards ul li.dark.selected {
     -webkit-box-shadow: 0px 0px 30px 25px rgba(24,24,24,0.8);
     -moz-box-shadow: 0px 0px 30px 25px rgba(24,24,24,0.8);
     box-shadow: 0px 0px 30px 25px rgba(24,24,24,0.8);
@@ -463,11 +467,14 @@ ul.cards-row li.dark.selected {
 
 .light {
     background-color: #fff;
-    -webkit-animation: light 8s;
-    /* Chrome, Safari, Opera */
+    -webkit-animation-duration: 8s;
+    animation-duration: 8s;
     -webkit-animation-iteration-count: infinite;
-    animation: light 8s;
     animation-iteration-count: infinite;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    -webkit-animation-name: light;
+    animation-name: light;
 }
 
 .dark {
@@ -580,78 +587,72 @@ ul.cards-row li.dark.selected {
 }
 
 /* Chrome, Safari, Opera */
-@-webkit-keyframes flip {
+@-webkit-keyframes flipcard {
     0% {
-        -webkit-transform: perspective(400px) rotate3d(0, 1, 0, -360deg);
-        transform: perspective(400px) rotate3d(0, 1, 0, -360deg);
+        -webkit-transform: perspective(400px) rotate3d(0, 1, 0, 0deg);
+        transform: perspective(400px) rotate3d(0, 1, 0, 0deg);
         -webkit-animation-timing-function: ease-out;
         animation-timing-function: ease-out;
+        z-index: 1;
     }
 
-    40% {
-        -webkit-transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -190deg);
-        transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -190deg);
-        -webkit-animation-timing-function: ease-out;
-        animation-timing-function: ease-out;
+    25% {
+        -webkit-transform: perspective(400px) translate3d(0, 0, 75px) rotate3d(0, 1, 0, 180deg);
+        transform: perspective(400px) translate3d(0, 0, 75px) rotate3d(0, 1, 0, 180deg);
+        -webkit-animation-timing-function: ease-in;
+        animation-timing-function: ease-in;
+        z-index: 1;
     }
 
     50% {
-        -webkit-transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -170deg);
-        transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -170deg);
+        -webkit-transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, 360deg);
+        transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, 360deg);
         -webkit-animation-timing-function: ease-in;
         animation-timing-function: ease-in;
-    }
-
-    80% {
-        -webkit-transform: perspective(400px) scale3d(.95, .95, .95);
-        transform: perspective(400px) scale3d(.95, .95, .95);
-        -webkit-animation-timing-function: ease-in;
-        animation-timing-function: ease-in;
+        z-index: 1;
     }
 
     100% {
-        -webkit-transform: perspective(400px);
-        transform: perspective(400px);
+        -webkit-transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, 360deg);
+        transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, 360deg);
         -webkit-animation-timing-function: ease-in;
         animation-timing-function: ease-in;
+        z-index: 1;
     }
 }
 
 /* Standard syntax */
-@keyframes flip {
+@keyframes flipcard {
     0% {
-        -webkit-transform: perspective(400px) rotate3d(0, 1, 0, -360deg);
-        transform: perspective(400px) rotate3d(0, 1, 0, -360deg);
+        -webkit-transform: perspective(400px) rotate3d(0, 1, 0, 0deg);
+        transform: perspective(400px) rotate3d(0, 1, 0, 0deg);
         -webkit-animation-timing-function: ease-out;
         animation-timing-function: ease-out;
+        z-index: 1;
     }
 
-    40% {
-        -webkit-transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -190deg);
-        transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -190deg);
-        -webkit-animation-timing-function: ease-out;
-        animation-timing-function: ease-out;
+    25% {
+        -webkit-transform: perspective(400px) translate3d(0, 0, 75px) rotate3d(0, 1, 0, 180deg);
+        transform: perspective(400px) translate3d(0, 0, 75px) rotate3d(0, 1, 0, 180deg);
+        -webkit-animation-timing-function: ease-in;
+        animation-timing-function: ease-in;
+        z-index: 1;
     }
 
     50% {
-        -webkit-transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -170deg);
-        transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, -170deg);
+        -webkit-transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, 360deg);
+        transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, 360deg);
         -webkit-animation-timing-function: ease-in;
         animation-timing-function: ease-in;
-    }
-
-    80% {
-        -webkit-transform: perspective(400px) scale3d(.95, .95, .95);
-        transform: perspective(400px) scale3d(.95, .95, .95);
-        -webkit-animation-timing-function: ease-in;
-        animation-timing-function: ease-in;
+        z-index: 1;
     }
 
     100% {
-        -webkit-transform: perspective(400px);
-        transform: perspective(400px);
+        -webkit-transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, 360deg);
+        transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, 360deg);
         -webkit-animation-timing-function: ease-in;
         animation-timing-function: ease-in;
+        z-index: 1;
     }
 }
 
@@ -662,11 +663,11 @@ ul.cards-row li.dark.selected {
     animation-fill-mode: both;
 }
 
-.animated.flip {
+.animated.flipcard {
     -webkit-backface-visibility: visible;
     backface-visibility: visible;
-    -webkit-animation-name: flip;
-    animation-name: flip;
+    -webkit-animation-name: flipcard;
+    animation-name: flipcard;
 }
 
 #actions {
