@@ -111,16 +111,25 @@ ul {
     cursor: pointer;
 }
 
-#panel-how-to-play .card {
-    margin-bottom: 38px;
+#panel-how-to-play h1 {
+    line-height: 40px;
 }
 
-#panel-how-to-play .card:after {
+#panel-how-to-play p {
+    line-height: 25px;
+}
+
+#panel-how-to-play .cards ul li {
+    margin-bottom: 45px;
+}
+
+#panel-how-to-play .cards ul li:after {
     content: attr(data-content);
     position: absolute;
     bottom: -33px;
     left: 50%;
     font-size: 30px;
+    font-weight: bold;
     -webkit-transform: translateX(-50%);
     transform: translateX(-50%);
 }
@@ -744,6 +753,10 @@ and (max-width: 640px) {
         width: 72px;
         height: 116px;
         margin: 10px 4px;
+    }
+
+    .panel {
+        font-size: 18px;
     }
 
     #panel-how-to-play .cards ul li {
