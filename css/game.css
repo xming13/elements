@@ -111,6 +111,12 @@ ul {
     cursor: pointer;
 }
 
+#back {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+}
+
 #panel-how-to-play h1 {
     line-height: 40px;
 }

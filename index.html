@@ -28,6 +28,7 @@
     </div>
 </div>
 <div id="panel-container">
+    <a id="back" class="button-action" style="display: none;">Back</a>
     <div class="jumbotron"></div>
     <div id="panel-main" class="panel">
         <ul>
@@ -60,7 +61,6 @@
         <br>
         <br>
         <a id="host" class="button-action">Create</a>
-        <a class="button-action back">Back</a>
     </div>
     <div id="panel-join" class="panel" style="display: none;">
         Username: <input id="username-join" type="text"/>
@@ -70,7 +70,6 @@
         <br>
         <br>
         <a id="connect" class="button-action">Connect</a>
-        <a class="button-action back">Back</a>
     </div>
     <div id="panel-how-to-play" class="panel" style="display:none;">
         <h1>Collect all five Elements to win!</h1>
@@ -124,6 +123,28 @@
                     <li class="available discard2" data-content="Discard&nbsp;2"></li>
                 </ul>
             </div>
+        </p>
+
+        <h3>Move</h3>
+        <p>
+            Choose one Element card from any player’s row and move it to an <b>empty</b> slot in a different player’s row.
+        </p>
+
+        <h3>Swap</h3>
+        <p>
+            Choose one Element card from any player’s row and swap
+            it with a different Element card from any other player’s row.
+            <br>
+            <b>The two cards must be different Elements.</b>
+        </p>
+
+        <h3>Discard 1 / Discard 2</h3>
+        <p>
+            Discard an equal number of Element
+            cards from the table as the Discard type (shown by the arrows).
+            <br>
+            Cards can be chosen together from the same player (including
+            yourself) or separately from different players.
         </p>
     </div>
     <div class="warning browser" style="display: none;">

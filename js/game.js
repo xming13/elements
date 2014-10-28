@@ -77,12 +77,13 @@ XMing.GameManager = new function() {
     var CARD_NAMES = _.pluck(CARDS, 'name');
 
     var DATA = {
-        DECK: 'deck',
+        INITIAL_DECK: 'initial_deck',
+        UPDATE_DECK: 'update_deck',
         TURN_START: 'turn_start',
         DRAW: 'draw',
         ACTION: 'action',
         MESSAGE: 'message',
-        REQUEST_DECK: 'request_deck'
+        REQUEST_INITIAL_DECK: 'request_initial_deck'
     };
 
     _.templateSettings = {
@@ -118,6 +119,7 @@ XMing.GameManager = new function() {
 
     this.peer = null;
     this.connectedPeers = {};
+    this.isGameHost = false;
 
     this.connect = function(c) {
         console.log('connect');
@@ -171,15 +173,15 @@ XMing.GameManager = new function() {
                 console.log(c.peer);
                 console.log(data);
 
-                if (data.type == DATA.REQUEST_DECK) {
-                    console.log('receive data for request_deck');
+                if (data.type == DATA.REQUEST_INITIAL_DECK) {
+                    console.log('receive data for request initial deck');
 
                     c.send({
-                        type: DATA.DECK,
+                        type: DATA.INITIAL_DECK,
                         deck: m.deck
                     });
-                } else if (data.type == DATA.DECK) {
-                    console.log('receive data for deck');
+                } else if (data.type == DATA.INITIAL_DECK) {
+                    console.log('receive data for initial deck');
 
                     // setting initial deck sent by the host when the game start so that everyone uses the same deck
                     m.deck = data.deck;
@@ -197,6 +199,11 @@ XMing.GameManager = new function() {
 
                     m.isDrawPhase = true;
                     $('#actions').fadeIn();
+                } else if (data.type == DATA.UPDATE_DECK) {
+                    console.log('receive data for update deck');
+
+                    m.deck = m.deck.concat(data.cards);
+                    m.cardsDiscard = [];
                 } else if (data.type == DATA.TURN_START) {
                     console.log('retrieve data for turn start');
 
@@ -256,6 +263,19 @@ XMing.GameManager = new function() {
 
                         messagesGame.append(TEMPLATE.myTurnStart());
                         m.scrollGameMessagesToBottom();
+
+                        // running out of cards in the dec
+                        // so shuffle the discard pile to the end of the deck
+                        if (this.isGameHost && this.deck.length <= 1) {
+                            var shuffleCards = _.shuffle(this.cardsDiscard);
+                            this.deck = this.deck.concat(shuffleCards);
+                            this.cardsDiscard = [];
+
+                            c.send({
+                                type: DATA.UPDATE_DECK,
+                                cards: shuffleCards
+                            });
+                        }
 
                         m.isDrawPhase = true;
                         $('#actions').fadeIn();
@@ -830,29 +850,27 @@ XMing.GameManager = new function() {
 
         // navigate to create connection screen
         $("#create").click(function() {
-            $("#panel-main").hide();
-            $("#panel-host").show();
+            $(".panel").hide();
+            $("#panel-host, #back").show();
             $("#instruction").hide();
         });
 
         // navigate to join connection screen
         $("#join").click(function() {
-            $("#panel-main").hide();
-            $("#panel-join").show();
+            $(".panel").hide();
+            $("#panel-join, #back").show();
         });
 
         // navigate back to main menu screen
-        $(".back").click(function() {
-            $("#panel-host").hide();
-            $("#panel-join").hide();
-            $("#panel-how-to-play").hide();
+        $("#back").click(function() {
+            $(".panel, #back").hide();
             $("#panel-main").show();
             self.destroy();
         });
 
         $("#how-to-play").click(function() {
             $("#panel-main").hide();
-            $("#panel-how-to-play").show();
+            $("#panel-how-to-play, #back").show();
         })
 
         // create new connection
@@ -874,6 +892,7 @@ XMing.GameManager = new function() {
 
                 self.peer.on('connection', function(c) {
                     console.log('on connection');
+                    self.isGameHost = true;
                     self.connect(c);
 
                     $("#gameboard").show();
@@ -918,8 +937,10 @@ XMing.GameManager = new function() {
                     c.on('open', function() {
                         console.log('connect open start');
                         self.connect(c);
+                        self.isGameHost = false;
+
                         c.send({
-                            type: DATA.REQUEST_DECK
+                            type: DATA.REQUEST_INITIAL_DECK
                         });
 
                         console.log('connect open end');
