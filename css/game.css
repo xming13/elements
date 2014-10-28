@@ -272,17 +272,6 @@ ul {
     background-image: url('../images/draw.png');
 }
 
-.draw-cards ul li.light.flipcard {
-    -webkit-animation-duration: 1s;
-    animation-duration: 1s;
-    -webkit-animation-iteration-count: 1;
-    animation-iteration-count: 1;
-    -webkit-animation-fill-mode: both;
-    animation-fill-mode: both;
-    -webkit-animation-name: flipcard;
-    animation-name: flipcard;
-}
-
 .my-cards ul li,
 .opp-cards ul li {
     background-image: url('../images/empty.png');
@@ -420,6 +409,8 @@ ul {
     -webkit-box-shadow: 0px 0px 30px 25px rgba(255,255,255,0.8);
     -moz-box-shadow: 0px 0px 30px 25px rgba(255,255,255,0.8);
     box-shadow: 0px 0px 30px 25px rgba(255,255,255,0.8);
+    -webkit-animation: 0;
+    animation: 0;
 }
 
 .cards ul li.dark {
@@ -438,6 +429,19 @@ ul {
     -webkit-box-shadow: 0px 0px 30px 25px rgba(24,24,24,0.8);
     -moz-box-shadow: 0px 0px 30px 25px rgba(24,24,24,0.8);
     box-shadow: 0px 0px 30px 25px rgba(24,24,24,0.8);
+}
+
+/* Special case: override animation for .light.flipcard */
+.cards ul li.light.available.flipcard:hover,
+.cards ul li.light.selected.flipcard {
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-iteration-count: 1;
+    animation-iteration-count: 1;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    -webkit-animation-name: flipcard;
+    animation-name: flipcard;
 }
 
 .card-text {
@@ -513,6 +517,10 @@ ul {
 
 .earth.dim {
     color: #a36100;
+}
+
+.light.dim {
+    color: #fff;
 }
 
 .dark.dim {
@@ -732,11 +740,17 @@ ul {
 @media only screen
 and (min-width: 320px)
 and (max-width: 640px) {
-    #panel-how-to-play .card {
+    .cards ul li {
+        width: 72px;
+        height: 116px;
+        margin: 10px 4px;
+    }
+
+    #panel-how-to-play .cards ul li {
         margin-bottom: 33px;
     }
 
-    #panel-how-to-play .card:after {
+    #panel-how-to-play .cards ul li:after {
         bottom: -28px;
         font-size: 20px;
     }
@@ -746,20 +760,14 @@ and (max-width: 640px) {
         line-height: 18px;
     }
 
-    #draw {
-        width: 380px;
-    }
-
-    .cards ul li {
-        width: 72px;
-        height: 116px;
-        margin: 10px 4px;
-    }
-
-    .messages-chat .card-text {
+    .messages .card-text {
         margin: 0 2px;
         padding: 0 5px;
         font: bold 8px 'Gloria Hallelujah', cursive;
+    }
+
+    #draw {
+        width: 380px;
     }
 }
 
