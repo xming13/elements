@@ -9,6 +9,7 @@ XMing.AchievementManager = (function() {
         numGameWon: 0,
         numGameLost: 0,
         numDeckFinished: 0,
+        numPlaceDarkToSelf: 0,
         numMoveDarkToOpp: 0,
         numMoveOppLightToSelf: 0,
         numSwapOppLightWithOwnDark: 0,
@@ -36,13 +37,13 @@ XMing.AchievementManager = (function() {
             title: 'First Game',
             description: 'A new journey begins!',
             badgeUrl: '',
-            hasAwarded: function() { return stats.numGamePlayed > 0; }
+            hasAwarded: function() { return stats.numGamePlayed >= 1; }
         },
         {
             title: 'Game Lover <3',
             description: 'Thanks for playing so much!!!',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numGamePlayed; },
             goal: 100
         },
@@ -50,7 +51,7 @@ XMing.AchievementManager = (function() {
             title: 'A Worthy Opponent',
             description: 'No winner yet after finishing a deck',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDeckFinished; },
             goal: 1
         },
@@ -58,7 +59,7 @@ XMing.AchievementManager = (function() {
             title: 'GODLIGHT',
             description: 'Won with 5 light elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numWonWithFiveLight; },
             goal: 1
         },
@@ -66,7 +67,7 @@ XMing.AchievementManager = (function() {
             title: 'The Purist',
             description: 'Won without light elements 100 times',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numWonWithoutLight; },
             goal: 100
         },
@@ -74,7 +75,7 @@ XMing.AchievementManager = (function() {
             title: 'You Are The Friendliest',
             description: 'Help opponent win 5 times',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numHelpOppWin; },
             goal: 5
         },
@@ -82,15 +83,23 @@ XMing.AchievementManager = (function() {
             title: 'So Much Charm',
             description: 'Won by opponent\'s help 5 times',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numHelpedByOppWin; },
             goal: 5
+        },
+        {
+            title: 'The Sadist',
+            description: 'Put dark element on your row 10 times',
+            badgeUrl: '',
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
+            getCurrent: function() { return stats.numPlaceDarkToSelf; },
+            goal: 10
         },
         {
             title: 'The Evilist',
             description: 'Swap light element with opponent\'s dark element 10 times',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numSwapOppLightWithOwnDark; },
             goal: 10
         },
@@ -98,7 +107,7 @@ XMing.AchievementManager = (function() {
             title: 'Guide the Misguided',
             description: 'Move opponent\'s light element to your side 10 times',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numMoveOppLightToSelf; },
             goal: 10
         },
@@ -106,23 +115,23 @@ XMing.AchievementManager = (function() {
             title: 'Take No Evil',
             description: 'Move dark element to your opponent\'s side 10 times',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numMoveDarkToOpp; },
             goal: 10
         },
         {
-            title: 'The Fast and Furious',
+            title: 'Fast and Furious',
             description: 'Won the match within 5 turns',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() <= this.goal; },
             getCurrent: function() { return stats.numLeastTurnWon; },
-            goal: 1
+            goal: 5
         },
         {
             title: 'The Unluckiest',
             description: 'Have 5 dark elements in a row',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numFiveInRowDark; },
             goal: 1
         },
@@ -130,7 +139,7 @@ XMing.AchievementManager = (function() {
             title: 'Tsunami',
             description: 'Have 5 water elements in a row',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numFiveInRowWater; },
             goal: 1
         },
@@ -138,7 +147,7 @@ XMing.AchievementManager = (function() {
             title: 'Inferno',
             description: 'Have 5 fire elements in a row',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numFiveInRowFire; },
             goal: 1
         },
@@ -146,7 +155,7 @@ XMing.AchievementManager = (function() {
             title: 'Sword Dance',
             description: 'Have 5 metal elements in a row',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numFiveInRowWater; },
             goal: 1
         },
@@ -154,7 +163,7 @@ XMing.AchievementManager = (function() {
             title: '???',
             description: 'Have 5 wood elements in a row',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numFiveInRowWood; },
             goal: 1
         },
@@ -162,7 +171,7 @@ XMing.AchievementManager = (function() {
             title: 'Earthquake',
             description: 'Have 5 earth elements in a row',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numFiveInRowEarth; },
             goal: 1
         },
@@ -170,7 +179,7 @@ XMing.AchievementManager = (function() {
             title: 'Water Apprentice',
             description: 'Defeat 10 water elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementWater; },
             goal: 10
         },
@@ -178,7 +187,7 @@ XMing.AchievementManager = (function() {
             title: 'Fire Apprentice',
             description: 'Defeat 10 fire elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementFire; },
             goal: 10
         },
@@ -186,7 +195,7 @@ XMing.AchievementManager = (function() {
             title: 'Metal Apprentice',
             description: 'Defeat 10 metal elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementMetal; },
             goal: 10
         },
@@ -194,7 +203,7 @@ XMing.AchievementManager = (function() {
             title: 'Wood Apprentice',
             description: 'Defeat 10 wood elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementWood; },
             goal: 10
         },
@@ -202,7 +211,7 @@ XMing.AchievementManager = (function() {
             title: 'Earth Apprentice',
             description: 'Defeat 10 earth elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementEarth; },
             goal: 10
         },
@@ -210,7 +219,7 @@ XMing.AchievementManager = (function() {
             title: 'Dark Apprentice',
             description: 'Defeat 5 dark elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementDark; },
             goal: 5
         },
@@ -218,7 +227,7 @@ XMing.AchievementManager = (function() {
             title: 'Water Master',
             description: 'Defeat 25 water elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementWater; },
             goal: 25
         },
@@ -226,7 +235,7 @@ XMing.AchievementManager = (function() {
             title: 'Fire Master',
             description: 'Defeat 25 fire elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementFire; },
             goal: 25
         },
@@ -234,7 +243,7 @@ XMing.AchievementManager = (function() {
             title: 'Metal Master',
             description: 'Defeat 25 metal elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementMetal; },
             goal: 25
         },
@@ -242,7 +251,7 @@ XMing.AchievementManager = (function() {
             title: 'Wood Master',
             description: 'Defeat 25 wood elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementWood; },
             goal: 25
         },
@@ -250,7 +259,7 @@ XMing.AchievementManager = (function() {
             title: 'Earth Master',
             description: 'Defeat 25 earth elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementEarth; },
             goal: 25
         },
@@ -258,7 +267,7 @@ XMing.AchievementManager = (function() {
             title: 'Dark Master',
             description: 'Defeat 13 dark elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementDark; },
             goal: 13
         },
@@ -266,7 +275,7 @@ XMing.AchievementManager = (function() {
             title: 'Water GrandMaster',
             description: 'Defeat 50 water elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementWater; },
             goal: 50
         },
@@ -274,7 +283,7 @@ XMing.AchievementManager = (function() {
             title: 'Fire GrandMaster',
             description: 'Defeat 50 fire elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementFire; },
             goal: 50
         },
@@ -282,7 +291,7 @@ XMing.AchievementManager = (function() {
             title: 'Metal GrandMaster',
             description: 'Defeat 50 metal elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementMetal; },
             goal: 50
         },
@@ -290,7 +299,7 @@ XMing.AchievementManager = (function() {
             title: 'Wood GrandMaster',
             description: 'Defeat 50 wood elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementWood; },
             goal: 50
         },
@@ -298,7 +307,7 @@ XMing.AchievementManager = (function() {
             title: 'Earth GrandMaster',
             description: 'Defeat 50 earth elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementEarth; },
             goal: 50
         },
@@ -306,11 +315,13 @@ XMing.AchievementManager = (function() {
             title: 'Dark GrandMaster',
             description: 'Defeat 25 dark elements',
             badgeUrl: '',
-            hasAwarded: function() { return this.getCurrent() > this.goal; },
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numDefeatElementDark; },
             goal: 25
         }
     ];
+
+    var numMaxCards = 98;
 
     function init() {
         if (isLocalStorageSupported()) {
@@ -328,36 +339,153 @@ XMing.AchievementManager = (function() {
         }
     }
 
-    function updateStats(eventType, meta) {
+    function updateStats(eventType, data) {
         if (hasLocalStorage) {
-            if (eventType === 'won' || eventType === 'lost') {
-                stats.numGamePlayed++;
 
-                if (eventType === 'won') {
-                    stats.numGameWon++;
-                }
-                else {
-                    stats.numGameLost++;
-                }
+            switch (eventType) {
+                case 'shuffle':
+                    stats.numDeckFinished++;
+                    break;
+                case 'won':
+                case 'lost':
+                    stats.numGamePlayed++;
 
-                var myCards = _.last(eventType, 5);
+                    var numTurn = Math.ceil((numMaxCards - data.numCardLeft) / 2);
 
-                var numLightCard = 0
-                _.each(myCards, function(card) {
-                    if (card && card.name === 'light') {
-                        numLightCard++;
+                    if (eventType === 'won') {
+                        stats.numGameWon++;
+
+                        if (stats.numLeastTurnWon > numTurn) {
+                            stats.numLeastTurnWon = numTurn;
+                        }
+
+                        if ((data.isGameHost && !isGameHostTurn(numTurn))
+                        || (!data.isGameHost && isGameHostTurn(numTurn))) {
+                            stats.numHelpedByOppWin++;
+                        }
+
+                        var numLightCard = _.filter(data.myCards, function(card) {
+                            return !_.isUndefined(card) && card.name === 'light';
+                        }).length;
+
+                        if (numLightCard == 5) {
+                            stats.numWonWithFiveLight++;
+                        }
+                        else if (numLightCard == 0) {
+                            stats.numWonWithoutLight++;
+                        }
                     }
-                });
+                    else {
+                        stats.numGameLost++;
 
-                if (numLightCard == 5) {
-                    stats.numWonWithFiveLight++;
-                }
-                else if (numLightCard == 0) {
-                    stats.numWonWithoutLight++;
+                        if ((data.isGameHost && isGameHostTurn(numTurn))
+                            || (!data.isGameHost && !isGameHostTurn(numTurn))) {
+                            stats.numHelpOppWin++;
+                        }
+                    }
+
+                    saveData(stats);
+                    console.log('data saved');
+
+                    console.log(stats);
+
+                    console.log('get saved data');
+
+                    console.log(getSavedData());
+
+                    break;
+                case 'element':
+                    if (!_.isUndefined(data.originalCardOnBoard)) {
+                        switch (data.originalCardOnBoard.name) {
+                            case 'water':
+                                stats.numDefeatElementWater++;
+                                break;
+                            case 'fire':
+                                stats.numDefeatElementFire++;
+                                break;
+                            case 'metal':
+                                stats.numDefeatElementMetal++;
+                                break;
+                            case 'wood':
+                                stats.numDefeatElementWood++;
+                                break;
+                            case 'earth':
+                                stats.numDefeatElementEarth++;
+                                break;
+                            case 'dark':
+                                stats.numDefeatElementDark++;
+                                break;
+                        }
+                    }
+
+                    if (data.cardPlayed.name === 'dark' && data.slotIndex < 5) {
+                        stats.numPlaceDarkToSelf++;
+                    }
+                    checkFiveInARow(data.myCards);
+                    break;
+                case 'move':
+                    if (data.cardFrom.name === 'dark' && data.indexFrom < 5) {
+                        stats.numMoveDarkToOpp++;
+                    }
+                    else if (data.cardFrom.name === 'light' && data.indexFrom >= 5) {
+                        stats.numMoveOppLightToSelf++;
+                    }
+                    checkFiveInARow(data.myCards);
+                    break;
+                case 'swap':
+                    if ((data.cardFrom.name === 'dark' && data.cardTo.name === 'light' && data.indexFrom < 5)
+                    || (data.cardFrom.name === 'light' && data.cardTo.name === 'dark' && data.indexFrom >= 5)){
+                        stats.numSwapOppLightWithOwnDark++;
+                    }
+                    checkFiveInARow(data.myCards);
+                    break;
+            }
+
+            function isGameHostTurn(numTurn) {
+                return numTurn % 2 == 0;
+            }
+
+            function checkFiveInARow(myCards) {
+                var name = '';
+                var isSameForAll = true;
+                for (var i = 0; i < myCards.length; i++) {
+                    if (_.isUndefined(myCards[i])) {
+                        isSameForAll = false;
+                        break;
+                    }
+
+                    if (name === '') {
+                        name = myCards[i].name;
+                    }
+
+                    if (name !== myCards[i].name) {
+                        isSameForAll = false;
+                        break;
+                    }
                 }
 
-                saveData(stats);
-                console.log('data saved');
+                if (isSameForAll) {
+                    switch (name) {
+                        case 'water':
+                            stats.numFiveInRowWater++;
+                            break;
+                        case 'fire':
+                            stats.numFiveInRowFire++;
+                            break;
+                        case 'metal':
+                            stats.numFiveInRowMetal++;
+                            break;
+                        case 'wood':
+                            stats.numFiveInRowWood++;
+                            break;
+                        case 'earth':
+                            stats.numFiveInRowEarth++;
+                            break;
+                        case 'dark':
+                            stats.numFiveInRowDark++;
+                            break;
+                    }
+                }
             }
         }
     }
@@ -402,7 +530,8 @@ XMing.AchievementManager = (function() {
     return {
         init: init,
         updateStats: updateStats,
-        getAchievements: getAchievements
+        getAchievements: getAchievements,
+        printStats: function() { console.log(stats); }
     }
 })();
 

@@ -206,13 +206,18 @@ XMing.GameManager = new function() {
 
                     m.deck = m.deck.concat(data.cards);
                     m.cardsDiscard = [];
+
+                    XMing.AchievementManager.updateStats('shuffle', {});
+
                 } else if (data.type == DATA.TURN_START) {
                     console.log('retrieve data for turn start');
 
                     messagesGame.append(TEMPLATE.oppTurnStart({
                         peer: c.peer
                     }));
+
                     m.scrollChatMessagesToBottom();
+
                 } else if (data.type == DATA.DRAW) {
                     console.log('receive data for draw');
                     m.deck.splice(data.indexDraw, 1);
@@ -221,7 +226,9 @@ XMing.GameManager = new function() {
                         peer: c.peer,
                         cardName: data.cardName
                     }));
+
                     m.scrollGameMessagesToBottom();
+
                 } else if (data.type == DATA.ACTION) {
                     console.log('receive data for action');
 
@@ -277,6 +284,8 @@ XMing.GameManager = new function() {
                                 type: DATA.UPDATE_DECK,
                                 cards: shuffleCards
                             });
+
+                            XMing.AchievementManager.updateStats('shuffle', {});
                         }
 
                         m.isDrawPhase = true;
@@ -721,16 +730,34 @@ XMing.GameManager = new function() {
     };
 
     this.performCardAction = function(card, selectedSlots) {
-        if (card.type == 'element') {
-            this.cardsOnBoard[selectedSlots[0]] = card;
-        } else {
-            switch (card.name) {
-                case 'move':
-                    var fromIndex = selectedSlots[0];
-                    var toIndex = selectedSlots[1];
+        var self = this;
 
-                    this.cardsOnBoard[toIndex] = this.cardsOnBoard[fromIndex];
-                    delete this.cardsOnBoard[fromIndex];
+        if (card.type == 'element') {
+            var cardOriginal = self.cardsOnBoard[selectedSlots[0]];
+            this.cardsOnBoard[selectedSlots[0]] = card;
+
+            XMing.AchievementManager.updateStats('element', {
+                cardPlayed: card,
+                originalCardOnBoard: cardOriginal,
+                slotIndex: selectedSlots[0],
+                myCards: _.filter(self.cardsOnBoard, isMyCards)
+            });
+        } else {
+            switch (card.name) { 
+                case 'move':
+                    var indexFrom = selectedSlots[0];
+                    var indexTo = selectedSlots[1];
+
+                    var cardFrom = this.cardsOnBoard[indexFrom];
+
+                    this.cardsOnBoard[indexTo] = cardFrom;
+                    delete this.cardsOnBoard[indexFrom];
+
+                    XMing.AchievementManager.updateStats('move', {
+                        indexFrom: indexFrom,
+                        cardFrom: cardFrom,
+                        myCards: _.filter(self.cardsOnBoard, isMyCards)
+                    });
                     break;
                 case 'discard 1':
                     delete this.cardsOnBoard[selectedSlots[0]];
@@ -743,12 +770,23 @@ XMing.GameManager = new function() {
                     }
                     break;
                 case 'swap':
-                    var fromIndex = selectedSlots[0];
-                    var toIndex = selectedSlots[1];
+                    var indexFrom = selectedSlots[0];
+                    var indexTo = selectedSlots[1];
 
-                    var tempCards = this.cardsOnBoard[toIndex];
-                    this.cardsOnBoard[toIndex] = this.cardsOnBoard[fromIndex];
-                    this.cardsOnBoard[fromIndex] = tempCards;
+                    var cardFrom = this.cardsOnBoard[indexFrom];
+                    var cardTo = this.cardsOnBoard[indexTo];
+
+                    var tempCards = cardTo;
+                    this.cardsOnBoard[indexTo] = cardFrom;
+                    this.cardsOnBoard[indexFrom] = tempCards;
+
+                    XMing.AchievementManager.updateStats('swap', {
+                        indexFrom: indexFrom,
+                        cardFrom: cardFrom,
+                        indexTo: indexTo,
+                        cardTo: cardTo,
+                        myCards: _.filter(self.cardsOnBoard, isMyCards)
+                    });
 
                     break;
             }
@@ -1011,18 +1049,28 @@ XMing.GameManager = new function() {
     this.endGame = function(isYouWin) {
         console.log("end game");
 
+        var self = this;
+
         if (isYouWin) {
             swal('You won!', 'Congratulations!', 'success');
             $('.messages-game').append(TEMPLATE.myWin());
             this.scrollChatMessagesToBottom();
 
-            XMing.AchievementManager.updateStats('won', this.cardsOnBoard);
+            XMing.AchievementManager.updateStats('won', {
+                myCards: _.filter(self.cardsOnBoard, isMyCards),
+                numCardLeft: self.numCardLeft,
+                isGameHost: self.isGameHost
+            });
         } else {
             swal('You lost!', 'Play again!', 'error');
             $('.messages-game').append(TEMPLATE.myLose());
             this.scrollChatMessagesToBottom();
 
-            XMing.AchievementManager.updateStats('lost', this.cardsOnBoard);
+            XMing.AchievementManager.updateStats('lost', {
+                myCards: _.filter(self.cardsOnBoard, isMyCards),
+                numCardLeft: self.deck.length,
+                isGameHost: self.isGameHost
+            });
         }
 
         this.isGameEnd = true;
