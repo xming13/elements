@@ -10,6 +10,7 @@ XMing.AchievementManager = (function() {
         numGameLost: 0,
         numDeckFinished: 0,
         numPlaceDarkToSelf: 0,
+        numDiscardLight: 0,
         numMoveDarkToOpp: 0,
         numMoveOppLightToSelf: 0,
         numSwapOppLightWithOwnDark: 0,
@@ -65,15 +66,15 @@ XMing.AchievementManager = (function() {
         },
         {
             title: 'The Purist',
-            description: 'Won without light elements 100 times',
+            description: 'Won without light elements 20 times',
             badgeUrl: '',
             hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numWonWithoutLight; },
-            goal: 100
+            goal: 20
         },
         {
             title: 'You Are The Friendliest',
-            description: 'Help opponent win 5 times',
+            description: 'Help opponent to win 5 times',
             badgeUrl: '',
             hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numHelpOppWin; },
@@ -96,6 +97,14 @@ XMing.AchievementManager = (function() {
             goal: 10
         },
         {
+            title: '???',
+            description: 'Discard light elements 20 times',
+            badgeUrl: '',
+            hasAwarded: function() { return this.getCurrent() >= this.goal; },
+            getCurrent: function() { return stats.numDiscardLight; },
+            goal: 20
+        },
+        {
             title: 'The Evilist',
             description: 'Swap light element with opponent\'s dark element 10 times',
             badgeUrl: '',
@@ -105,7 +114,7 @@ XMing.AchievementManager = (function() {
         },
         {
             title: 'Guide the Misguided',
-            description: 'Move opponent\'s light element to your side 10 times',
+            description: 'Move opponent\'s light element to your row 10 times',
             badgeUrl: '',
             hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numMoveOppLightToSelf; },
@@ -113,7 +122,7 @@ XMing.AchievementManager = (function() {
         },
         {
             title: 'Take No Evil',
-            description: 'Move dark element to your opponent\'s side 10 times',
+            description: 'Move dark element to your opponent\'s row 10 times',
             badgeUrl: '',
             hasAwarded: function() { return this.getCurrent() >= this.goal; },
             getCurrent: function() { return stats.numMoveDarkToOpp; },
@@ -121,7 +130,7 @@ XMing.AchievementManager = (function() {
         },
         {
             title: 'Fast and Furious',
-            description: 'Won the match within 5 turns',
+            description: 'Won a game within 5 turns',
             badgeUrl: '',
             hasAwarded: function() { return this.getCurrent() <= this.goal; },
             getCurrent: function() { return stats.numLeastTurnWon; },
@@ -432,9 +441,14 @@ XMing.AchievementManager = (function() {
                     }
                     checkFiveInARow(data.myCards);
                     break;
+                case 'discard':
+                    if (data.cardDiscard.name === 'light') {
+                        stats.numDiscardLight++;
+                    }
+                    break;
                 case 'swap':
                     if ((data.cardFrom.name === 'dark' && data.cardTo.name === 'light' && data.indexFrom < 5)
-                    || (data.cardFrom.name === 'light' && data.cardTo.name === 'dark' && data.indexFrom >= 5)){
+                    || (data.cardFrom.name === 'light' && data.cardTo.name === 'dark' && data.indexFrom >= 5)) {
                         stats.numSwapOppLightWithOwnDark++;
                     }
                     checkFiveInARow(data.myCards);

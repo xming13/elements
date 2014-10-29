@@ -743,7 +743,7 @@ XMing.GameManager = new function() {
                 myCards: _.filter(self.cardsOnBoard, isMyCards)
             });
         } else {
-            switch (card.name) { 
+            switch (card.name) {
                 case 'move':
                     var indexFrom = selectedSlots[0];
                     var indexTo = selectedSlots[1];
@@ -760,13 +760,28 @@ XMing.GameManager = new function() {
                     });
                     break;
                 case 'discard 1':
-                    delete this.cardsOnBoard[selectedSlots[0]];
-                    break;
-                case 'discard 2':
+                    var cardDiscard = this.cardsOnBoard[selectedSlots[0]];
                     delete this.cardsOnBoard[selectedSlots[0]];
 
+                    XMing.AchievementManager.updateStats('discard', {
+                        cardDiscard: cardDiscard
+                    });
+                    break;
+                case 'discard 2':
+                    var cardDiscard = this.cardsOnBoard[selectedSlots[0]];
+                    delete this.cardsOnBoard[selectedSlots[0]];
+
+                    XMing.AchievementManager.updateStats('discard', {
+                        cardDiscard: cardDiscard
+                    });
+
                     if (!_.isUndefined(selectedSlots[1])) {
+                        var cardDiscard2 = this.cardsOnBoard[selectedSlots[1]];
                         delete this.cardsOnBoard[selectedSlots[1]];
+
+                        XMing.AchievementManager.updateStats('discard', {
+                            cardDiscard: cardDiscard2
+                        });
                     }
                     break;
                 case 'swap':
