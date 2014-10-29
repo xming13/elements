@@ -44,8 +44,8 @@
             <li class="disable">
                 <a id="options">Options</a>
             </li>
-            <li class="disable">
-                <a id="achievement">Achievement</a>
+            <li>
+                <a id="achievement">Achielements</a>
             </li>
             <li class="disable">
                 <a id="about">About</a>
@@ -133,9 +133,7 @@
         <h3>Swap</h3>
         <p>
             Choose one Element card from any player’s row and swap
-            it with a different Element card from any other player’s row.
-            <br>
-            <b>The two cards must be different Elements.</b>
+            it with a <b>different</b> Element card from a different player’s row.
         </p>
 
         <h3>Discard 1 / Discard 2</h3>
@@ -146,6 +144,11 @@
             Cards can be chosen together from the same player (including
             yourself) or separately from different players.
         </p>
+    </div>
+    <div id="panel-achievement" class="panel" style="display:none;">
+        <h1>Achielements</h1>
+        <div class="achievements">
+        </div>
     </div>
     <div class="warning browser" style="display: none;">
         <div class="important">Your browser version: <span id="browsers"></span><br>
@@ -201,10 +204,12 @@
 <script type="text/javascript" src="js/underscore-min.js"></script>
 <script type="text/javascript" src="js/sweet-alert.min.js"></script>
 <script type="text/javascript" src="js/peer.js"></script>
+<script type="text/javascript" src="js/achievement.js"></script>
 <script type="text/javascript" src="js/game.js"></script>
 
 <script>
     $(document).ready(function () {
+        XMing.AchievementManager.init();
         XMing.GameManager.init();
 
         // http://stackoverflow.com/a/5918791

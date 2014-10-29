@@ -107,7 +107,9 @@ XMing.GameManager = new function() {
         oppDraw: _.template('<div><span class="peer">{{ peer }}</span> draws <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span> !</div>'),
         oppAction: _.template('<div><span class="peer">{{ peer }}</span> plays <span class="card-text {# print(cardName.replace(\' \', \'\')); }}">{{ cardName }}</span> !</div>'),
         oppActionFail: _.template('<div><span class="peer">{{ peer }}</span> has no available move!</div>'),
-        oppMessage: _.template('<div><span class="peer">{{ peer }} :</span> {- message }}</div>')
+        oppMessage: _.template('<div><span class="peer">{{ peer }} :</span> {- message }}</div>'),
+
+        achievement: _.template('<div><span><b>{{ title }}</b></span><br><span>{{ description }}</span> - <span>{{ awarded }}</span><span>{{ progress }}</span></div><br>')
     };
 
     this.deck = [];
@@ -873,6 +875,26 @@ XMing.GameManager = new function() {
             $("#panel-how-to-play, #back").show();
         })
 
+        $('#achievement').click(function() {
+            _.each(XMing.AchievementManager.getAchievements(), function(achievement) {
+
+                $('.achievements').append(TEMPLATE.achievement({
+                    title: achievement.title,
+                    description: achievement.description,
+                    awarded: achievement.hasAwarded() ? 'Awarded' : 'Not Awarded',
+                    progress: (function() {
+                        if (achievement.getCurrent && achievement.goal) {
+                            return ' - ' + achievement.getCurrent() + ' / ' + achievement.goal;
+                        }
+                        return ''
+                    })()
+                }));
+            });
+
+            $('.panel').hide();
+            $('#panel-achievement, #back').show();
+        })
+
         // create new connection
         $("#host").click(function() {
             var usernameHost = $("#username-host").val();
@@ -993,10 +1015,14 @@ XMing.GameManager = new function() {
             swal('You won!', 'Congratulations!', 'success');
             $('.messages-game').append(TEMPLATE.myWin());
             this.scrollChatMessagesToBottom();
+
+            XMing.AchievementManager.updateStats('won', this.cardsOnBoard);
         } else {
             swal('You lost!', 'Play again!', 'error');
             $('.messages-game').append(TEMPLATE.myLose());
             this.scrollChatMessagesToBottom();
+
+            XMing.AchievementManager.updateStats('lost', this.cardsOnBoard);
         }
 
         this.isGameEnd = true;
