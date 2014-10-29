@@ -258,7 +258,7 @@ XMing.GameManager = new function() {
                         var card = _.findWhere(CARDS, {
                             name: data.cardName
                         });
-                        m.performCardAction(card, slots);
+                        m.performCardAction(card, slots, false);
                         m.updateUI();
                         m.checkGameStatus();
                         m.scrollGameMessagesToBottom();
@@ -448,7 +448,7 @@ XMing.GameManager = new function() {
                 });
 
             function processElementSelected(card, selectedSlot) {
-                self.performCardAction(card, [selectedSlot]);
+                self.performCardAction(card, [selectedSlot], true);
                 self.updateUI();
                 self.eachActiveConnection(function(c, $c) {
                     if (c.label === 'game') {
@@ -495,7 +495,7 @@ XMing.GameManager = new function() {
         var selectedSlots = [];
 
         var doAction = function(card, selectedSlots) {
-            self.performCardAction(card, selectedSlots);
+            self.performCardAction(card, selectedSlots, true);
             self.updateUI();
             self.eachActiveConnection(function(c, $c) {
                 if (c.label === 'game') {
@@ -729,19 +729,21 @@ XMing.GameManager = new function() {
         $($(".cards-row li")[slotNumber]).addClass('selected');
     };
 
-    this.performCardAction = function(card, selectedSlots) {
+    this.performCardAction = function(card, selectedSlots, isByMe) {
         var self = this;
 
         if (card.type == 'element') {
             var cardOriginal = self.cardsOnBoard[selectedSlots[0]];
             this.cardsOnBoard[selectedSlots[0]] = card;
 
-            XMing.AchievementManager.updateStats('element', {
-                cardPlayed: card,
-                originalCardOnBoard: cardOriginal,
-                slotIndex: selectedSlots[0],
-                myCards: _.filter(self.cardsOnBoard, isMyCards)
-            });
+            if (isByMe) {
+                XMing.AchievementManager.updateStats('element', {
+                    cardPlayed: card,
+                    originalCardOnBoard: cardOriginal,
+                    slotIndex: selectedSlots[0],
+                    myCards: _.filter(self.cardsOnBoard, isMyCards)
+                });
+            }
         } else {
             switch (card.name) {
                 case 'move':
@@ -753,35 +755,44 @@ XMing.GameManager = new function() {
                     this.cardsOnBoard[indexTo] = cardFrom;
                     delete this.cardsOnBoard[indexFrom];
 
-                    XMing.AchievementManager.updateStats('move', {
-                        indexFrom: indexFrom,
-                        cardFrom: cardFrom,
-                        myCards: _.filter(self.cardsOnBoard, isMyCards)
-                    });
+                    if (isByMe) {
+                        XMing.AchievementManager.updateStats('move', {
+                            indexFrom: indexFrom,
+                            cardFrom: cardFrom,
+                            myCards: _.filter(self.cardsOnBoard, isMyCards)
+                        });
+                    }
                     break;
                 case 'discard 1':
                     var cardDiscard = this.cardsOnBoard[selectedSlots[0]];
                     delete this.cardsOnBoard[selectedSlots[0]];
 
-                    XMing.AchievementManager.updateStats('discard', {
-                        cardDiscard: cardDiscard
-                    });
+                    if (isByMe) {
+                        XMing.AchievementManager.updateStats('discard', {
+                            cardDiscard: cardDiscard
+                        });
+                    }
+
                     break;
                 case 'discard 2':
                     var cardDiscard = this.cardsOnBoard[selectedSlots[0]];
                     delete this.cardsOnBoard[selectedSlots[0]];
 
-                    XMing.AchievementManager.updateStats('discard', {
-                        cardDiscard: cardDiscard
-                    });
+                    if (isByMe) {
+                        XMing.AchievementManager.updateStats('discard', {
+                            cardDiscard: cardDiscard
+                        });
+                    }
 
                     if (!_.isUndefined(selectedSlots[1])) {
                         var cardDiscard2 = this.cardsOnBoard[selectedSlots[1]];
                         delete this.cardsOnBoard[selectedSlots[1]];
 
-                        XMing.AchievementManager.updateStats('discard', {
-                            cardDiscard: cardDiscard2
-                        });
+                        if (isByMe) {
+                            XMing.AchievementManager.updateStats('discard', {
+                                cardDiscard: cardDiscard2
+                            });
+                        }
                     }
                     break;
                 case 'swap':
@@ -795,13 +806,15 @@ XMing.GameManager = new function() {
                     this.cardsOnBoard[indexTo] = cardFrom;
                     this.cardsOnBoard[indexFrom] = tempCards;
 
-                    XMing.AchievementManager.updateStats('swap', {
-                        indexFrom: indexFrom,
-                        cardFrom: cardFrom,
-                        indexTo: indexTo,
-                        cardTo: cardTo,
-                        myCards: _.filter(self.cardsOnBoard, isMyCards)
-                    });
+                    if (isByMe) {
+                        XMing.AchievementManager.updateStats('swap', {
+                            indexFrom: indexFrom,
+                            cardFrom: cardFrom,
+                            indexTo: indexTo,
+                            cardTo: cardTo,
+                            myCards: _.filter(self.cardsOnBoard, isMyCards)
+                        });
+                    }
 
                     break;
             }

@@ -449,8 +449,8 @@ ul {
 /* Special case: override animation for .light.flipcard */
 .cards ul li.light.available.flipcard:hover,
 .cards ul li.light.selected.flipcard {
-    -webkit-animation-duration: 1s;
-    animation-duration: 1s;
+    -webkit-animation-duration: 0.8s;
+    animation-duration: 0.8s;
     -webkit-animation-iteration-count: 1;
     animation-iteration-count: 1;
     -webkit-animation-fill-mode: both;
@@ -656,7 +656,7 @@ ul {
         z-index: 1;
     }
 
-    25% {
+    15% {
         -webkit-transform: perspective(400px) translate3d(0, 0, 75px) rotate3d(0, 1, 0, 180deg);
         transform: perspective(400px) translate3d(0, 0, 75px) rotate3d(0, 1, 0, 180deg);
         -webkit-animation-timing-function: ease-in;
@@ -664,7 +664,7 @@ ul {
         z-index: 1;
     }
 
-    50% {
+    30% {
         -webkit-transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, 360deg);
         transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, 360deg);
         -webkit-animation-timing-function: ease-in;
@@ -691,7 +691,7 @@ ul {
         z-index: 1;
     }
 
-    25% {
+    15% {
         -webkit-transform: perspective(400px) translate3d(0, 0, 75px) rotate3d(0, 1, 0, 180deg);
         transform: perspective(400px) translate3d(0, 0, 75px) rotate3d(0, 1, 0, 180deg);
         -webkit-animation-timing-function: ease-in;
@@ -699,7 +699,7 @@ ul {
         z-index: 1;
     }
 
-    50% {
+    30% {
         -webkit-transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, 360deg);
         transform: perspective(400px) translate3d(0, 0, 150px) rotate3d(0, 1, 0, 360deg);
         -webkit-animation-timing-function: ease-in;
@@ -724,6 +724,8 @@ ul {
 }
 
 .animated.flipcard {
+    -webkit-animation-duration: 0.8s;
+    animation-duration: 0.8s;
     -webkit-backface-visibility: visible;
     backface-visibility: visible;
     -webkit-animation-name: flipcard;
@@ -750,6 +752,34 @@ ul {
     border-radius: 25px;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
+}
+
+.achievement-popup {
+    padding: 10px;
+    position: absolute;
+    width: 50%;
+    left: 50%;
+    background: #fdefff;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    text-align: center;
+    border: 5px solid #f782ff;
+    border-radius: 15px;
+    -webkit-box-shadow: 0 0 10px 10px #000;
+    -moz-box-shadow: 0 0 10px 10px #000;
+    box-shadow: 0 0 10px 10px #000;
+}
+
+.achievement-popup img {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+    vertical-align: middle;
+}
+
+.achievement-popup div {
+    display: inline-block;
 }
 
 @media only screen
