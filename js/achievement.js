@@ -14,7 +14,8 @@ XMing.AchievementManager = (function() {
         numMoveDarkToOpp: 0,
         numMoveOppLightToSelf: 0,
         numSwapOppLightWithOwnDark: 0,
-        numLeastTurnWon: 999,
+        numLeastTurnsWon: 999,
+        numWonWithinFiveTurns: 0,
         numHelpOppWin: 0,
         numHelpedByOppWin: 0,
         numWonWithoutLight: 0,
@@ -84,7 +85,7 @@ XMing.AchievementManager = (function() {
         },
         'purist': {
             title: 'The Purist',
-            description: 'Won without light elements 20 times',
+            description: 'Won without light elements',
             badgeUrl: 'images/badge.png',
             hasAwarded: function() {
                 return this.getCurrent() >= this.goal;
@@ -96,7 +97,7 @@ XMing.AchievementManager = (function() {
         },
         'friendliest': {
             title: 'You Are The Friendliest',
-            description: 'Help opponent to win 5 times',
+            description: 'Help opponent to win',
             badgeUrl: 'images/badge.png',
             hasAwarded: function() {
                 return this.getCurrent() >= this.goal;
@@ -108,7 +109,7 @@ XMing.AchievementManager = (function() {
         },
         'much_charm': {
             title: 'So Much Charm',
-            description: 'Won by opponent\'s help 5 times',
+            description: 'Won by opponent\'s help',
             badgeUrl: 'images/badge.png',
             hasAwarded: function() {
                 return this.getCurrent() >= this.goal;
@@ -120,7 +121,7 @@ XMing.AchievementManager = (function() {
         },
         'sadist': {
             title: 'The Sadist',
-            description: 'Put dark element on your row 10 times',
+            description: 'Put dark element on your row',
             badgeUrl: 'images/badge.png',
             hasAwarded: function() {
                 return this.getCurrent() >= this.goal;
@@ -132,7 +133,7 @@ XMing.AchievementManager = (function() {
         },
         'no_light': {
             title: '???',
-            description: 'Discard light elements 20 times',
+            description: 'Discard light element',
             badgeUrl: 'images/badge.png',
             hasAwarded: function() {
                 return this.getCurrent() >= this.goal;
@@ -144,7 +145,7 @@ XMing.AchievementManager = (function() {
         },
         'evilest': {
             title: 'The Evilest',
-            description: 'Swap light element with opponent\'s dark element 10 times',
+            description: 'Swap dark element with opponent\'s light element',
             badgeUrl: 'images/badge.png',
             hasAwarded: function() {
                 return this.getCurrent() >= this.goal;
@@ -156,7 +157,7 @@ XMing.AchievementManager = (function() {
         },
         'guide_the_misguided': {
             title: 'Guide the Misguided',
-            description: 'Move opponent\'s light element to your row 10 times',
+            description: 'Move opponent\'s light element to your row',
             badgeUrl: 'images/badge.png',
             hasAwarded: function() {
                 return this.getCurrent() >= this.goal;
@@ -168,7 +169,7 @@ XMing.AchievementManager = (function() {
         },
         'no_evil': {
             title: 'Take No Evil',
-            description: 'Move dark element to your opponent\'s row 10 times',
+            description: 'Move dark element to your opponent\'s row',
             badgeUrl: 'images/badge.png',
             hasAwarded: function() {
                 return this.getCurrent() >= this.goal;
@@ -180,15 +181,15 @@ XMing.AchievementManager = (function() {
         },
         'fast_and_furious': {
             title: 'Fast and Furious',
-            description: 'Won a game within 5 turns',
+            description: 'Won within 5 turns',
             badgeUrl: 'images/badge.png',
             hasAwarded: function() {
-                return this.getCurrent() <= this.goal;
+                return this.getCurrent() >= this.goal;
             },
             getCurrent: function() {
-                return stats.numLeastTurnWon;
+                return stats.numWonWithinFiveTurns;
             },
-            goal: 5
+            goal: 1
         },
         'unluckiest': {
             title: 'The Unluckiest',
@@ -516,8 +517,11 @@ XMing.AchievementManager = (function() {
                     if (eventType === 'won') {
                         stats.numGameWon++;
 
-                        if (stats.numLeastTurnWon > numTurn) {
-                            stats.numLeastTurnWon = numTurn;
+                        if (stats.numLeastTurnsWon > numTurn) {
+                            stats.numLeastTurnsWon = numTurn;
+                            if (numTurn <= 5) {
+                                stats.numWonWithinFiveTurns++;
+                            }
                             checkAchievement(achievements.fast_and_furious);
                         }
 

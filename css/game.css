@@ -742,7 +742,8 @@ ul {
 }
 
 #draw {
-    width: 600px;
+    width: 80%;
+    max-width: 600px;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -782,15 +783,102 @@ ul {
     display: inline-block;
 }
 
+.achievement {
+    width: 430px;
+    height: 100px;
+    margin: 0 auto 5px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid purple;
+    border-radius: 10px;
+}
+
+.achievement.awarded {
+    background: rgba(81, 0, 108, 0.6);
+    color: white;
+}
+
+.achievement .image-wrapper {
+    width: 58px;
+    padding: 15px 5px;
+    float: left;
+}
+
+.achievement .image-wrapper img {
+    width: 50px;
+    border: 2px solid purple;
+    border-radius: 50%;
+}
+
+.achievement .text-wrapper {
+    width: 350px;
+    padding-left: 12px;
+    float: left;
+    text-align: left;
+}
+
+.achievement-title {
+    font-weight: bold;
+    font-size: 18px;
+    padding-bottom: 1px;
+    padding-top: 15px;
+}
+
+.achievement-description {
+    font-size: 15px;
+    padding-bottom: 3px;
+}
+
+.achievement-progress {
+    position: relative;
+}
+
+.achievement-progress progress {
+    width: 250px;
+    height: 10px;
+    display: block;
+    -webkit-appearance: none;
+    border: none;
+}
+
+.achievement-progress progress::-webkit-progress-bar {
+    background: #dca1ff;
+    border-radius: 50px;
+    padding: 2px;
+    box-shadow: 0 1px 0px 0 rgba(255, 255, 255, 0.2);
+}
+
+.achievement-progress progress::-webkit-progress-value {
+    border-radius: 50px;
+    box-shadow: inset 0 1px 1px 0 rgba(161, 0, 255, 0.4);
+    background:
+        -webkit-linear-gradient(45deg, transparent, transparent 33%, rgba(0, 0, 0, 0.1) 33%, rgba(0, 0, 0, 0.1) 66%, transparent 66%),
+        -webkit-linear-gradient(left, #c64eed, #8e09a6);
+}
+
+.achievement-progress progress[value]:before {
+    content: attr(value) ' / ' attr(max);
+    position: absolute;
+    left: 255px;
+    top: 0;
+    font-size: 13px;
+    line-height: 10px;
+    display: inline;
+}
+
+/* only when orientation is in portrait mode */
+@media all
+and (max-width: 736px)
+and (orientation:portrait) {
+    #rotate {
+        display: table;
+    }
+}
+
+/* most mobile device */
 @media only screen
 and (min-width: 320px)
-and (max-width: 640px) {
-    .cards ul li {
-        width: 72px;
-        height: 116px;
-        margin: 10px 4px;
-    }
-
+and (max-width: 736px) {
     .panel {
         font-size: 18px;
     }
@@ -814,17 +902,51 @@ and (max-width: 640px) {
         padding: 0 5px;
         font: bold 8px 'Gloria Hallelujah', cursive;
     }
+}
+
+/* iphone 4 */
+@media only screen
+and (min-width: 320px)
+and (max-width: 480px) {
+    .cards ul li {
+        width: 62px;
+        height: 100px;
+        margin: 10px 0;
+    }
 
     #draw {
-        width: 380px;
+        width: 80%;
+        min-width: 280px;
     }
 }
 
-/* only when orientation is in portrait mode */
-@media all
-and (max-width: 640px)
-and (orientation:portrait) {
-    #rotate {
-        display: table;
+/* iphone 5 */
+@media only screen
+and (min-width: 481px)
+and (max-width: 568px) {
+    .cards ul li {
+        width: 70px;
+        height: 110px;
+        margin: 10px 0;
+    }
+
+    #draw {
+        width: 80%;
+        min-width: 280px;
+    }
+}
+
+@media only screen
+and (min-width: 569px)
+and (max-width: 736px) {
+    .cards ul li {
+        width: 72px;
+        height: 116px;
+        margin: 10px 4px;
+    }
+
+    #draw {
+        width: 80%;
+        min-width: 380px;
     }
 }

@@ -109,7 +109,7 @@ XMing.GameManager = new function() {
         oppActionFail: _.template('<div><span class="peer">{{ peer }}</span> has no available move!</div>'),
         oppMessage: _.template('<div><span class="peer">{{ peer }} :</span> {- message }}</div>'),
 
-        achievement: _.template('<div><span><b>{{ title }}</b></span><br><span>{{ description }}</span> - <span>{{ awarded }}</span><span>{{ progress }}</span></div><br>')
+        achievement: _.template('<div class="achievement {{ awarded }}"><div class="image-wrapper"><img src="{{ badgeUrl }}"/></div><div class="text-wrapper"><div class="achievement-title">{{ title }}</div><div class="achievement-description">{{ description }}</div><div class="achievement-progress">{{ progress }}</div></div>')
     };
 
     this.deck = [];
@@ -947,10 +947,11 @@ XMing.GameManager = new function() {
                 $('.achievements').append(TEMPLATE.achievement({
                     title: achievement.title,
                     description: achievement.description,
-                    awarded: achievement.hasAwarded() ? 'Awarded' : 'Not Awarded',
+                    badgeUrl: achievement.badgeUrl,
+                    awarded: achievement.hasAwarded() ? 'awarded' : 'not-awarded',
                     progress: (function() {
                         if (achievement.getCurrent && achievement.goal) {
-                            return ' - ' + achievement.getCurrent() + ' / ' + achievement.goal;
+                            return '<progress max="' + achievement.goal + '" value="' + achievement.getCurrent() + '"></progress>';
                         }
                         return ''
                     })()
