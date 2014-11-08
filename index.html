@@ -27,78 +27,91 @@
         <img src="images/icon-horizontal.jpg" alt="rotate" />
     </div>
 </div>
-<div id="panel-container">
-    <a id="back" class="button-action" style="display: none;">Back</a>
-    <div class="jumbotron"></div>
-    <div id="panel-main" class="panel">
-        <ul>
-            <li>
-                <a id="create">Create Game</a>
-            </li>
-            <li>
-                <a id="join">Join Game</a>
-            </li>
-            <li>
-                <a id="how-to-play">How To Play</a>
-            </li>
-            <li class="disable">
-                <a id="options">Options</a>
-            </li>
-            <li>
-                <a id="achievement">Achielements</a>
-            </li>
-            <li class="disable">
-                <a id="about">About</a>
-            </li>
-        </ul>
+<div class="content">
+    <div class="jumbotron">
+        <div class="svg-wrapper">
+            <div style="position:relative;">
+                <svg id="triangles-dark" class="triangles triangles-elements" style="position:absolute;"></svg>
+                <svg id="triangles-light" class="triangles triangles-elements" style="position:absolute;"></svg>
+                <svg id="triangles-earth" class="triangles triangles-elements" style="position:absolute;"></svg>
+                <svg id="triangles-wood" class="triangles triangles-elements" style="position:absolute;"></svg>
+                <svg id="triangles-metal" class="triangles triangles-elements" style="position:absolute;"></svg>
+                <svg id="triangles-fire" class="triangles triangles-elements" style="position:absolute;"></svg>
+                <svg id="triangles-water" class="triangles triangles-elements" style="position:absolute;"></svg>
+            </div>
+        </div>
     </div>
-    <div id="panel-host" class="panel" style="display: none;">
-        Username: <input id="username-host" type="text"/>
-        <br>
-        <br>
+    <div class="panel-container">
+        <a id="back" class="button-action" style="display: none;">Back</a>
+        <div id="panel-main" class="panel">
+            <ul>
+                <li>
+                    <a id="create">Create Game</a>
+                </li>
+                <li>
+                    <a id="join">Join Game</a>
+                </li>
+                <li>
+                    <a id="how-to-play">How To Play</a>
+                </li>
+                <li class="disable">
+                    <a id="options">Options</a>
+                </li>
+                <li>
+                    <a id="achievement">Achielements</a>
+                </li>
+                <li class="disable">
+                    <a id="about">About</a>
+                </li>
+            </ul>
+        </div>
+        <div id="panel-host" class="panel" style="display: none;">
+            Username: <input id="username-host" type="text"/>
+            <br>
+            <br>
         <span id="instruction" style="display: none;">Give this ID: <span id="pid"></span>
         to your friend!</span>
-        <br>
-        <br>
-        <a id="host" class="button-action">Create</a>
-    </div>
-    <div id="panel-join" class="panel" style="display: none;">
-        Username: <input id="username-join" type="text"/>
-        <br>
-        <br>
-        Get the ID from your friend: <input type="text" id="rid"/>
-        <br>
-        <br>
-        <a id="connect" class="button-action">Connect</a>
-    </div>
-    <div id="panel-how-to-play" class="panel" style="display:none;">
-        <h1>Collect all five Elements to win!</h1>
-        <p>
-            <span class="card-text water">Water</span><span class="card-text fire">Fire</span>
-            <span class="card-text metal">Metal</span><span class="card-text wood">Wood</span>
-            <span class="card-text earth">Earth</span>
-        </p>
-        <p>
-            The order of the cards is not important.
-        </p>
-        <p>
-            <span class="card-text light">Light</span> is wild and can represent any element you need to win
-        </p>
-        <p>
-            <span class="card-text dark">Dark</span> does not contribute to winning and is often used to block your opponent's slot.
-        </p>
-        <p>
-            <b>You must always play your card</b> even if you don't like the result.
-        </p>
+            <br>
+            <br>
+            <a id="host" class="button-action">Create</a>
+        </div>
+        <div id="panel-join" class="panel" style="display: none;">
+            Username: <input id="username-join" type="text"/>
+            <br>
+            <br>
+            Get the ID from your friend: <input type="text" id="rid"/>
+            <br>
+            <br>
+            <a id="connect" class="button-action">Connect</a>
+        </div>
+        <div id="panel-how-to-play" class="panel" style="display:none;">
+            <h1>Collect all five Elements to win!</h1>
+            <p>
+                <span class="card-text water">Water</span><span class="card-text fire">Fire</span>
+                <span class="card-text metal">Metal</span><span class="card-text wood">Wood</span>
+                <span class="card-text earth">Earth</span>
+            </p>
+            <p>
+                The order of the cards is not important.
+            </p>
+            <p>
+                <span class="card-text light">Light</span> is wild and can represent any element you need to win
+            </p>
+            <p>
+                <span class="card-text dark">Dark</span> does not contribute to winning and is often used to block your opponent's slot.
+            </p>
+            <p>
+                <b>You must always play your card</b> even if you don't like the result.
+            </p>
 
-        <h2>Element Card</h2>
-        <p>
-            An element card can be played into any empty slot or replace any element it can defeat.
-        </p>
-        <p>
-            You can see the colors of the replaceable elements at the top left corner of each card.
-        </p>
-        <p>
+            <h2>Element Card</h2>
+            <p>
+                An element card can be played into any empty slot or replace any element it can defeat.
+            </p>
+            <p>
+                You can see the colors of the replaceable elements at the top left corner of each card.
+            </p>
+            <p>
             <div class="cards">
                 <ul>
                     <li class="available dim water" data-content="Water"></li>
@@ -112,9 +125,9 @@
                     <li class="available dim dark" data-content="Dark"></li>
                 </ul>
             </div>
-        </p>
-        <h2>Action Card</h2>
-        <p>
+            </p>
+            <h2>Action Card</h2>
+            <p>
             <div class="cards">
                 <ul>
                     <li class="available move" data-content="Move"></li>
@@ -123,33 +136,35 @@
                     <li class="available discard2" data-content="Discard&nbsp;2"></li>
                 </ul>
             </div>
-        </p>
+            </p>
 
-        <h3>Move</h3>
-        <p>
-            Choose one Element card from any player’s row and move it to an <b>empty</b> slot in a different player’s row.
-        </p>
+            <h3>Move</h3>
+            <p>
+                Choose one Element card from any player’s row and move it to an <b>empty</b> slot in a different player’s row.
+            </p>
 
-        <h3>Swap</h3>
-        <p>
-            Choose one Element card from any player’s row and swap
-            it with a <b>different</b> Element card from a different player’s row.
-        </p>
+            <h3>Swap</h3>
+            <p>
+                Choose one Element card from any player’s row and swap
+                it with a <b>different</b> Element card from a different player’s row.
+            </p>
 
-        <h3>Discard 1 / Discard 2</h3>
-        <p>
-            Discard an equal number of Element
-            cards from the table as the Discard type (shown by the arrows).
-            <br>
-            Cards can be chosen together from the same player (including
-            yourself) or separately from different players.
-        </p>
-    </div>
-    <div id="panel-achievement" class="panel" style="display:none;">
-        <h1>Achielements</h1>
-        <div class="achievements">
+            <h3>Discard 1 / Discard 2</h3>
+            <p>
+                Discard an equal number of Element
+                cards from the table as the Discard type (shown by the arrows).
+                <br>
+                Cards can be chosen together from the same player (including
+                yourself) or separately from different players.
+            </p>
+        </div>
+        <div id="panel-achievement" class="panel" style="display:none;">
+            <h1>Achielements</h1>
+            <div class="achievements">
+            </div>
         </div>
     </div>
+
     <div class="warning browser" style="display: none;">
         <div class="important">Your browser version: <span id="browsers"></span><br>
             Currently <strong>Firefox 22+ and Google Chrome 26.0.1403.0 or above</strong> is required.
@@ -201,8 +216,10 @@
 </div>
 
 <script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery.svg.min.js"></script>
 <script type="text/javascript" src="js/underscore-min.js"></script>
 <script type="text/javascript" src="js/sweet-alert.min.js"></script>
+<script type="text/javascript" src="js/triangles.js"></script>
 <script type="text/javascript" src="js/peer.js"></script>
 <script type="text/javascript" src="js/achievement.js"></script>
 <script type="text/javascript" src="js/game.js"></script>
@@ -231,6 +248,60 @@
 
         // Show browser version
         $('#browsers').text(navigator.sayswho);
+
+        // Jumbotron
+        $.fn.triangles.defaults.height = 250;
+        $.fn.triangles.defaults.width = $(window).width();
+        $.fn.triangles.defaults.triangleLength = 18;
+
+        $('#triangles-dark').triangles({
+            paintColor: '#181818',
+            baseColor: '#999999',
+        });
+        $('#triangles-light').triangles({
+            paintColor: '#fff',
+            baseColor: '#ddd'
+        });
+        $('#triangles-earth').triangles({
+            paintColor: '#a36100',
+            baseColor: '#f4dece'
+        });
+        $('#triangles-wood').triangles({
+            paintColor: '#13e213',
+            baseColor: '#ccffcc'
+        });
+        $('#triangles-metal').triangles({
+            paintColor: '#ffd700',
+            baseColor: '#fffbcc'
+        });
+        $('#triangles-fire').triangles({
+            paintColor: '#ff1010',
+            baseColor: '#ffcaca'
+        });
+        $('#triangles-water').triangles({
+            paintColor: '#1010ff',
+            baseColor: '#ccccff'
+        });
+
+        $('.triangles-elements').click(function(index, elem) {
+            var data = $(this).data('triangles');
+            var index = $(this).index('.triangles-elements');
+
+            if (index == 0) {
+                data.fadeTriangles('all', 0, function() {});
+                $('#triangles-water').data('triangles').fadeTriangles('all', 1, function() {
+                    $('.triangles-elements').css({
+                        'z-index': 0,
+                        'opacity': 1
+                    });
+                });
+            }
+            else {
+                data.fadeTriangles('all', 0, function() {
+                    $($('.triangles-elements')[index - 1]).css('z-index', 10 - index);
+                });
+            }
+        });
     });
 
     // Make sure things clean up properly.

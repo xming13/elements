@@ -188,8 +188,8 @@ XMing.GameManager = new function() {
                     // setting initial deck sent by the host when the game start so that everyone uses the same deck
                     m.deck = data.deck;
 
-                    $("#gameboard").show();
-                    $("#panel-container").hide();
+                    $("#gameboard").fadeIn('fast');
+                    $("#panel-container").fadeOut('fast');
 
                     // Game start!
                     c.send({
@@ -918,27 +918,26 @@ XMing.GameManager = new function() {
 
         // navigate to create connection screen
         $("#create").click(function() {
-            $(".panel").hide();
-            $("#panel-host, #back").show();
-            $("#instruction").hide();
+            $(".panel, #instruction").fadeOut('fast');
+            $("#panel-host, #back").fadeIn('fast');
         });
 
         // navigate to join connection screen
         $("#join").click(function() {
-            $(".panel").hide();
-            $("#panel-join, #back").show();
+            $(".panel").fadeOut('fast');
+            $("#panel-join, #back").fadeIn('fast');
         });
 
         // navigate back to main menu screen
         $("#back").click(function() {
-            $(".panel, #back").hide();
-            $("#panel-main").show();
+            $(".panel, #back").fadeOut('fast');
+            $("#panel-main").fadeIn('fast');
             self.destroy();
         });
 
         $("#how-to-play").click(function() {
-            $("#panel-main").hide();
-            $("#panel-how-to-play, #back").show();
+            $("#panel-main").fadeOut('fast');
+            $("#panel-how-to-play, #back").fadeIn('fast');
         })
 
         $('#achievement').click(function() {
@@ -958,8 +957,8 @@ XMing.GameManager = new function() {
                 }));
             });
 
-            $('.panel').hide();
-            $('#panel-achievement, #back').show();
+            $('.panel').fadeOut('fast');
+            $('#panel-achievement, #back').fadeIn('fast');
         })
 
         // create new connection
@@ -975,7 +974,7 @@ XMing.GameManager = new function() {
 
                 self.peer.on('open', function(id) {
                     $('#pid').text(id);
-                    $("#instruction").show();
+                    $("#instruction").fadeIn('fast');
                     self.prepareDeck();
                 });
 
@@ -984,8 +983,8 @@ XMing.GameManager = new function() {
                     self.isGameHost = true;
                     self.connect(c);
 
-                    $("#gameboard").show();
-                    $("#panel-container").hide();
+                    $("#gameboard").fadeIn('fast');
+                    $("#panel-container").fadeOut('fast');
                 });
 
                 self.peer.on('error', function(err) {

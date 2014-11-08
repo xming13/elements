@@ -58,7 +58,7 @@ ul {
     vertical-align: middle;
 }
 
-#panel-container {
+.content {
     height: 100%;
 }
 
@@ -66,6 +66,10 @@ ul {
     min-height: 250px;
     background: white;
     width: 100%;
+}
+
+.panel-container {
+    position: relative;
 }
 
 .panel {
@@ -115,6 +119,7 @@ ul {
     position: fixed;
     top: 10px;
     left: 10px;
+    z-index: 999;
 }
 
 #panel-how-to-play h1 {
