@@ -29,17 +29,7 @@
 </div>
 <div class="content">
     <div class="jumbotron">
-        <div class="svg-wrapper">
-            <div style="position:relative;">
-                <svg id="triangles-dark" class="triangles triangles-elements" style="position:absolute;"></svg>
-                <svg id="triangles-light" class="triangles triangles-elements" style="position:absolute;"></svg>
-                <svg id="triangles-earth" class="triangles triangles-elements" style="position:absolute;"></svg>
-                <svg id="triangles-wood" class="triangles triangles-elements" style="position:absolute;"></svg>
-                <svg id="triangles-metal" class="triangles triangles-elements" style="position:absolute;"></svg>
-                <svg id="triangles-fire" class="triangles triangles-elements" style="position:absolute;"></svg>
-                <svg id="triangles-water" class="triangles triangles-elements" style="position:absolute;"></svg>
-            </div>
-        </div>
+
     </div>
     <div class="panel-container">
         <a id="back" class="button-action" style="display: none;">&nbsp;&nbsp;<&nbsp;&nbsp;</a>
@@ -219,7 +209,6 @@
 <script type="text/javascript" src="js/jquery.svg.min.js"></script>
 <script type="text/javascript" src="js/underscore-min.js"></script>
 <script type="text/javascript" src="js/sweet-alert.min.js"></script>
-<script type="text/javascript" src="js/triangles.js"></script>
 <script type="text/javascript" src="js/peer.js"></script>
 <script type="text/javascript" src="js/achievement.js"></script>
 <script type="text/javascript" src="js/game.js"></script>
@@ -248,60 +237,6 @@
 
         // Show browser version
         $('#browsers').text(navigator.sayswho);
-
-        // Jumbotron
-        $.fn.triangles.defaults.height = 250;
-        $.fn.triangles.defaults.width = $(window).width();
-        $.fn.triangles.defaults.triangleLength = 18;
-
-        $('#triangles-dark').triangles({
-            paintColor: '#181818',
-            baseColor: '#999999',
-        });
-        $('#triangles-light').triangles({
-            paintColor: '#fff',
-            baseColor: '#ddd'
-        });
-        $('#triangles-earth').triangles({
-            paintColor: '#a36100',
-            baseColor: '#f4dece'
-        });
-        $('#triangles-wood').triangles({
-            paintColor: '#13e213',
-            baseColor: '#ccffcc'
-        });
-        $('#triangles-metal').triangles({
-            paintColor: '#ffd700',
-            baseColor: '#fffbcc'
-        });
-        $('#triangles-fire').triangles({
-            paintColor: '#ff1010',
-            baseColor: '#ffcaca'
-        });
-        $('#triangles-water').triangles({
-            paintColor: '#1010ff',
-            baseColor: '#ccccff'
-        });
-
-        $('.triangles-elements').click(function(index, elem) {
-            var data = $(this).data('triangles');
-            var index = $(this).index('.triangles-elements');
-
-            if (index == 0) {
-                data.fadeTriangles('all', 0, function() {});
-                $('#triangles-water').data('triangles').fadeTriangles('all', 1, function() {
-                    $('.triangles-elements').css({
-                        'z-index': 0,
-                        'opacity': 1
-                    });
-                });
-            }
-            else {
-                data.fadeTriangles('all', 0, function() {
-                    $($('.triangles-elements')[index - 1]).css('z-index', 10 - index);
-                });
-            }
-        });
     });
 
     // Make sure things clean up properly.
