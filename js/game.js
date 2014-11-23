@@ -1057,11 +1057,11 @@ XMing.GameManager = new function() {
             if (self.isDrawPhase) {
                 self.isDrawPhase = false;
                 var cardDraw = m.drawCard($('.draw-cards ul li').index(this));
-                $(this).removeClass('available').addClass('selected animated flipcard ' + cardDraw.name)
+                $(this).removeClass('available').addClass('selected animated flipcard ' + cardDraw.name.replace(' ', ''))
                     .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
                         var that = this;
                         $('#actions').fadeOut(200, function() {
-                            $(that).addClass('available').removeClass('selected animated flipcard ' + cardDraw.name);
+                            $(that).addClass('available').removeClass('selected animated flipcard ' + cardDraw.name.replace(' ', ''));
 
                             if (cardDraw.type == 'element') {
                                 self.setupElementSelection(cardDraw);
