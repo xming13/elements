@@ -189,7 +189,7 @@ XMing.GameManager = new function() {
                     m.deck = data.deck;
 
                     $("#gameboard").fadeIn('fast');
-                    $("#panel-container").fadeOut('fast');
+                    $("#content").fadeOut('fast');
 
                     // Game start!
                     c.send({
@@ -984,7 +984,7 @@ XMing.GameManager = new function() {
                     self.connect(c);
 
                     $("#gameboard").fadeIn('fast');
-                    $("#panel-container").fadeOut('fast');
+                    $("#content").fadeOut('fast');
                 });
 
                 self.peer.on('error', function(err) {

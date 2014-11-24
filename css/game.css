@@ -58,7 +58,7 @@ ul {
     vertical-align: middle;
 }
 
-.content {
+#content {
     height: 100%;
 }
 
@@ -68,7 +68,7 @@ ul {
     width: 100%;
 }
 
-.panel-container {
+#panel-container {
     position: relative;
 }
 
