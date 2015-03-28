@@ -1,0 +1,22 @@
+{
+  "name": "elements",
+  "version": "1.0.0",
+  "description": "A PvP card game implemented with peerjs",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "~4.9.x",
+    "una": "^0.4.3"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": "0.10.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xming13/elements.git"
+  },
+  "license": "MIT"
+}
