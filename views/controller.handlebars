@@ -1,0 +1,17 @@
+<div class="content">
+  <h2>{{title}}</h2>
+  <div class="body">
+    {{body}}
+  </div>
+</div>
+
+<script>
+    UnaController.register('room1', {name: 'controller1'}, function (res) {
+        UnaController.sendToScreen('controller_msg', 'woof');
+    });
+
+    UnaController.onScreenInput('screen_msg', function (data) {
+        // screen says woof too
+        console.log(data.una.user_data.name + ' says ' + data.payload);
+    });
+</script>

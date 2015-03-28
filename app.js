@@ -1,14 +1,46 @@
-var express = require('express');
-var app = express();
+var una = require('una');
+var http = require('http');
+var path = require('path');
+var routes = require('./routes');
+var expressHbs = require('express-handlebars');
 
-app.set('port', (process.env.PORT || 5000));
+var app = una.app;
+var express = una.express;
 
-app.use(express.static(__dirname + '/public'));
+app.set('port', process.env.PORT || 3216);
+app.set('views', __dirname + '/views');
 
-app.get('/', function(request, response) {
-    response.send('Hello World');
+app.engine('handlebars', expressHbs({defaultLayout:'main.handlebars'}));
+app.set('view engine', 'handlebars');
+
+app.use(app.router);
+app.use(express.static(path.join(__dirname, '/public')));
+
+app.get('/screen', routes.screen);
+app.get('/controller', routes.controller);
+
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With, Accept, Origin, Referer, User-Agent, Content-Type, Authorization, X-Mindflash-SessionID');
+
+    // intercept OPTIONS method
+    if ('OPTIONS' == req.method) {
+        res.send(200);
+    } else {
+        next();
+    }
+};
+
+app.configure(function() {
+    app.use(allowCrossDomain);
 });
 
-app.listen(app.get('port'), function() {
-  console.log("Node app is running at localhost:" + app.get('port'));
+// Set http constants to allow infinite # of sockets
+http.globalAgent.maxSockets = Infinity;
+
+var server = http.createServer(app).listen(app.get('port'), function(){
+    console.log('Express server listening on port ' + app.get('port'));
 });
+
+una.listen(server);

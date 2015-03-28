@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Screen</title>
+</head>
+<body>
+<h1>Screen</h1>
+<div class="content"></div>
+
+<script src='js/socket.io.js'></script>
+<script src='js/una.js'></script>
+<script>
+    UnaScreen.register('room1', {name: 'screen'});
+
+    UnaScreen.onControllerInput('controller_msg', function (data) {
+        // controller1 says woof
+        console.log(data.una.user_data.name + ' says ' + data.payload);
+        UnaScreen.sendToController(data.una.id, 'screen_msg', data.payload + ' you too!');
+    });
+</script>
+</body>
+</html>
