@@ -10,14 +10,18 @@ var express = una.express;
 app.set('port', process.env.PORT || 3216);
 app.set('views', __dirname + '/views');
 
-app.engine('handlebars', expressHbs({defaultLayout:'main.handlebars'}));
+app.engine('handlebars', expressHbs({defaultLayout:'desktop.handlebars'}));
 app.set('view engine', 'handlebars');
 
 app.use(app.router);
 app.use(express.static(path.join(__dirname, '/public')));
 
-app.get('/screen', routes.screen);
-app.get('/controller', routes.controller);
+app.get('/', routes.index);
+app.get('/room', routes.room);
+app.get('/room/*', routes.room);
+app.get('/play', routes.play);
+app.get('/play/*', routes.play);
+app.get('/join', routes.join);
 
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');

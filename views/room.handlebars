@@ -1,14 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Screen</title>
-</head>
-<body>
-<h1>Screen</h1>
-<div class="content"></div>
+<div class="content">
+  <h2>{{title}}</h2>
+</div>
 
-<script src='js/socket.io.js'></script>
-<script src='js/una.js'></script>
 <script>
     UnaScreen.register('room1', {name: 'screen'});
 
@@ -18,5 +11,3 @@
         UnaScreen.sendToController(data.una.id, 'screen_msg', data.payload + ' you too!');
     });
 </script>
-</body>
-</html>
