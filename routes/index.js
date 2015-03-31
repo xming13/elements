@@ -15,8 +15,8 @@ module.exports = {
         res.render('play', { title: 'Play' });
     },
 
-    join: function (req, res) {
-        res.render('join', { title: 'Join', layout: 'mobile.handlebars'});
+    controller: function (req, res) {
+        res.render('controller', { title: 'Controller', layout: 'mobile.handlebars'});
     },
 
     choose: function (req, res) {

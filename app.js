@@ -21,7 +21,7 @@ app.get('/room', routes.room);
 app.get('/room/*', routes.room);
 app.get('/play', routes.play);
 app.get('/play/*', routes.play);
-app.get('/join', routes.join);
+app.get('/controller', routes.controller);
 
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');

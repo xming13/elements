@@ -1,0 +1,38 @@
+.choose-name {
+    padding: 10px;
+    background: #FFD81A;
+}
+
+.choose-avatar {
+    padding: 10px;
+    background: #FFB31A;
+}
+
+.choose-play {
+    padding: 10px;
+    background: #FFFF1A;
+}
+
+.btn-play {
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.joystick-controller {
+    height: 100px;
+}
+
+#joystick {
+    height: 100px;
+}
+
+.joystick-left {
+    background: #F14F4F;
+}
+
+.joystick-right {
+    background: #AFE14A;
+}
