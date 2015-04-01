@@ -1,40 +1,64 @@
 $(document).ready(function() {
-    var loadJoystick = function () {
-        var joystick = new VirtualJoystick({
-            container: document.getElementById('joystick'),
-            mouseSupport: true
-        });
+    var path = window.location.pathname.slice(1).split('/');
+    var myRoomId = (path.length === 2 && path[1] !== '') ? path[1] : 'lobby';
 
-        // Handle move event
-        var isMoving = false;
-        var previousAngle = null;
-        var threshold = 1;
-        setInterval(function () {
-            var x = joystick.deltaX();
-            var y = joystick.deltaY();
+    var username = window.localStorage.getItem('username');
+    if (username) {
+        $('#username').val(username);
+    }
 
-            if (x === 0 && y === 0) {
-                if (isMoving) {
-                    isMoving = false;
-                    UnaController.sendToScreen('input', {key: 'stopmove'});
+    $('.btn-play').click(function() {
+        var myUsername = $('#username').val();
+        if (myUsername) {
+            window.localStorage.setItem('username', myUsername);
+            UnaController.register(myRoomId, { name: myUsername }, function(res) {
+                console.log(res);
+                console.log('myRoomId', myRoomId);
+                if (res.success) {
+                    $('.join-container').hide();
+                    loadJoystick();
                 }
-            }
-            else {
-                var delta = Math.atan2(y, x);
-                var deltaDeg = Math.round(delta * 180 / Math.PI);
+            })
+        }
+        else {
+            alert('Please enter a name!');
+        }
 
-                console.log(deltaDeg);
+        var loadJoystick = function () {
+            var joystick = new VirtualJoystick({
+                container: document.getElementById('joystick'),
+                mouseSupport: true
+            });
 
-                if (!previousAngle || Math.abs(deltaDeg - previousAngle) > threshold) {
-                    previousAngle = deltaDeg;
+            // Handle move event
+            var isMoving = false;
+            var previousAngle = null;
+            var threshold = 1;
+            setInterval(function () {
+                var x = joystick.deltaX();
+                var y = joystick.deltaY();
 
-                    var length = Math.min(Math.sqrt(x * x + y * y) / 50.0, 1.0);
-                    isMoving = true;
-                    UnaController.sendToScreen('input', {key: 'move', angle: delta, length: length});
+                if (x === 0 && y === 0) {
+                    if (isMoving) {
+                        isMoving = false;
+                        UnaController.sendToScreen('input', {key: 'stopmove'});
+                    }
                 }
-            }
-        }, 1000 / 30);
-    };
+                else {
+                    var delta = Math.atan2(y, x);
+                    var deltaDeg = Math.round(delta * 180 / Math.PI);
 
-    loadJoystick();
+                    console.log(deltaDeg);
+
+                    if (!previousAngle || Math.abs(deltaDeg - previousAngle) > threshold) {
+                        previousAngle = deltaDeg;
+
+                        var length = Math.min(Math.sqrt(x * x + y * y) / 50.0, 1.0);
+                        isMoving = true;
+                        UnaController.sendToScreen('input', {key: 'move', angle: delta, length: length});
+                    }
+                }
+            }, 1000 / 30);
+        };
+    });
 });

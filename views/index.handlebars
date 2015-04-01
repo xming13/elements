@@ -1,6 +1,8 @@
 <html>
 <head>
     <title>{{title}}</title>
+    <!--Utilities-->
+    <script src="/lib/jquery-2.1.3.min.js"></script>
 
     <!--Network-->
     <script src="/socket.io/socket.io.js"></script>
@@ -19,9 +21,37 @@
 
 <div class="desktop-container">
     Desktop
+
+    <button type="button" class="btn-create">Create Game</button>
+
+    <p>After clicking 'Create Game', visit the site on your mobile device and enter the room number shown on the next
+        screen.</p>
 </div>
 <div class="mobile-container">
     Mobile
+
+    <p>Enter the room number of the game to join</p>
+    <input type="text" id="room-id"/>
+    <button type="button" class="btn-join">Play!</button>
 </div>
+
+<script>
+    $(function () {
+        $('.btn-create').click(function () {
+            var roomId = Math.floor(Math.random() * 998) + 1;
+            window.location.href = '/room/' + roomId;
+        });
+
+        $('.btn-join').click(function () {
+            var roomId = $('#room-id').val();
+            if (roomId) {
+                window.location.href = '/controller/' + roomId;
+            }
+            else {
+                alert('Please enter a room number!');
+            }
+        });
+    });
+</script>
 </body>
 </html>

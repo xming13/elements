@@ -3,11 +3,39 @@
 </div>
 
 <script>
-    UnaScreen.register('room1', {name: 'screen'});
+    $(function() {
+        var path = window.location.pathname.slice(1).split('/');
+        var myRoomId = (path.length === 2 && path[1] !== '') ? path[1] : 'lobby';
 
-    UnaScreen.onControllerInput('controller_msg', function (data) {
-        // controller1 says woof
-        console.log(data.una.user_data.name + ' says ' + data.payload);
-        UnaScreen.sendToController(data.una.id, 'screen_msg', data.payload + ' you too!');
+        UnaScreen.register(myRoomId, {'screen': myRoomId }, function(res) {
+            if (res.success) {
+                // init
+            }
+            else {
+                console.log(res.error);
+            }
+        });
+
+        UnaScreen.onControllerJoin(function(res) {
+            var uid = res.una.id;
+            var userData = res.una.user_data;
+            return true;
+        });
+
+        UnaScreen.onControllerLeave(function(res) {
+            console.log(res);
+        });
+
+        UnaScreen.onControllerInput('input', function(res) {
+            console.log(res);
+        });
     });
+
+//    UnaScreen.register('room1', {name: 'screen'});
+//
+//    UnaScreen.onControllerInput('controller_msg', function (data) {
+//        // controller1 says woof
+//        console.log(data.una.user_data.name + ' says ' + data.payload);
+//        UnaScreen.sendToController(data.una.id, 'screen_msg', data.payload + ' you too!');
+//    });
 </script>
