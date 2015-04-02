@@ -1,41 +1,53 @@
 <div class="content">
-  <h2>{{title}}</h2>
+    <h2>{{title}}</h2>
+
+    <div id="app">
+        <h3>Player List</h3>
+
+        <div id="player-list"></div>
+
+        <button type="button" class="btn-start">Start Game!</button>
+    </div>
 </div>
 
+<script src="/js/room.js"></script>
 <script>
-    $(function() {
+    $(function () {
         var path = window.location.pathname.slice(1).split('/');
         var myRoomId = (path.length === 2 && path[1] !== '') ? path[1] : 'lobby';
 
-        UnaScreen.register(myRoomId, {'screen': myRoomId }, function(res) {
+        UnaScreen.register(myRoomId, {'screen': myRoomId}, function (res) {
             if (res.success) {
-                // init
+                Room.init();
             }
             else {
                 console.log(res.error);
             }
         });
 
-        UnaScreen.onControllerJoin(function(res) {
+        UnaScreen.onControllerJoin(function (res) {
             var uid = res.una.id;
             var userData = res.una.user_data;
+
+            Room.controllerJoin(uid, userData);
+
             return true;
         });
 
-        UnaScreen.onControllerLeave(function(res) {
-            console.log(res);
+        UnaScreen.onControllerLeave(function (res) {
+            Room.controllerLeave(res.una.id);
         });
 
-        UnaScreen.onControllerInput('input', function(res) {
-            console.log(res);
+        UnaScreen.onControllerInput('input', function (res) {
+            Room.controllerInput(res.una.id);
         });
     });
 
-//    UnaScreen.register('room1', {name: 'screen'});
-//
-//    UnaScreen.onControllerInput('controller_msg', function (data) {
-//        // controller1 says woof
-//        console.log(data.una.user_data.name + ' says ' + data.payload);
-//        UnaScreen.sendToController(data.una.id, 'screen_msg', data.payload + ' you too!');
-//    });
+    //    UnaScreen.register('room1', {name: 'screen'});
+    //
+    //    UnaScreen.onControllerInput('controller_msg', function (data) {
+    //        // controller1 says woof
+    //        console.log(data.una.user_data.name + ' says ' + data.payload);
+    //        UnaScreen.sendToController(data.una.id, 'screen_msg', data.payload + ' you too!');
+    //    });
 </script>
