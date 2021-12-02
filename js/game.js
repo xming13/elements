@@ -971,7 +971,7 @@ XMing.GameManager = new function() {
                 // var options = {
                 //    key: 'j4a6ijvcn8z1tt9'
                 // }
-                self.peer = new Peer(usernameHost);
+                self.peer = new Peer();
 
                 self.peer.on('open', function(id) {
                     $('#pid').text(id);
@@ -1003,14 +1003,15 @@ XMing.GameManager = new function() {
             } else {
                 var requestedPeer = $('#rid').val();
                 if (!self.connectedPeers[requestedPeer]) {
-                    self.peer = new Peer(requestedPeer, {
+                    self.peer = new Peer();
+                    // self.peer = new Peer(null, {
                         // key: 'j4a6ijvcn8z1tt9',
-                        debug: 3,
-                        logFunction: function() {
-                            var copy = Array.prototype.slice.call(arguments).join(' ');
-                            console.log(copy);
-                        }
-                    });
+                        // debug: 3,
+                        // logFunction: function() {
+                        //    var copy = Array.prototype.slice.call(arguments).join(' ');
+                        //    console.log(copy);
+                        // }
+                    // });
 
                     // pending peerjs team to enable this feature for me!
                     // console.log(self.peer.listAllPeers());
