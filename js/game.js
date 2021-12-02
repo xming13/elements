@@ -989,7 +989,7 @@ XMing.GameManager = new function() {
                 });
 
                 self.peer.on('error', function(err) {
-                    swal('Oops..', err, 'error');
+                    swal('Oops..', err, 'error');                    
                 });
             }
         });
@@ -1003,7 +1003,7 @@ XMing.GameManager = new function() {
             } else {
                 var requestedPeer = $('#rid').val();
                 if (!self.connectedPeers[requestedPeer]) {
-                    self.peer = new Peer($("#username-join").val(), {
+                    self.peer = new Peer(requestedPeer, {
                         // key: 'j4a6ijvcn8z1tt9',
                         debug: 3,
                         logFunction: function() {
@@ -1038,6 +1038,7 @@ XMing.GameManager = new function() {
                     c.on('error', function(err) {
                         console.log('onError: ' + err);
                         swal('Oops..', err, 'error');
+                        delete self.connectedPeers[requestedPeer];
                     });
 
                     self.connectedPeers[requestedPeer] = 1;
