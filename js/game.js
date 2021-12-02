@@ -968,9 +968,10 @@ XMing.GameManager = new function() {
             if (usernameHost === '') {
                 swal('Oops..', 'Please enter a username!', 'error');
             } else {
-                self.peer = new Peer(usernameHost, {
-                    key: 'j4a6ijvcn8z1tt9'
-                });
+                // var options = {
+                //    key: 'j4a6ijvcn8z1tt9'
+                // }
+                self.peer = new Peer(usernameHost);
 
                 self.peer.on('open', function(id) {
                     $('#pid').text(id);
