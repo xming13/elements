@@ -1004,7 +1004,7 @@ XMing.GameManager = new function() {
                 var requestedPeer = $('#rid').val();
                 if (!self.connectedPeers[requestedPeer]) {
                     self.peer = new Peer($("#username-join").val(), {
-                        key: 'j4a6ijvcn8z1tt9',
+                        // key: 'j4a6ijvcn8z1tt9',
                         debug: 3,
                         logFunction: function() {
                             var copy = Array.prototype.slice.call(arguments).join(' ');
